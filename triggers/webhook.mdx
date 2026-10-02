@@ -1,10 +1,10 @@
 ---
 title: "Webhook triggers"
-description: "A webhook trigger gives your script its own URL — any service that can send an HTTP request can run your automation, with signature checking on by default."
-keywords: ["webhook trigger", "HTTP", "POST", "signing secret", "automation", "Script.it"]
+description: "A webhook trigger gives your script its own URL — any service that can send an HTTP request, or a form on your own website, can run your automation, with signature checking on by default."
+keywords: ["webhook trigger", "HTTP", "POST", "signing secret", "web page form", "website form", "reCAPTCHA", "automation", "Script.it"]
 ---
 
-A webhook trigger gives your script its own URL. When something sends a request to that URL, Script.it runs your script. Any service that can call a webhook — Zapier, Make, Stripe, your own internal tool — can start your automation this way, and can send data along with it.
+A webhook trigger gives your script its own URL. When something sends a request to that URL, Script.it runs your script. Any service that can call a webhook — Zapier, Make, Stripe, your own internal tool — can start your automation this way, and can send data along with it. So can a form on your own website: see [Calling it from a web page](#calling-it-from-a-web-page).
 
 ## Creating a webhook trigger
 
@@ -43,12 +43,43 @@ Some providers also do a one-time verification handshake when you add the URL. S
 Clear the signing secret field and Script.it issues a new one. The URL stays the same, so you only have to update the sending service — no need to delete and rebuild the trigger.
 
 <Warning>
-  You can turn signature checking off if the service calling you can't sign its requests. If you do, the URL becomes the only thing protecting the trigger — treat it like a password. Don't share it publicly, commit it to a repository, or put it in client-side code. If it leaks, delete the trigger and create a new one to get a fresh URL.
+  You can turn signature checking off if the service calling you can't sign its requests. If you do, the URL becomes the only thing protecting the trigger — treat it like a password. Don't share it publicly, commit it to a repository, or put it in client-side code. If it leaks, delete the trigger and create a new one to get a fresh URL. An **IP allowlist** on the trigger limits who can call it, for example to your office or VPN ranges.
+
+  Some self-hosted installations don't allow webhooks without a signature. There, the setting can't be turned off, and a webhook that already has it off stops receiving until it's turned back on.
 </Warning>
+
+## Calling it from a web page
+
+A form on your own website — a signup form, a contact form, a request form — can post straight to your webhook, and each submission runs your script. A web page can't keep a signing secret (anyone could read it in the page's source), so the form proves itself a different way: every submission carries a reCAPTCHA check, and only pages on the domains you allow count.
+
+<Steps>
+  <Step title="Allow your domain">
+    Open the trigger's settings and enter your site's domain under **Allowed domains** — `example.com` covers `www.example.com` and every other subdomain. Add several separated by commas.
+  </Step>
+  <Step title="Turn on browser requests">
+    Check **Allow browser requests**. Signature checking stays on for everything else that calls the URL.
+  </Step>
+  <Step title="Paste the form into your page">
+    Open **Web page form** on the trigger and copy the code. It's a complete form with the webhook URL already filled in: rename the fields to what you want to collect and paste it into your page. It can appear more than once on a page.
+  </Step>
+  <Step title="Submit it once">
+    Fill the form in on your live page and check that the run shows up on the trigger. Submissions from a page on any other domain are refused.
+  </Step>
+</Steps>
+
+Or ask the agent — "add a signup form to acme.com that runs my welcome-email script" — and it sets the trigger up and hands you the form.
+
+Every field in the form reaches your script by its name, and a field that appears more than once (a group of checkboxes) arrives as a list. The reCAPTCHA token never does — it's checked and removed before your script runs.
+
+To keep a public form from being abused, each visitor can submit up to 30 times a minute, and a webhook takes up to 120 submissions a minute and 5,000 a day. Over those limits the form shows a "try again" message.
+
+<Note>
+  Nothing in the page can run your script without passing the check — not the URL on its own. On a self-hosted installation, the administrator decides whether a form can be used without the captcha on pages that aren't public, such as an intranet.
+</Note>
 
 ## Sending data to your script
 
-Whatever you send in the request body is handed to your script when it runs — a Stripe event, a GitHub push, or any JSON you choose. Your script can read those values and act on them.
+Whatever you send in the request body is handed to your script when it runs — a Stripe event, a GitHub push, the fields of a web page form, or any JSON you choose. Your script can read those values and act on them.
 
 ## What happens when the webhook fires
 
