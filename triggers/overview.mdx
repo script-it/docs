@@ -12,7 +12,7 @@ There's one kind of trigger, with a menu of things it can watch for:
 
 - **A schedule** — every weekday at 8 AM, every six hours, the first of the month. See [Schedule triggers](/triggers/schedule).
 - **An app event** — a new Notion database item, a GitHub pull request, a Slack mention, a Calendly booking, a new row in a Google Sheet. Over 80 events across 40+ apps. See [App events](/triggers/app-events).
-- **A webhook** — your own URL that any service can send a request to. See [Webhook triggers](/triggers/webhook).
+- **A webhook** — your own URL that any service can send a request to, or that a form on your own website can post to. See [Webhook triggers](/triggers/webhook).
 - **Anything else** — if nothing in the menu fits, the agent can build a custom trigger for you. See [Custom triggers](/triggers/custom).
 
 They all behave the same way once they exist: they watch for something, and when they see it, they run your script.
@@ -75,7 +75,7 @@ Any member of the workspace can enable a script's triggers. Doing so doesn't cha
     React to activity in Slack, GitHub, Notion, and more.
   </Card>
   <Card title="Webhook triggers" icon="webhook" href="/triggers/webhook">
-    Give your script a URL any service can call.
+    Give your script a URL any service — or a form on your website — can call.
   </Card>
   <Card title="Managing triggers" icon="activity" href="/triggers/managing">
     Run history, failures, pausing, and limits.
