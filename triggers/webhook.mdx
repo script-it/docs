@@ -1,12 +1,189 @@
 ---
 title: "Webhook triggers"
-description: "A webhook trigger gives your script its own URL — any service that can send an HTTP request, or a form on your own website, can run your automation, with signature checking on by default."
-keywords: ["webhook trigger", "HTTP", "POST", "signing secret", "web page form", "website form", "reCAPTCHA", "automation", "Script.it"]
+description: "A webhook trigger gives your script its own URL. Anything that can send an HTTP request — your own code, a service like Stripe or GitHub, or a form on your website — can run it, with signature checking on by default."
+keywords: ["webhook trigger", "HTTP", "POST", "signing secret", "HMAC", "web page form", "website form", "reCAPTCHA", "automation", "Script.it"]
 ---
 
-A webhook trigger gives your script its own URL. When something sends a request to that URL, Script.it runs your script. Any service that can call a webhook — Zapier, Make, Stripe, your own internal tool — can start your automation this way, and can send data along with it. So can a form on your own website: see [Calling it from a web page](#calling-it-from-a-web-page).
+A webhook trigger is a URL Script.it mints for your script. A `POST` to it runs the script, with the request body as the trigger's payload. How the caller proves itself depends on who it is:
 
-## Creating a webhook trigger
+<CardGroup cols={3}>
+  <Card title="Your own code or service" icon="code" href="#signing-your-requests">
+    Sign each request with the trigger's secret.
+  </Card>
+  <Card title="A service that signs its own webhooks" icon="plug" href="#provider-signed-webhooks">
+    Stripe, Slack, GitHub and others: pick the provider, paste its secret.
+  </Card>
+  <Card title="A form on your website" icon="globe" href="#calling-it-from-a-web-page">
+    No secret in the page — a reCAPTCHA check and your allowed domains instead.
+  </Card>
+</CardGroup>
+
+The quickest way to get one is to ask the agent — "run my welcome-email script whenever my order service posts a shipment", or "add a signup form to acme.com that runs my welcome-email script" — and it creates the trigger and hands you the URL, the secret, or the form. The settings are the same whether the agent sets them or you do in the app; see [Settings reference](#settings-reference) and [Setting it up in the app](#setting-it-up-in-the-app).
+
+## The contract
+
+- **URL**: `https://api.script.it/api/webhooks/<token>` (your installation's own API host when self-hosted). The token is minted when the trigger is created and never changes. Turning the trigger off keeps it; deleting the trigger invalidates it.
+- **Request**: `POST`, with a JSON body or an `application/x-www-form-urlencoded` body (what a form sends). The body is what your script receives: JSON as sent; a form body as its fields, with a field that appears more than once as a list.
+- **Response**: `200` with `{"event_id": "…"}` as soon as the request is accepted. The script runs right after, so a slow script never times the sender out. A refused request answers `4xx` with `{"detail": {"code": "WEBHOOK_INVALID", "reason": "<why>", "message": "…"}}`; a `429` also carries `Retry-After`. Each section below lists its reasons.
+
+## Signing your requests
+
+Webhook triggers are **signed by default**: Script.it creates a signing secret with the trigger and checks every request against it, so knowing the URL isn't enough to run your script. A signed request carries two headers:
+
+| Header | Value |
+|---|---|
+| `X-Scriptit-Timestamp` | Unix time in seconds, when the request was made |
+| `X-Scriptit-Signature` | `sha256=` followed by the hex HMAC-SHA256 of `"<timestamp>.<body>"`, keyed with the signing secret |
+
+The HMAC is computed over the exact body string you send, so sign the serialized body, not an object you serialize again afterwards. A request whose timestamp is more than 5 minutes old is refused, so a captured request can't be replayed later (`max_timestamp_age_seconds` changes the window).
+
+<CodeGroup>
+
+```bash curl
+TIMESTAMP=$(date +%s)
+BODY='{"order_id": "A-1042", "email": "ada@example.com"}'
+SIGNATURE="sha256=$(printf '%s' "$TIMESTAMP.$BODY" | openssl dgst -sha256 -hmac "$SIGNING_SECRET" | cut -d' ' -f2)"
+
+curl -X POST "$WEBHOOK_URL" \
+  -H "Content-Type: application/json" \
+  -H "X-Scriptit-Timestamp: $TIMESTAMP" \
+  -H "X-Scriptit-Signature: $SIGNATURE" \
+  -d "$BODY"
+```
+
+```python Python
+import hashlib, hmac, json, os, time, requests
+
+body = json.dumps({"order_id": "A-1042", "email": "ada@example.com"})
+timestamp = str(int(time.time()))
+signature = "sha256=" + hmac.new(
+    os.environ["SIGNING_SECRET"].encode(), f"{timestamp}.{body}".encode(), hashlib.sha256
+).hexdigest()
+
+requests.post(os.environ["WEBHOOK_URL"], data=body, headers={
+    "Content-Type": "application/json",
+    "X-Scriptit-Timestamp": timestamp,
+    "X-Scriptit-Signature": signature,
+})
+```
+
+```javascript Node.js
+import { createHmac } from "node:crypto";
+
+const body = JSON.stringify({ order_id: "A-1042", email: "ada@example.com" });
+const timestamp = String(Math.floor(Date.now() / 1000));
+const signature = "sha256=" + createHmac("sha256", process.env.SIGNING_SECRET)
+  .update(`${timestamp}.${body}`)
+  .digest("hex");
+
+await fetch(process.env.WEBHOOK_URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "X-Scriptit-Timestamp": timestamp,
+    "X-Scriptit-Signature": signature,
+  },
+  body,
+});
+```
+
+</CodeGroup>
+
+Keep the secret in the sender's environment — never in a web page, a repository, or anything a visitor can read. To **rotate it**, clear the signing secret field in the trigger's settings (or ask the agent): Script.it issues a new one and the URL stays the same, so only the sender needs updating.
+
+A refused signed request answers `400` with the reason `webhook_missing_signature_headers`, `webhook_invalid_signature`, `webhook_invalid_timestamp` or `webhook_timestamp_out_of_range`.
+
+## Provider-signed webhooks
+
+If the calls come from a service that signs its webhooks its own way, set **Provider** on the trigger to that service and paste in the secret it gives you. Script.it then checks each request the way that provider signs it, so you point the service straight at your URL with nothing in between.
+
+Supported providers: Stripe, Slack, GitHub, Shopify, Zoom, HubSpot, Jira, Trello, Asana, Discord, Zendesk, Intercom, Linear, monday.com, SendGrid, Square, Paddle, Figma, Lemon Squeezy, WhatsApp (and the other Meta webhook products) and Telegram bots.
+
+- **Verification handshakes** (Slack, GitHub, Zoom, Asana, Discord, monday.com, WhatsApp) are answered for you. WhatsApp verifies with a token you paste into Meta's dashboard; Script.it shows it after you create the trigger.
+- **Square, Trello and HubSpot** sign over the URL as well as the body, so their trigger also needs its own public URL in the **Notification URL** setting.
+- **monday.com** signs only the webhooks made through a monday app. A webhook made from monday's UI or API carries no signature, so it needs signature checking off — see [Turning signatures off](#turning-signatures-off).
+
+<Note>
+  If the service is one you've already connected to Script.it — Slack, GitHub, Stripe and many more — you usually don't need a webhook trigger at all. An [app event](/triggers/app-events) receives the same events with no URL to set up.
+</Note>
+
+## Calling it from a web page
+
+A form on your own website — a signup form, a contact form, a request form — can post straight to your webhook. A page can't keep a signing secret (anyone can read the page's source), so the form proves itself a different way:
+
+1. The trigger has **Allowed domains** set to the site's domain — `example.com` covers `www.example.com` and every other subdomain; several are separated by commas, and pasting the page's URL works too — and **Allow browser requests** turned on. Signature checking stays on for everything else that calls the URL.
+2. The page loads reCAPTCHA Enterprise with the site key Script.it gives you (shown with the form in the app, and returned to the agent as `browser_requests_site_key`), and each submission sends the form's fields `application/x-www-form-urlencoded` plus one extra field, `_captcha_token`, holding a token minted for the action `webhook_submit`.
+3. Script.it checks the token, that it was minted on a page served from one of the allowed domains, and that it wasn't scored as a bot, then removes `_captcha_token` and runs your script with the remaining fields.
+
+The simplest way to get a working form is to copy it: **Web page form** on the trigger in the app has the URL and site key filled in, and the agent hands you the same form when you ask it for one. It's plain HTML — rename the fields to what you want to collect, style it as you like, and it can appear more than once on a page. Its shape:
+
+```html
+<script src="https://www.google.com/recaptcha/enterprise.js?render=SITE_KEY"></script>
+
+<form data-scriptit-webhook="https://api.script.it/api/webhooks/TOKEN">
+  <input name="email" type="email" placeholder="Email" required />
+  <input name="name" type="text" placeholder="Name" />
+  <button type="submit">Submit</button>
+</form>
+
+<script>
+  // On submit: mint a token for the action "webhook_submit", append it to
+  // the form's fields as _captcha_token, and POST them to the form's URL.
+</script>
+```
+
+Visitors' browsers load Google's reCAPTCHA script, so Google sees that a visitor was on your page; the token is the only thing that reaches Script.it, and it's checked and discarded before your script runs.
+
+To keep a public form from being abused, each visitor can submit up to 30 times a minute, and a webhook takes up to 120 submissions a minute and 5,000 a day. A refused submission answers with the reason: `webhook_captcha_required` (`400`, no token in the body), `webhook_captcha_rejected` (`403`, the token was invalid, expired or scored as a bot), `webhook_captcha_domain_not_allowed` (`403`, the page isn't on an allowed domain), `webhook_browser_rate_limited` or `webhook_browser_budget_exhausted` (`429`, with `Retry-After`).
+
+<Note>
+  A self-hosted installation decides what a page may do: it can bring its own reCAPTCHA key, allow a form without a captcha for pages that aren't public (an intranet) on triggers with signature checking off, or allow neither — then the page posts to your own server, which signs the request and forwards it. Where a setting isn't allowed, the trigger refuses it with a message that names what the installation does allow.
+</Note>
+
+## Limiting who can call it
+
+An **IP allowlist** on the trigger — individual addresses or CIDR ranges — refuses every request from anywhere else with `webhook_ip_not_allowed` (`403`), including a request whose address can't be determined. It applies on top of signatures and captchas, and it's the one protection left when signatures are off.
+
+### Turning signatures off
+
+You can turn **Require signature** off when the sender can't sign its requests — a webhook made from monday's UI, a tool with no signing option, or a form on a page that isn't public, on a self-hosted installation that allows it.
+
+<Warning>
+  With signatures off, the URL is the only thing protecting the trigger — anyone who has it can run your script. Treat it like a password: don't share it publicly, commit it to a repository, or put it in client-side code, and add an IP allowlist whenever the sender's addresses are known. If it leaks, delete the trigger and create a new one to get a fresh URL.
+
+  Some self-hosted installations don't allow webhooks without a signature. There, the setting can't be turned off, and a webhook that already has it off answers `webhook_signature_required_by_deployment` (`403`) until it's turned back on.
+</Warning>
+
+## What your script receives
+
+The request body is the trigger's payload: a JSON body as sent, a form body as its fields (a repeated field as a list). It reaches your script the way every trigger's payload does — as a session file, by default `data_files/trigger_event.json`. See [Trigger payloads](/developers/overview#trigger-payloads).
+
+Runs appear in your session history like any other run, and in the trigger's run history on the script. See [Managing triggers](/triggers/managing).
+
+## Settings reference
+
+A webhook trigger's settings are flat keys. In the app they're the trigger's settings; the agent sets them with `scriptit trigger create webhook --inputs '{…}'` and changes them with `scriptit trigger update <trigger_id> --inputs '{…}'`.
+
+| Setting | Default | What it does |
+|---|---|---|
+| `require_signature` | `true` | Check each request's signature. `false` lets anyone with the URL run the script. |
+| `signing_secret` | generated | The secret signatures are checked with. Clear it to rotate; for a provider, paste the provider's secret. |
+| `webhook_provider` | `scriptit` | Whose signature scheme to check: `scriptit` for your own code, or a provider preset (`stripe`, `slack`, `github`, …). |
+| `ip_allowlist` | none | Addresses or CIDR ranges allowed to call the URL, e.g. `["203.0.113.0/24"]`. |
+| `max_timestamp_age_seconds` | `300` | How old a signed request may be (60–3600). |
+| `allow_browser_requests` | `false` | Also accept web page form posts that carry a captcha token. Needs `require_signature`, the `scriptit` provider and allowed domains. |
+| `browser_allowed_domains` | none | Domains whose pages may post, comma-separated; subdomains included. |
+| `notification_url` | none | The trigger's public URL, for providers that sign over it (Square, Trello, HubSpot). |
+| `verify_token` | generated | The token a provider's URL-verification handshake checks (WhatsApp). |
+
+## Managing webhook triggers
+
+- **Turn it off and on** from the script. The URL is kept, so turning it back on resumes with the same setup.
+- **Delete it** to permanently invalidate the URL. Anything still calling it stops working, and a new trigger gets a different URL.
+
+## Setting it up in the app
+
+### Creating a webhook trigger
 
 <Steps>
   <Step title="Open the Triggers tab">
@@ -15,83 +192,27 @@ A webhook trigger gives your script its own URL. When something sends a request 
   <Step title="Choose Webhook">
     Give it a name that says where the calls will come from — "Stripe payment received", "Deploy finished" — and choose **Webhook**.
   </Step>
-  <Step title="Choose the script">
-    Pick the script to run, and fill in any inputs it needs.
-  </Step>
   <Step title="Create the trigger">
-    Click **Create Trigger**. Script.it shows you the **webhook URL** and a **signing secret**, along with example code for sending a request. Copy them — you'll need them to set up the sending service.
+    Click **Create Trigger**. Script.it shows you the **webhook URL** and the **signing secret**, with example code for sending a signed request. Copy them — you'll need them to set up the sending service.
   </Step>
   <Step title="Point your service at the URL">
-    Paste the URL into whatever should call it. Most services have a **Send test event** button — use it, and check that the run shows up on your trigger.
+    Paste the URL into whatever should call it. Most services have a **Send test event** button — use it, and check that the run shows up on your trigger. For a provider's own signing, set **Provider** and **Signing secret** in the trigger's settings first.
   </Step>
 </Steps>
 
-## Securing your webhook
-
-Webhook triggers are **signed by default**. Script.it creates a signing secret when you make the trigger and checks every incoming request against it, so knowing the URL isn't enough to run your script.
-
-The example code shown after you create the trigger already includes the signing, so you can copy it straight into your own service.
-
-### Using a provider's own signing
-
-If the calls come from a service that signs its own webhooks — Stripe, Slack, GitHub, Shopify, Zoom, HubSpot, Jira, Trello, Asana, Discord, Zendesk, Intercom, Linear, monday.com, SendGrid, Square, Paddle, Figma, Lemon Squeezy, WhatsApp — choose that provider on the trigger and paste in the secret it gives you. Script.it then checks requests the way that provider signs them, so you can point the service straight at your URL with nothing in between.
-
-Some providers also do a one-time verification handshake when you add the URL. Script.it answers it for you, and shows you a verification token when a provider needs one pasted in.
-
-### Rotating the secret
-
-Clear the signing secret field and Script.it issues a new one. The URL stays the same, so you only have to update the sending service — no need to delete and rebuild the trigger.
-
-<Warning>
-  You can turn signature checking off if the service calling you can't sign its requests. If you do, the URL becomes the only thing protecting the trigger — treat it like a password. Don't share it publicly, commit it to a repository, or put it in client-side code. If it leaks, delete the trigger and create a new one to get a fresh URL. An **IP allowlist** on the trigger limits who can call it, for example to your office or VPN ranges.
-
-  Some self-hosted installations don't allow webhooks without a signature. There, the setting can't be turned off, and a webhook that already has it off stops receiving until it's turned back on.
-</Warning>
-
-## Calling it from a web page
-
-A form on your own website — a signup form, a contact form, a request form — can post straight to your webhook, and each submission runs your script. A web page can't keep a signing secret (anyone could read it in the page's source), so the form proves itself a different way: every submission carries a reCAPTCHA check, and only pages on the domains you allow count.
+### Adding a web page form
 
 <Steps>
   <Step title="Allow your domain">
-    Open the trigger's settings and enter your site's domain under **Allowed domains** — `example.com` covers `www.example.com` and every other subdomain. Add several separated by commas.
+    Open the trigger's settings and enter your site's domain under **Allowed domains**.
   </Step>
   <Step title="Turn on browser requests">
-    Check **Allow browser requests**. Signature checking stays on for everything else that calls the URL.
+    Check **Allow browser requests**.
   </Step>
   <Step title="Paste the form into your page">
-    Open **Web page form** on the trigger and copy the code. It's a complete form with the webhook URL already filled in: rename the fields to what you want to collect and paste it into your page. It can appear more than once on a page.
+    Open **Web page form** on the trigger, copy the code, rename the fields to what you want to collect, and paste it into your page.
   </Step>
   <Step title="Submit it once">
-    Fill the form in on your live page and check that the run shows up on the trigger. Submissions from a page on any other domain are refused.
+    Fill the form in on your live page and check that the run shows up on the trigger.
   </Step>
 </Steps>
-
-Or ask the agent — "add a signup form to acme.com that runs my welcome-email script" — and it sets the trigger up and hands you the form.
-
-Every field in the form reaches your script by its name, and a field that appears more than once (a group of checkboxes) arrives as a list. The reCAPTCHA token never does — it's checked and removed before your script runs.
-
-To keep a public form from being abused, each visitor can submit up to 30 times a minute, and a webhook takes up to 120 submissions a minute and 5,000 a day. Over those limits the form shows a "try again" message.
-
-<Note>
-  Nothing in the page can run your script without passing the check — not the URL on its own. On a self-hosted installation, the administrator decides whether a form can be used without the captcha on pages that aren't public, such as an intranet.
-</Note>
-
-## Sending data to your script
-
-Whatever you send in the request body is handed to your script when it runs — a Stripe event, a GitHub push, the fields of a web page form, or any JSON you choose. Your script can read those values and act on them.
-
-## What happens when the webhook fires
-
-Script.it accepts the request straight away and runs your script right after, so a slow script never causes a timeout on the sending side.
-
-Runs appear in your session history like any other run, and in the trigger's run history on the script. See [Managing triggers](/triggers/managing).
-
-## Managing webhook triggers
-
-- **Turn it off and on** from the script. The URL is kept, so turning it back on resumes with the same setup.
-- **Delete it** to permanently invalidate the URL. Anything still calling it stops working, and a new trigger gets a different URL.
-
-<Note>
-  If you want to react to something in an app you've already connected — a Slack message, a GitHub pull request, a Stripe payment — you usually don't need a webhook trigger at all. Use an [app event](/triggers/app-events) instead and skip the setup.
-</Note>
