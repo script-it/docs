@@ -24,7 +24,7 @@ The quickest way to get one is to ask the agent — "run my welcome-email script
 
 - **URL**: `https://api.script.it/api/webhooks/<token>` (your installation's own API host when self-hosted). The token is minted when the trigger is created and never changes. Turning the trigger off keeps it; deleting the trigger invalidates it.
 - **Request**: `POST`, with a JSON body or an `application/x-www-form-urlencoded` body (what a form sends). The body is what your script receives: JSON as sent; a form body as its fields, with a field that appears more than once as a list.
-- **Response**: `200` with `{"event_id": "…"}` as soon as the request is accepted. The script runs right after, so a slow script never times the sender out. A refused request answers `4xx` with `{"detail": {"code": "WEBHOOK_INVALID", "reason": "<why>", "message": "…"}}`; a `429` also carries `Retry-After`. Each section below lists its reasons.
+- **Response**: `200` with `{"inbox_id": "…"}` as soon as the request is accepted. The script runs right after, so a slow script never times the sender out. A refused request answers `4xx` with `{"detail": {"code": "WEBHOOK_INVALID", "reason": "<why>", "message": "…"}}`; a `429` also carries `Retry-After`. Each section below lists its reasons.
 
 ## Signing your requests
 
@@ -111,7 +111,7 @@ Supported providers: Stripe, Slack, GitHub, Shopify, Zoom, HubSpot, Jira, Trello
 
 A form on your own website — a signup form, a contact form, a request form — can post straight to your webhook. A page can't keep a signing secret (anyone can read the page's source), so the form proves itself a different way:
 
-1. The trigger has **Allowed domains** set to the site's domain — `example.com` covers `www.example.com` and every other subdomain; several are separated by commas, and pasting the page's URL works too — and **Allow browser requests** turned on. Signature checking stays on for everything else that calls the URL.
+1. The trigger has **Allowed domains** set to the site's domain — `example.com` covers `www.example.com` and every other subdomain; several are separated by commas, and a pasted page URL is reduced to its host (`https://www.example.com/signup` → `www.example.com`) — and **Allow browser requests** turned on. Signature checking stays on for everything else that calls the URL.
 2. The page loads reCAPTCHA Enterprise with the site key Script.it gives you (shown with the form in the app, and returned to the agent as `browser_requests_site_key`), and each submission sends the form's fields `application/x-www-form-urlencoded` plus one extra field, `_captcha_token`, holding a token minted for the action `webhook_submit`.
 3. Script.it checks the token, that it was minted on a page served from one of the allowed domains, and that it wasn't scored as a bot, then removes `_captcha_token` and runs your script with the remaining fields.
 
