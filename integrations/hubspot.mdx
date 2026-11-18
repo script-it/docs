@@ -4,7 +4,7 @@ description: "Install the Script.it HubSpot integration, choose the permissions 
 keywords: ["HubSpot", "HubSpot integration", "CRM automation", "connect HubSpot", "OAuth", "scopes", "setup guide", "Script.it"]
 ---
 
-Script.it connects to HubSpot so your scripts and the AI agent can work with your CRM directly. Describe what you want in plain English — "when someone submits our demo form, create a ticket and email the deal owner," "summarize this week's sales conversations," "generate a quote from this deal" — and the agent builds and runs the automation using your HubSpot data.
+Script.it connects to HubSpot so your scripts and the AI agent can work with your CRM directly. Describe what you want in plain English — "when someone submits our demo form, create a ticket and assign it to the deal owner," "summarize this week's sales conversations," "generate a quote from this deal" — and the agent builds and runs the automation using your HubSpot data.
 
 This guide walks through installing the integration, choosing the permissions to grant, and running your first HubSpot automation.
 
@@ -12,11 +12,11 @@ This guide walks through installing the integration, choosing the permissions to
 
 The HubSpot integration is not a fixed one-way sync. The agent uses whichever HubSpot capabilities your automation needs, including:
 
-- **CRM records** — create, update, and search contacts, companies, deals, tickets, quotes, and custom objects.
-- **Sales context** — read conversations, sales emails, and timeline activity to summarize and act on customer history.
-- **Marketing** — work with campaigns, marketing events, forms, and form submissions.
-- **Data movement** — import and export CRM data in bulk, attach and manage files.
-- **Actions** — send transactional emails, assign records to owners, log timeline events.
+- **CRM records** — create, update, and search contacts, companies, deals, tickets, quotes, and contact lists. On HubSpot Enterprise portals, custom object records too.
+- **Sales context** — read inbox conversations and sent sales emails to summarize and act on customer history.
+- **Marketing** — work with campaigns, marketing events, forms, form submissions, and CMS content.
+- **Data movement** — import and export CRM data in bulk, and upload and manage files.
+- **Workflows and owners** — trigger and read HubSpot workflows, and assign records to owners.
 
 ## Before you start
 
@@ -37,13 +37,13 @@ Some permissions depend on your HubSpot subscription. For example, ticket automa
     Search for **HubSpot** in the catalog and click **Connect**.
   </Step>
   <Step title="Choose the permissions to grant">
-    Script.it shows a checklist of HubSpot permissions before anything is authorized. All are optional — keep the full set for maximum flexibility, or trim the selection to exactly what your automations will touch. You can reconnect later with a different selection if your needs change.
+    Script.it shows a checklist of HubSpot permissions before anything is authorized. Everything except basic OAuth access is optional — keep the full set for maximum flexibility, or trim the selection to exactly what your automations will touch. You can reconnect later with a different selection if your needs change.
   </Step>
   <Step title="Authorize on HubSpot">
     Script.it redirects you to HubSpot's authorization page. Pick the HubSpot account you want to connect, review the requested permissions, and click **Connect app**.
   </Step>
   <Step title="Confirm the connection">
-    You're redirected back to Script.it, and HubSpot now appears in your connected integrations with a **Connected** badge. It's immediately available to your scripts and sessions.
+    You're redirected back to Script.it, and HubSpot now appears in your connected integrations with an **Active** badge. It's immediately available to your scripts and sessions.
   </Step>
 </Steps>
 
@@ -61,26 +61,26 @@ Some permissions depend on your HubSpot subscription. For example, ticket automa
     The agent identifies that the automation needs HubSpot, builds a script using your connected account, and shows you what it will do.
   </Step>
   <Step title="Run it">
-    Run the script directly, or let its trigger (a schedule, a webhook, or a HubSpot event) fire it automatically. Every run shows exactly what the agent read and changed.
+    Run the script directly, or let a trigger fire it automatically: a schedule, a webhook, or a HubSpot event such as a new contact, company, deal, or ticket. Every run shows exactly what the agent read and changed.
   </Step>
 </Steps>
 
 ## Permissions reference
 
-Script.it requests HubSpot permissions (OAuth scopes) so the agent can act on your behalf. Only basic OAuth access is required — every other scope is optional, and HubSpot drops any scope your subscription doesn't include. Here is what each group enables:
+Script.it requests HubSpot permissions (OAuth scopes) so the agent can act on your behalf. Only `oauth` (basic OAuth access) is required. Every other scope is optional, and HubSpot drops any scope your subscription doesn't include. Here is what each group enables:
 
 | Permission group | Scopes | What it enables |
 |---|---|---|
-| Contacts, companies & deals | `crm.objects.contacts.read/write`, `crm.objects.companies.read/write`, `crm.objects.deals.read/write`, `crm.objects.line_items.read`, `crm.objects.owners.read`, `crm.lists.read/write` | Read, create, and update core CRM records, line items, owners, and contact lists. |
-| Tickets & quotes | `tickets`, `crm.objects.quotes.read/write` | Support-ticket triage and quote generation automations. |
-| Custom objects & properties | `crm.objects.custom.read`, `crm.schemas.contacts.read/write`, `crm.schemas.companies.read/write`, `crm.schemas.deals.read`, `crm.schemas.custom.read` | Read custom objects, and inspect or create the property definitions the agent needs before reading or writing records. |
-| Marketing | `marketing.campaigns.read/write`, `crm.objects.marketing_events.read/write`, `forms`, `content` | Campaign and marketing-event automations, form submissions as triggers, CMS and blog content. |
-| Conversations & email history | `conversations.read`, `sales-email-read`, `timeline` | Summarize inbox conversations and sales emails, and log timeline events for a clear audit trail. |
-| Sending email | `transactional-email` | Send emails as automation steps. |
-| Import, export & files | `crm.import`, `crm.export`, `files` | Bulk data migrations and file attachments. |
+| Required | `oauth` | Basic OAuth access. HubSpot requires it for every app. |
+| Contacts, companies & deals | `crm.objects.contacts.read/write`, `crm.objects.companies.read/write`, `crm.objects.deals.read/write`, `crm.objects.line_items.read`, `crm.objects.owners.read`, `crm.lists.read/write` | Read, create, and update core CRM records, and read deal line items and CRM owners. Read, create, and update contact lists. |
+| Tickets & quotes | `tickets`, `crm.objects.quotes.read/write` | Read and write tickets, and read, create, and update sales quotes. |
+| Custom objects & properties | `crm.objects.custom.read/write`, `crm.schemas.contacts.read/write`, `crm.schemas.companies.read/write`, `crm.schemas.deals.read`, `crm.schemas.custom.read` | Read, create, and update custom object records (HubSpot Enterprise). Read or create the property definitions the agent needs before reading or writing records. |
+| Marketing | `marketing.campaigns.read/write`, `crm.objects.marketing_events.read/write`, `forms`, `content` | Read, create, and update campaigns and marketing events. Read and submit forms. Read CMS, blog, and landing pages. |
+| Conversations & email history | `conversations.read`, `sales-email-read` | Read inbox messages and sent sales emails. |
+| Import, export & files | `crm.import`, `crm.export`, `files` | Import and export CRM data, and upload and manage files. |
 | Workflows | `automation` | Trigger and read HubSpot workflow automations. |
-| Account & users | `settings.users.read/write`, `account-info.security.read` | Route and assign records to the right users, read account audit information. |
-| Commerce & CMS domains | `accounting`, `e-commerce`, `cms.domains.read/write` | Commerce data automations and CMS domain configuration. |
+| Users | `settings.users.read` | Read user settings, so records can be routed to the right people. |
+| Commerce & CMS domains | `e-commerce`, `cms.domains.read` | Access e-commerce features, and read CMS domain configurations. |
 
 <Note>
   Script.it stores only the OAuth tokens HubSpot issues — your HubSpot password is never visible to Script.it. Tokens are encrypted at rest, and scripts never contain credentials.
@@ -94,8 +94,12 @@ You can share your HubSpot connection with a workspace so teammates' scripts can
 
 To remove Script.it's access to your HubSpot account:
 
-1. In Script.it, go to **Settings → Integrations**, find HubSpot, and click the **···** menu → **Disconnect**. This revokes the tokens immediately.
+1. In Script.it, go to **Settings → Integrations**, find HubSpot, and choose **Disconnect** from its **⋮** menu. Script.it deletes its copy of your tokens. If nobody else in Script.it is connected to the same HubSpot account, Script.it also revokes the app's access in HubSpot.
 2. Optionally, you can also remove the app from HubSpot directly: in HubSpot, go to **Settings → Integrations → Connected Apps**, find Script.it, and uninstall it.
+
+<Note>
+  HubSpot gives an app one grant per HubSpot account, shared by every Script.it connection to that account. While anyone else is still connected to the same HubSpot account, Script.it keeps the grant so their connection keeps working. Uninstalling the app in HubSpot removes access for all of them.
+</Note>
 
 Scripts that use HubSpot will stop working until you reconnect.
 

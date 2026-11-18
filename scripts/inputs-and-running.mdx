@@ -1,0 +1,91 @@
+---
+title: "Inputs and running"
+description: "Set a script's inputs, run the whole script or a single block, and follow, stop, and find its runs."
+keywords: ["script inputs", "block inputs", "run script", "run block", "stop script", "widgets", "dropdown", "file picker", "sessions", "Script.it"]
+---
+
+Inputs let you change what a script does without touching its code. You can run a script from its page, from a single block, from chat, or on a [trigger](/triggers/overview). Every run happens in a session, which keeps its results and files.
+
+## Script inputs and block inputs
+
+A script has two kinds of inputs.
+
+| Kind | Where you see it | What it controls |
+|---|---|---|
+| **Script inputs** | The **Script inputs** row in the script header | Values the whole run uses, such as a date range or a target environment |
+| **Block inputs** | The **Block inputs** row on a block's card | Values one block uses, such as a prompt, a folder, or a limit |
+
+A block input often takes its value from a script input or from an earlier block's output. The block card shows where each value comes from. The **Dependencies** row lists the outputs a block pulls from earlier blocks, and the **Assets** row lists the [script assets](/scripts/assets) it reads.
+
+### Editing an input
+
+Click an input's value on the script page to edit it. The value you set there is saved with the script, so it becomes the default for every later run, for everyone who uses the script. To change a value for one run only, change it in the run card instead (see [Running a script](#running-a-script)). Saving a value needs edit access to the script's workspace.
+
+An input can also hold an expression, such as a path to another block's output. Use **Edit expression** to see or change it. You rarely need to: ask the agent and it sets the value for you.
+
+Once the script has run in the session you have open, each input also shows the value that run used.
+
+<Note>
+  A required input with no default has to be filled in before the script can run. That's how a script asks you for a fresh value every time. Tell the agent "ask me for the file next time" and it makes that input required.
+</Note>
+
+### Input widgets
+
+Each input uses a control that fits its type:
+
+| Widget | Used for |
+|---|---|
+| Text field or text area | Names, prompts, notes |
+| Number field or slider | Counts and limits, with an optional range |
+| Dropdown or multi-select | One or several choices from a list |
+| Checkbox | On or off |
+| Date picker and color picker | A date, or a color |
+| File picker | One file, with upload |
+| Folder picker | A folder you fill with files |
+
+Ask the agent for the control you want: "Make the tone a dropdown with casual and formal".
+
+## Running a script
+
+There are several ways to start a run:
+
+- **From the script header.** Click **Run**. Script.it opens a new session with a run card in the message box. The card shows the script's inputs, so you can check or change them, then send it to run. Values you change in the run card apply to that run only.
+- **In the session you have open.** Open the script's **⋮** menu and choose **Run in current session**.
+- **One block.** Hover over a block and click its run button, or choose **Run block** from the block's **⋮** menu. Only that block runs, using what earlier blocks produced in the same session.
+- **From chat.** Ask the agent: "Run @weekly-digest for last month". The agent runs scripts itself while it builds or fixes them, too.
+- **Automatically.** A [trigger](/triggers/overview) runs the script on a schedule, on an app event, or from a webhook.
+
+To share a quick way to run a script, choose **Copy link to run script** from the script's **⋮** menu. Anyone who can open the script can use the link to run it.
+
+### Runs and permission profiles
+
+A session runs under a [permission profile](/governance/permission-profiles). If the session you run in uses a profile other than **Full**, Script.it asks first, for example: "This run uses the Chat permission profile." Choose **Run with Chat** to keep the session's limits, or **Switch to Full and run**.
+
+## Following a run
+
+While the script runs, its **Run** button turns into **Stop**, and each block's card shows its progress. Open a block's **Timeline** to see its steps and log lines as they happen. When a block finishes, its output files appear on its card. See [Blocks](/scripts/blocks#block-outputs) for what a card shows.
+
+A run can end in a few ways:
+
+- **Succeeded.** Every block ran.
+- **Failed.** A block raised an error. Its card offers **Show error details** and a ready-made prompt that asks the agent to fix it.
+- **Ended early.** A block decided there was nothing left to do. The header's **Last run** row says where and why, as "Run ended at *block*: *reason*". The blocks after it show "Not run".
+- **Waiting.** A block is waiting for an answer, an event, or a time. See [Approvals and waits](/scripts/approvals-and-waits).
+
+### Stopping a run
+
+Click **Stop** in the script header, or the round stop button at the bottom of the script page, to stop a running script. A run that is waiting has its own stop: **Stop the waiting run** on the stop button or in the waiting block's **⋮** menu.
+
+## Where runs live
+
+Every run belongs to a session. The session keeps the run's results and the files its blocks wrote, so two sessions can run the same script without mixing their outputs. See [Session files](/sessions/files).
+
+The script page shows the runs of the session you have open: each block's latest output and the input values it used. The header's **Sessions** row links to the last session that ran or edited the script. Click **View All** to see every one.
+
+<Tip>
+  A run that the agent starts with "run this for each lead" can give each lead a session of its own. That keeps many runs side by side, each with its own history and waits.
+</Tip>
+
+<Note>
+  You can't run a script while its [history](/scripts/outline-and-history#history) is open. Close history to run it again.
+</Note>

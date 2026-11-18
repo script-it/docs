@@ -1,0 +1,102 @@
+---
+title: "Outlines, comments, and history"
+description: "Read how each block works in plain language, comment on anything the agent should change, and browse or restore earlier versions of a script."
+keywords: ["outline", "How this block works", "comments", "annotate", "feedback", "history", "versions", "restore", "Script.it"]
+---
+
+You don't need to read code to understand or change a script. Each block explains itself in plain language. You point at what you want changed and the agent changes it. Every version is kept, so you can look back and restore one.
+
+## How this block works
+
+Each block card has a **How this block works** row. Open it to read the block's steps in ordinary paragraphs and lists. A trigger's card has the same row, **How this trigger works**.
+
+The agent writes this outline from the block's code and keeps it current with every change. Because the outline lives in the code, it always describes what the block actually does.
+
+- A step that has more detail shows its summary first. Expand it to read the rest.
+- When a block's outline has several steps, **Contents** lists them so you can jump to one.
+- Names of blocks and integrations show as tags you can click.
+
+If a block has no outline yet, click **Explain this block** (or **Explain this trigger**). The agent reads the code and writes one.
+
+## Commenting on a script
+
+You never edit the outline directly. Instead, you comment on it, and the agent makes the change in the code and the outline together.
+
+<Steps>
+  <Step title="Select the text">
+    Select text in a block's outline, its title or description, the script description, or a Markdown block. A **Comment** button appears under the selection.
+  </Step>
+  <Step title="Write your comment">
+    Click **Comment**, then write a question or the change you want: "Skip leads that already replied", or "Why does this wait two days?". Press Enter to add it.
+  </Step>
+  <Step title="Add more, then send">
+    Add as many comments as you like, from any script. They collect above the message box as "*N* comments, sent with your next message". Send a message, or send the comments on their own.
+  </Step>
+</Steps>
+
+The agent reads each comment with the text it quotes and updates the script. When it's done, the outline shows the new version.
+
+- Point at the comment chip to see the queued comments by block. Click **Review all** to edit or delete them before sending.
+- A comment whose quoted text has changed since you wrote it is marked **Changed**.
+
+<Note>
+  Commenting on a script needs edit access (**Can edit**) to its workspace.
+</Note>
+
+### Commenting on outputs and files
+
+The same comments work on what a script produces and on the files you open. Select text to comment on:
+
+- Markdown files, code, and plain text
+- Word documents and PowerPoint decks
+- A block's **Timeline**
+- Messages in the chat
+
+For structured content, turn on **Annotate** in the file's bar or a block's output bar, then click what you mean:
+
+| Content | What you can point at |
+|---|---|
+| JSON and CSV files | A value, a column, or a view's tab |
+| Excel workbooks | A cell, or a range of cells |
+| HTML pages | An element, or selected words in it |
+
+Every comment joins the same queue, so one message can carry comments on the outline, an output, and a chat reply together.
+
+<Tip>
+  Commenting on an output is the quickest way to fix a result: "This column should be in euros" on the CSV a block wrote, sent with "and rerun the block".
+</Tip>
+
+## History
+
+Script.it saves a version of the script at the end of every agent turn that changes it, and when you change it in the app. **History** lets you see what each version changed and go back to one.
+
+To open it, click the history button beside **Run** in the script header, or choose **Show script history** from the script's **⋮** menu.
+
+History lists the versions that changed the script's explanation, newest first, grouped by day. Each version shows:
+
+- When it was saved, and who saved it (**You** for your own changes)
+- How many changes it made
+- Which blocks it changed
+
+Click a version to see its changes inside each block's card, with additions and removals marked. Use the arrows beside the change counter, such as **Change 3 of 12**, to step through them. Changes that belong to no current block appear under **Other changes in this version**. Click **Show older versions** to load more.
+
+To ask the agent about a version, hover over it and click **Reference version in chat**.
+
+While history is open, the script is read-only and you can't run it. Click **Close history** to go back.
+
+### Restoring a version
+
+Click **Restore version** on the version you're viewing, then confirm with **Restore this version**. The restore is saved as a new version, so nothing in history is lost.
+
+| Restored | Not touched |
+|---|---|
+| `SKILL.md` and the script's source files. Files added since that version are removed. | Assets, logs, and run outputs |
+| Triggers, which follow `SKILL.md`. A trigger that version lacks stops; one it declares runs for every member. | Other scripts this one runs |
+
+Teammates get the restored version when their workspace syncs. If a restore fails for a technical reason, Script.it asks the agent to restore the version in the chat instead.
+
+<Note>
+  **Restore version** needs edit access. It isn't available while the script has unsaved changes or the agent is working on it.
+</Note>
+
+You can also ask the agent in chat: "Go back to the version before you added the Slack step".

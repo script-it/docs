@@ -1,68 +1,121 @@
 ---
 title: "Agent chat"
-description: "Build, run, modify, and debug scripts by chatting with the Script.it AI agent — from your first message to a working, iterated automation."
-keywords: ["agent chat", "build script", "run script", "AI agent", "session chat", "automation", "prompts"]
+description: "Build, run, change, and debug scripts by chatting with your Script.it agent: the composer, @ references, attachments, dictation, and how to read what the agent did."
+keywords: ["agent chat", "composer", "@ mention", "reference", "attach files", "voice dictation", "build script", "run script", "rewind", "AI agent"]
 ---
 
-The chat panel is how you interact with the Script.it AI agent. You describe what you want in plain English — build a script, run it, fix a bug, add a step — and the agent does the work. Responses stream back in real time, so you can follow along as the agent thinks and acts.
+You work with your agent by chatting. Describe what you want in plain English — build a script, run it, fix a failure, add a step — and the agent does the work while you watch. Its replies stream in as it goes.
 
-## Starting a new session
-
-When you open a new session, the chat starts empty and offers a few suggestions to help you begin. You can click one of the starter prompts or type your own message directly into the composer at the bottom of the panel.
+## Start a session
 
 <Steps>
   <Step title="Open a new session">
-    Click **New session** in the sidebar. The agent chat opens with starter suggestions including "Guide me to automation," "Teach me about Script.it," and a template picker.
+    Click **New session** at the bottom of the sidebar, or press `Cmd+Shift+S` (`Ctrl+Shift+S` on Windows). The new session offers three starting points: **Guide me to automation**, **Teach me about Script.it**, and **Templates for common Scripts**. Click one to put its prompt in the message box, or to open the templates.
   </Step>
-  <Step title="Describe your automation">
-    Type what you want to build in the composer and press **Enter** (or click the send button). Be specific about the goal — what data should flow in, what should happen to it, and where the result should go.
+  <Step title="Describe what you want">
+    Type in the message box and press `Enter`, or click the send button. Say what should go in, what should happen, and where the result should go.
   </Step>
   <Step title="Watch the agent work">
-    The agent responds as it works, streaming its progress live. You'll see a **Working...** indicator while it's active, which collapses into a **Details** section once it finishes. Any script changes appear in the changes bar above the composer.
+    A **Working** indicator shows above the message box while the agent is busy. When it finishes, its steps fold into a **Details** section you can expand. Scripts it created or changed appear as chips above the message box.
   </Step>
 </Steps>
 
-## Building a script
+A new session isn't saved until you send its first message.
 
-To have the agent build a new script, describe the automation you want. The more context you give, the more accurate the result will be.
+## The composer
 
-**Example prompts:**
+The message box at the bottom of the session is the composer. Its placeholder reads **Ask anything, @ to reference**.
+
+| Control | What it does |
+|---|---|
+| Permission selector | Shows the session's permission profile, **Full** by default. Pick another to limit what the agent may do. See [Permission profiles](/governance/permission-profiles). |
+| Model picker | Shows the model the agent uses, **Auto** by default. See [Models](/sessions/models). |
+| Microphone | Dictate your message. See [Dictate a message](#dictate-a-message). |
+| **@** (**Reference Scripts, Files or Integrations**) | Opens the reference menu. You can also type `@`. |
+| Paperclip (**Attach files**) | Attach files from your computer. |
+| Send | Sends the message. While the agent works, a **Stop generation** button sits next to it. |
+
+You can send another message while the agent is still working. To stop it, click **Stop generation**.
+
+Above the composer, a row shows the **Working** indicator, chips for the scripts this session touched, and a folder button that opens [Session Files](/sessions/files).
+
+## Reference things with @
+
+Type `@` or click the **@** button to point the agent at something specific. The reference menu has two parts:
+
+- **Used in session** — scripts this session already worked on. Click the arrow beside a script to pick one of its blocks.
+- **Library** — browse **Scripts & Blocks**, **Integrations**, **Triggers**, **Files**, and **Sessions**.
+
+Keep typing after `@` to search everything at once. A search also lists your permission profiles, under **Permissions**.
+
+A reference becomes a chip in your message, so the agent knows exactly which script, block, file, or session you mean.
+
+```
+Run @weekly-digest with last month's dates
+```
+
+```
+Compare the output of @fetch-orders with the file I attached
+```
+
+You can also drag a script or session from the sidebar onto the session to reference it.
+
+## Attach files
+
+Click **Attach files**, paste a file, or drag files anywhere onto the session. The composer shows **Drop to attach to your message** while you drag. Any file type works. Folders can't be attached; attach the files inside instead.
+
+Attached files are saved in the session's [Session Files](/sessions/files) when you send the message, so the agent and your scripts can use them.
+
+## Dictate a message
+
+The microphone button turns speech into text in the composer. Dictation works on every plan, Free included.
+
+- **Hold** the button to talk, and let go to stop.
+- **Tap** it to start dictating, and tap again (**Stop dictation**) to finish.
+
+The composer reads **Listening…** while it records. Your words appear in the message box, where you can edit them before you send.
+
+<Note>
+  Your browser asks for microphone access the first time. The button doesn't appear in browsers that can't record audio.
+</Note>
+
+## Build a script
+
+Describe the automation you want. The more context you give, the better the first version.
 
 ```
 Build me a script that fetches the latest 10 issues from our GitHub repo and posts a summary to Slack.
 ```
 
 ```
-Create a script that downloads a CSV from a URL, filters rows where the "status" column is "active", and saves the result as a new file.
+Create a script that downloads a CSV from a URL, keeps rows where "status" is "active", and saves the result as a new file.
 ```
 
 ```
-Build a weekly digest script that pulls unread emails from Gmail, summarizes each one with AI, and emails me the summary every Monday morning.
+Build a weekly digest that summarizes my unread Gmail and emails me the summary every Monday morning.
 ```
 
-The agent will create the blocks, write the source files, and set up the script — you don't need to touch any files manually.
+The agent writes the script one block at a time, running each block as it goes. The script opens beside the session so you can watch it take shape. You don't need to touch any files yourself.
 
 <Tip>
-  Start with one clear goal per script. Once the agent builds the initial version, you can add steps, change logic, or connect new integrations one at a time.
+  Start with one clear goal per script. Once the first version works, add steps, change logic, or connect more integrations one at a time.
 </Tip>
 
-## Running a script from chat
+## Run a script
 
-You can trigger a script to run without leaving the chat by referencing it with `@`:
+Ask the agent to run it:
 
 ```
 Run @weekly-digest
 ```
 
-The agent parses the script name and starts execution. Block results stream back into the chat as they complete, so you can see exactly what ran and what each step produced.
+The agent starts the run, and each block's results show in the chat and on the script as they finish.
 
-You can also run a script directly from the script view — look for the run button next to each block or at the top of the script panel. Clicking it brings up a run widget in the composer where you can confirm or adjust inputs before running.
+You can also run a script yourself from its page. See [Inputs and running](/scripts/inputs-and-running).
 
-## Asking the agent to modify a script
+## Change a script
 
-Once a script exists, you can refine it through conversation. Reference the script by name or just describe the change you want — the agent knows which script you've been working on.
-
-**Example prompts:**
+Once a script exists, refine it in conversation. Name the script or block, or just describe the change — the agent knows which script you've been working on.
 
 ```
 Update the Fetch Issues block to also include the issue author and assignee.
@@ -73,44 +126,46 @@ Add a step after "Process Data" that uploads the output file to Google Drive.
 ```
 
 ```
-The email block is failing with a 401 authentication error. Can you fix it?
+The email block fails with a 401 error. Can you fix it?
 ```
 
-<Note>
-  Script changes are tracked as version snapshots. If the agent makes a change you don't want, you can ask it to revert: "Undo that last change" or "Go back to the version before you added the upload step."
-</Note>
+## Undo a change
 
-## Understanding agent output
+Script.it saves a version of a script at the end of every agent turn that changed it. To go back:
 
-The agent's responses have a consistent structure:
+- **Restore it yourself.** On the script's page, click the history button beside **Run**, pick a version, click **Restore version**, and confirm with **Restore this version**. See [Outlines, comments, and history](/scripts/outline-and-history#history).
+- **Ask the agent.** For example, "Undo that last change" or "Go back to the version before you added the Slack step."
 
-- **Working...** — shown while the agent is processing. Expands to show reasoning and tool calls in progress.
-- **Details** — after the agent finishes, the working section collapses to "Details." You can click it to expand and inspect exactly what the agent did.
-- **Response text** — the agent's explanation of what it did or what you should do next.
-- **Block results** — when a script runs, each block's output appears inline so you can review results without leaving the chat.
+## Rewind or edit the conversation
 
-If the agent encounters an error during a run, it shows the error inline and often suggests or automatically applies a fix.
+- **Rewind.** Hover one of your earlier messages and click the rewind button (**Rewind conversation here (files unchanged)**). The conversation goes back to that point. Files and scripts stay as they are.
+- **Edit.** Click one of your earlier messages to edit it and send it again.
 
-## Undoing changes
+Both are unavailable while the agent is working.
 
-The agent supports reverting to previous states. If a change didn't work out, you can ask the agent to undo it at any point in the conversation:
+## Read the agent's work
 
-```
-Revert that last change.
-```
+- **Working** — shown while the agent is busy. Its steps stream in as it reasons and uses tools.
+- **Details** — when the agent finishes, its steps fold into a **Details** section. Expand it to see exactly what it did.
+- **Reply** — the agent's explanation of what it did, or what you should do next.
+- **Run results** — when a script runs, each block's result appears inline.
 
-```
-Go back to the version before you added the Slack step.
-```
+If a run fails, the agent shows the error and usually suggests or applies a fix.
 
-The agent uses snapshots taken before each edit, so it can restore an earlier state of any script accurately.
+Each of the agent's replies has a **Message options** menu with **Copy message** and **Credits used so far**, the credits this session has used up to that reply.
+
+## Ask about other sessions
+
+The agent can look through your earlier sessions in the same account. Ask it things like "What did we decide about the invoice script last week?" or "Find the session where I set up the Slack trigger." You can also reference a session with `@`.
 
 ## Tips for effective prompts
 
-Getting good results from the agent comes down to being specific and iterating in small steps.
+- **Be specific about inputs and outputs.** Instead of "process the data," say "read `report.csv`, keep rows where `revenue` is over 1000, and save the result to `filtered.csv`."
+- **One change at a time.** Focused requests give more predictable results.
+- **Reference what you mean.** With several scripts, use `@` to point at the one you mean.
+- **Describe the goal, not the code.** Say what you want to achieve and let the agent choose how.
+- **Iterate.** If the first version isn't right, say what's missing or wrong.
 
-- **Be specific about inputs and outputs.** Instead of "process the data," say "read `report.csv`, filter rows where the `revenue` column is greater than 1000, and save the result to `filtered.csv`."
-- **One change at a time.** Ask for one modification per message. The agent handles multi-step tasks well, but focused requests produce more predictable results.
-- **Name the script.** When you have multiple scripts, reference the one you mean: "In the @daily-report script, update the fetch block to…"
-- **Describe the goal, not the implementation.** Tell the agent what you want to accomplish, not how to write the code. Let it choose the right approach.
-- **Iterate.** If the first version isn't quite right, describe what's missing or wrong. The agent will refine the script based on your feedback.
+## Reach your agent outside the app
+
+You can also message your agent by email, Slack, Teams, Telegram, or WhatsApp. Each conversation is a session you can open here. See [Ways to reach your agent](/channels/overview).

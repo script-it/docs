@@ -1,16 +1,16 @@
 ---
 title: "Workspaces"
 description: "Workspaces are where teams collaborate on scripts and share integrations in Script.it."
-keywords: ["workspace", "workspaces", "collaboration", "members", "roles", "shared integrations", "Script.it"]
+keywords: ["workspace", "workspaces", "collaboration", "members", "roles", "Editor", "Reader", "guest", "shared integrations", "Script.it"]
 ---
 
 Workspaces are where you collaborate in Script.it. Each workspace holds its own scripts and gives people and organizations a shared place to use integrations that have been shared with the workspace.
 
-When you sign up, Script.it creates a private workspace in your Personal account automatically. You can create additional workspaces for teams, clients, departments, or any other collaboration boundary.
+When you sign up, Script.it creates a private workspace in your Personal account automatically. Each organization you join gives you a Private workspace there too, unless the organization turns that off. You can create additional workspaces for teams, clients, departments, or any other collaboration boundary.
 
 ## Signing up
 
-To create an account, go to [app.script.it/login](https://app.script.it/login). You can sign in with Google or with an email address and password. No credit card is required to get started — your account comes with free included credits right away.
+To create an account, go to [app.script.it/login](https://app.script.it/login). You can sign in with Google or with an email address and password. If your company uses [single sign-on](/governance/sso), use the sign-in link it gives you instead. No credit card is required to get started — your account comes with free included credits right away.
 
 <Note>
   New accounts are on the free plan by default. You can upgrade to a paid plan at any time from **Settings → Billing**. See [Billing, credits, and plans](/account/billing) for details.
@@ -35,18 +35,25 @@ Workspaces have two roles:
 
 | Role | What they can do |
 |---|---|
-| Editor | Edit scripts, invite or remove members, change member roles, and manage workspace settings. |
-| Reader | View and run scripts, and use integrations shared with the workspace. Readers cannot edit scripts or manage members. |
+| Editor (**Can edit**) | Edit scripts, invite or remove members, change member roles, and rename or delete the workspace. |
+| Reader (**Can view**) | View and run scripts, and use integrations shared with the workspace. Readers cannot edit scripts or manage members. |
 
 <Note>
-  Workspace role does not automatically grant the right to manage an integration. Sharing, editing, rotating credentials, and deleting integration resources are controlled by per-integration permissions. A workspace Editor can still remove a shared integration from that workspace's catalog for cleanup.
+  Workspace role does not grant the right to manage an integration. Sharing, editing, rotating credentials, and deleting a connection or custom integration type are controlled by that integration's own editors. A workspace Editor can still remove a shared integration from the workspace with **Remove from workspace**. See [Connect integrations](/integrations/connecting#who-can-do-what-with-a-connection).
 </Note>
+
+Your organization's permissions can narrow what you do in a workspace. For example, an organization can turn off creating workspaces or inviting people from outside it. See [Roles and permissions](/governance/roles-and-permissions).
 
 ## Sharing with people and organizations
 
 New workspaces are private to their creator. Creating a workspace while an organization is active does not share it automatically.
 
-From the workspace's **Members** dialog, an Editor can invite a person directly. An organization owner or admin who is also a workspace Editor can grant the entire organization **Editor** or **Reader** access. All current and future organization members inherit that role.
+From the workspace's **Members** dialog, an Editor can invite people and, in an organization workspace, the organization itself:
+
+- **People in the organization.** Any Editor can invite a member of the organization that owns the workspace, or anyone whose email is on one of its [verified domains](/account/organizations#configure-domain-auto-join).
+- **People outside the organization.** Inviting someone else into an organization workspace makes them a guest. It needs **Invite people outside the organization**, which only Owners and Admins hold by default. The dialog warns you when the address is outside the organization.
+- **The whole organization.** An Editor who holds **Share workspaces with everyone** can give the owning organization **Can edit** or **Can view** access. Every role holds it by default. All current and future organization members inherit that role.
+- **In your Personal account,** any Editor of a workspace can invite anyone.
 
 Direct and organization access coexist. If you have both, Script.it applies the stronger role.
 
@@ -70,13 +77,19 @@ A share reaches **everyone the workspace grants access to**, however that access
 ```mermaid
 flowchart TD
   S["A connection is shared<br/>with a workspace"] --> W["Everyone with access to<br/>that workspace can use it"]
-  W --> D["People invited directly —<br/>including collaborators from<br/>outside the owning organization"]
+  W --> D["People invited directly —<br/>including guests from<br/>outside the owning organization"]
   W --> O["Members of an organization<br/>the workspace is shared with"]
   D --> U["Calls run against the<br/><b>sharer's</b> upstream account"]
   O --> U
 ```
 
-Who owns the workspace does not narrow this. Instead, the decision is made when access is granted: only an organization owner or admin can add or remove an entire organization, and the sharing screen shows that connections shared into the workspace come along.
+Who owns the workspace does not narrow this. What narrows it:
+
+- **Who can open the workspace.** Organization permissions decide who can share a workspace with everyone and who can invite guests. Admins can remove those permissions from roles or members. See [What sharing a workspace exposes](/account/organizations#what-sharing-a-workspace-exposes).
+- **What the connection allows.** Its editors can store a permission policy, such as read-only. It applies to every call through the connection.
+- **What each person may call.** An organization can limit a member's Integration calls across every integration.
+
+See [Integration policies](/governance/integration-policies) for both kinds of limit.
 
 <Warning>
   When you share an OAuth or API-key connection, the people the workspace authorizes can make requests under your authorization at the upstream provider. Those requests may appear as you in the provider's logs or audit trail.
@@ -88,6 +101,7 @@ To manage workspaces, open **Settings → Sharing → Workspaces**. From there y
 
 - Create a workspace
 - Rename or delete a workspace
+- Move a workspace to another account (see [Move a workspace](/governance/admin-oversight#move-a-workspace-to-another-account))
 - Invite people or add an organization
 - Change a member's role
 - Remove members

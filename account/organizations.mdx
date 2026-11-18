@@ -1,7 +1,7 @@
 ---
 title: "Organizations and active accounts"
 description: "Use organizations to manage a company directory, shared workspace access, billing, and usage controls."
-keywords: ["organization", "active account", "members", "roles", "invitations", "auto-join", "workspace access", "Script.it"]
+keywords: ["organization", "active account", "members", "roles", "invitations", "domain auto-join", "verified domain", "workspace access", "share with organization", "Script.it"]
 ---
 
 An organization is a company directory and account context in Script.it. It brings together members, organization-shared workspaces, billing, and usage controls.
@@ -39,6 +39,7 @@ When someone shares a workspace with you and you are **not** a member of the org
 - You collaborate on the same scripts and files as everyone else in the workspace.
 - Everything you run there uses **your own credits**. Your own connections stay yours: an integration you have connected resolves to your account, not the owner's.
 - Connections other people have shared **into that workspace** are available to you as well, whoever owns the workspace. Using one calls the sharer's upstream account, not yours.
+- If a company owns the workspace, you appear in its member list as a **Guest**, with no organization permissions. See [Guests](/governance/roles-and-permissions#guests).
 - If you later join the owning organization, the workspace moves out of **Shared with you** and becomes available through that organization's account instead. Any triggers you created on it start running under the organization from then on — the invitation screen shows this before you accept.
 
 ## Switch your active account
@@ -53,55 +54,69 @@ Script.it opens a new session after the switch and updates your workspace access
 
 ## Create and manage an organization
 
-Open **Settings → Organization** to create an organization or manage one you belong to. From an organization's menu, permitted roles can rename it, set an image, invite members, or delete it.
+Open **Settings → Organization** to create an organization or manage one you belong to. An organization's **⋮** menu offers what your role allows: **Invite members**, **Change icon**, **Rename organization**, and, for the Owner, **Transfer ownership** and **Delete organization**.
 
 New organizations do not receive Personal free credits. To run billable actions, an organization must choose a credit plan. You can switch back to Personal at any time.
 
-An owner can delete an organization only after its paid subscription has ended. Deleting it removes organization membership and inherited workspace access; it does not delete a workspace that still has another Editor.
+The Owner can delete an organization only after its paid subscription has ended. Deleting it removes organization membership and inherited workspace access; it does not delete a workspace that still has another Editor.
 
-## Roles and permissions
+## Roles
 
-| Role | Organization settings | Members and auto-join | Organization usage | Billing |
-|---|---|---|---|---|
-| Owner | Manage | Manage | View and set member caps | Manage |
-| Admin | Manage | Manage | View and set member caps | No access |
-| Billing admin | View | View | Own usage only | Manage |
-| Member | View | View | Own usage only | No access |
+Everyone in an organization holds one role. Each role is a set of permissions that admins can change.
 
-Owners can invite members, admins, and billing admins. Admins can invite members and other admins, but not billing admins. An admin cannot change or remove an owner or another admin, and an organization must always retain an owner.
+| Role | In short |
+|---|---|
+| Owner | Holds every permission. Exactly one per organization. |
+| Admin | Manages members, workspaces, integrations, domains, and organization settings. No billing by default. |
+| Billing admin | Manages the plan, payment details, and spending. Doesn't manage members. |
+| Member | Creates workspaces, connects and shares integrations, runs and publishes scripts. |
+
+Your organization can also define its own roles, and give one member exceptions to their role. See [Roles and permissions](/governance/roles-and-permissions) for every permission and its default.
+
+Who can change whom follows one rule: you can manage only people who hold nothing you lack. An Admin can change or remove another Admin with the same permissions, but not a Billing admin, who holds billing permissions an Admin doesn't. Nobody but the Owner can act on the Owner, and an organization always keeps its Owner. Ownership moves only by [transferring it](/governance/admin-oversight#transfer-ownership).
 
 ## Invite members
 
-Owners and admins can invite people from **Settings → Organization**:
+People with **Manage members** can invite others. Owners and Admins hold it by default.
 
-1. Open the organization's **···** menu and select **Invite members**, or use the invite form for the active organization.
-2. Enter an email address and choose an allowed role.
+1. In **Settings → Organization**, open the organization's **⋮** menu and select **Invite members**, or use the invite field in the active organization's settings.
+2. Enter an email address and choose a role. You can offer only roles whose permissions you hold, so with the built-in roles an Admin can invite Admins and Members but not Billing admins.
 3. Send the invitation.
 
 The recipient can accept or decline the invitation in Script.it. Accepting adds them to the directory but does not switch their active account.
 
-## Configure auto-join domains
+## Configure domain auto-join
 
-Auto-join domains let people with a verified work email join an organization automatically after they sign in.
+Domain auto-join lets people with a verified work email join your organization automatically when they sign in. You need **Manage verified domains**, which Owners and Admins hold by default.
 
-1. Open **Settings → Organization** and select the organization.
-2. Under **Auto-join domains**, enter the company's domain.
-3. Add the displayed DNS TXT record at your domain provider.
-4. Return to Script.it and verify the domain.
+1. Open **Settings → Organization** with the organization active, and expand **Domain auto-join**.
+2. Enter your company's domain and select **Claim domain**.
+3. Add the DNS TXT record Script.it shows at your domain provider. Add it within 24 hours: the record is shown only once. If it expires, select **New token** for a new one.
+4. Return to Script.it and select **Verify**.
 
-After verification, matching users join as members and can access workspaces shared with the organization. An organization can verify multiple domains, but a domain can belong to only one active organization.
+After verification, people whose email matches the domain join as members and can access workspaces shared with the organization. An organization can verify several domains, but a domain can belong to only one organization. Public and disposable email domains can't be claimed.
+
+A verified domain also matters for [single sign-on](/governance/sso): it lets Script.it link existing accounts on that domain automatically.
 
 ## Share a workspace with an organization
 
-Workspace Editors can manage access, but only an organization owner or admin can add or remove that entire organization.
+Any Editor of a workspace can open it to the whole organization that owns it, if they hold **Share workspaces with everyone**. Every role holds it by default. Removing the organization's access needs the same permission.
 
 1. Open **Settings → Sharing → Workspaces**.
 2. Select **Members** for the workspace.
-3. Search for a person or organization.
-4. Choose **Can edit** or **Can view**, then send the invitation or add the organization.
+3. Search for a person or the organization.
+4. Choose **Can edit** or **Can view**, then send the invitation or select **Add** for the organization.
 
-All current and future organization members inherit the organization's workspace role. Direct grants to individual people remain separate, and the strongest applicable role wins.
+All current and future organization members inherit the organization's workspace role. Direct grants to individual people remain separate, and the strongest applicable role wins. A workspace can be shared this way only with the organization that owns it.
 
-Connections are shared with workspaces, not directly with organizations. A connection shared into a workspace reaches everyone that workspace grants access to — the organization's members and any collaborator invited from outside it. Because adding or removing an entire organization requires an organization owner or admin, that exposure is agreed when the invitation is made rather than each time a connection resolves.
+### What sharing a workspace exposes
 
-See [Workspaces](/account/workspace) and [Billing](/account/billing) for details.
+Connections are shared with workspaces, not directly with organizations. A connection shared into a workspace reaches everyone that workspace grants access to: the organization's members, and any guest invited from outside it.
+
+So deciding who can open workspaces is also deciding who can reach the connections in them. Admins control that exposure with permissions:
+
+- **Share workspaces with everyone** decides who can open a workspace to the whole organization. Remove it from a role or a member to keep workspaces to the people invited directly.
+- **Invite people outside the organization** decides who can bring in guests. Only Owners and Admins hold it by default.
+- **Share integrations** decides who can put a connection's credentials into a workspace at all.
+
+To limit what anyone can do with a shared connection, add an [integration policy](/governance/integration-policies). See [Workspaces](/account/workspace) and [Billing](/account/billing) for details.

@@ -1,0 +1,133 @@
+---
+title: "Messaging and social accounts"
+description: "Link your own LinkedIn, WhatsApp, Telegram, or Instagram account so scripts can read and send messages as you, and run when new messages arrive."
+keywords: ["LinkedIn", "WhatsApp", "Telegram", "Instagram", "linked account", "messaging", "outreach", "inbox", "premium integration", "Script.it"]
+---
+
+Link your personal LinkedIn, WhatsApp, Telegram, or Instagram account, and your agent can work in it for you. Scripts can read your conversations, reply, start new chats, and run the moment a message arrives. On LinkedIn, they can also send invitations, publish posts, and search.
+
+Everything happens as you. People see your name and your account, not a bot.
+
+<Note>
+  This is different from messaging **your agent**. **Agent WhatsApp** and **Agent Telegram** let you chat with your own agent through Script.it's WhatsApp number or Telegram bot, and they have no monthly fee. See [WhatsApp](/channels/whatsapp) and [Telegram](/channels/telegram). The **WhatsApp** and **Telegram** integrations on this page link your personal account, so scripts can act **as you** in your own conversations. They carry the monthly fee below.
+</Note>
+
+## What each account can do
+
+| Account | How you link it | What the agent can do |
+|---|---|---|
+| **LinkedIn** | Your email and password, or a session cookie from a browser where you're signed in | Messaging, networking, posting, and search. See the list below. |
+| **WhatsApp** | Scan a QR code with the WhatsApp app on your phone | The shared messaging features below. |
+| **Telegram** | Scan a QR code with the Telegram app on your phone | The shared messaging features below. |
+| **Instagram** | Your email and password, or a session cookie from a browser where you're signed in | The shared messaging features below, plus viewing profiles and their posts. |
+
+On **LinkedIn**, the agent can:
+
+- Read your inboxes, and send messages and InMails, in Classic, Sales Navigator, and Recruiter.
+- Send, accept, and withdraw invitations, follow members, and endorse skills.
+- View profiles, connections, followers, and companies, and visit profiles as you.
+- See who has viewed your profile.
+- Publish posts, and comment, reply, and react as you.
+- Search people, companies, posts, and jobs, including Sales Navigator and Recruiter searches, lead lists, and account lists.
+- Manage Recruiter projects and job postings: create, edit, publish, and close them.
+
+On **WhatsApp**, **Telegram**, and **Instagram**, the agent can:
+
+- Read your conversations and full message history, including attachments.
+- Send messages and replies, and start new conversations.
+- React to messages, forward them, and edit or delete messages it sent.
+- Mark messages read, show typing, set your online status, and see whether someone else is online.
+- See who is in a group chat, and add or remove participants.
+- List your contacts.
+
+The connect dialog lists exactly what the agent will be able to do before you connect.
+
+<Warning>
+  On LinkedIn, publishing a promoted job posting spends your LinkedIn budget.
+</Warning>
+
+<Tip>
+  To read public profiles and posts without acting as anyone, you don't need to link an account. The included **Social data** connection reads public data from LinkedIn, Instagram, and other networks. See [Included with every account](/integrations/overview#included-with-every-account).
+</Tip>
+
+## What it costs
+
+Each linked account costs **50 credits a month**. The connect dialog shows this as **Recurring connection usage** before you connect.
+
+This fee applies only to the personal accounts on this page. **Agent WhatsApp** and **Agent Telegram**, which you use to reach your own agent, have no monthly fee.
+
+- The charge goes to your active account, for each account you link.
+- Your active account needs enough credits to connect. If it doesn't have them, the dialog shows **Upgrade to connect** instead.
+- Disconnecting stops future monthly charges. The current month isn't refunded.
+- If a monthly renewal can't be paid, Script.it emails a warning and keeps the account linked for three days. If the credits still aren't there, Script.it unlinks it.
+- Reconnecting an account that expired doesn't add a charge.
+
+See [Billing](/account/billing) for how credits work.
+
+## Link an account
+
+Linking an account needs the **Connect and manage integrations** permission. Every role has it by default.
+
+<Steps>
+  <Step title="Find the service">
+    Go to **Settings → Integrations**, search for **LinkedIn**, **WhatsApp**, **Telegram**, or **Instagram**, and select it. For WhatsApp and Telegram, pick the plain service name, not **Agent WhatsApp** or **Agent Telegram**.
+  </Step>
+  <Step title="Review and connect">
+    Read what the agent will be able to do and the monthly cost, then click **Connect**. A sign-in page opens in a new tab.
+  </Step>
+  <Step title="Sign in on the hosted page">
+    The sign-in page isn't the service's own page. It's hosted by the provider Script.it uses to link these accounts. Script.it never sees your password or cookie.
+
+    - **WhatsApp and Telegram**: scan the QR code from the app on your phone.
+    - **LinkedIn and Instagram**: sign in with your email and password, or paste the session cookie from a browser where you're already signed in. The cookie reuses that session, so the service is less likely to stop the sign-in at a security check.
+  </Step>
+  <Step title="Return to Script.it">
+    The dialog waits while you finish in the other tab. If you closed that tab, click **Open the sign-in page again**. The sign-in link is valid for 30 minutes. When you're done, the account appears in your connected integrations.
+  </Step>
+</Steps>
+
+You can link more than one account on the same service, such as two LinkedIn profiles. Each one is charged separately. Give each an **Account Label** so you can tell them apart.
+
+If you try to link an account that's already linked, Script.it says so. If that connection has expired, use **Reconnect** on it instead of adding a new one.
+
+## Run a script when a message arrives
+
+Each service offers [app event](/triggers/app-events) triggers for the account you linked:
+
+| Trigger | Fires when |
+|---|---|
+| **New Message** | A new message arrives. |
+| **Message Edited** | A message is edited. |
+| **Reaction Added** | Someone adds a reaction to a message. |
+| **Reaction Removed** | Someone removes a reaction from a message. |
+| **LinkedIn New Connection** | A LinkedIn invitation is accepted, in either direction. It can arrive a few hours after the acceptance. |
+
+The trigger names start with the service, such as **WhatsApp New Message** or **Instagram Reaction Added**.
+
+Message triggers can be narrowed with **Only messages containing**. Reaction triggers can be narrowed with **Only this reaction**.
+
+Your own messages and reactions are skipped unless you turn on **Include my own messages** or **Include my own reactions**. Leave this off when the script replies, or each reply would start the script again.
+
+If you've linked more than one account on a service, choose which one the trigger watches.
+
+## Use your account with care
+
+These accounts are yours, and the services watch for activity that looks automated. When the agent builds a script for one of these accounts, it follows the pacing rules below. Keep them in mind when you ask for outreach.
+
+- **WhatsApp**: sending that looks automated can get your number restricted by WhatsApp, possibly for good. The agent replies once per incoming message and spaces a script's sends at least 15 seconds apart. It starts few new chats, and none in the first 24 hours after you link the number. Each connection has a daily sending allowance of about 100 messages.
+- **LinkedIn**: LinkedIn limits invitations, searches, and profile views separately. When LinkedIn stops accepting one of them, the agent's scripts back off and continue on a later run. Retrying right away doesn't help.
+- **Every service**: each connection has its own request allowances, and a limit can last up to a day. Reconnecting doesn't reset them.
+
+## When a connection stops working
+
+Sometimes a service asks you to sign in again, for example after a security check. When that happens, the connection shows as expired, and triggers that use it stop firing.
+
+To fix it, go to **Settings → Integrations**, open the account's **⋮** menu, and choose **Reconnect**. You sign in on the same hosted page. Reconnecting restores the same connection and doesn't add a charge. If a trigger paused while the account was expired, switch it back on. See [Managing triggers](/triggers/managing).
+
+Short outages on the service's side recover on their own. Reconnecting doesn't help with those.
+
+## Share or limit a linked account
+
+You can share a linked account with a workspace, like any connection. Everyone in that workspace can then read and send messages as you. Share only with people you'd trust to speak for you. Sharing a connection needs the **Share integrations** permission, which every role has by default. See [Connect integrations](/integrations/connecting).
+
+To restrict what scripts may do with an account, such as reading messages but not sending, set an integration policy on the connection. See [Integration policies](/governance/integration-policies).

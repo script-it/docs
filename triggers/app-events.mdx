@@ -1,29 +1,32 @@
 ---
 title: "App events"
-description: "Run a script when something happens in an app you've connected — a new Slack message, a GitHub pull request, a Notion item, a Calendly booking, a new spreadsheet row."
-keywords: ["app event trigger", "integration trigger", "Slack", "Gmail", "GitHub", "Notion", "automation", "Script.it"]
+description: "Run a script when something happens in an app you've connected — a new Slack message, a GitHub pull request, a Notion item, a new LinkedIn message, a new spreadsheet row."
+keywords: ["app event trigger", "integration trigger", "Slack", "Gmail", "GitHub", "Notion", "LinkedIn", "WhatsApp", "automation", "Script.it"]
 ---
 
-An app event trigger runs your script when something happens in one of your connected apps. Instead of checking a tool yourself or starting a script by hand, you pick the event you care about — a new Slack message, a Calendly booking, an issue opened in Linear — and Script.it runs the script the moment it happens.
+An app event trigger runs your script when something happens in one of your connected apps. Instead of checking a tool yourself or starting a script by hand, you pick the event you care about — a new Slack message, a Calendly booking, an issue opened in Linear — and Script.it runs the script when it happens.
 
 ## Before you start
 
-Connect the app first. Only apps you've connected show up in the trigger list.
+A trigger watches an account you've connected. The trigger list shows every event, including those for apps you haven't connected yet — they're marked **Connect to use**. Picking one opens the connection dialog, and you can carry on once you've connected.
 
-You can connect from **Settings → Integrations**, or just ask the agent — it'll prompt you when a connection is missing. See [Connecting integrations](/integrations/connecting).
+You can also connect ahead of time from **Settings → Integrations**, or just ask the agent — it'll prompt you when a connection is missing. See [Connecting integrations](/integrations/connecting).
 
 <Note>
-  A trigger uses the account you connected. If that connection is removed or expires, the trigger stops firing until you reconnect. Script.it flags affected triggers so you can spot them.
+  If the connection a trigger uses is removed or its access expires, the trigger pauses until you reconnect. Then it resumes on its own. See [Triggers that pause themselves](/triggers/managing#triggers-that-pause-themselves).
 </Note>
 
 ## Creating an app event trigger
 
 <Steps>
-  <Step title="Open the Triggers tab">
-    Open the script you want to run, click the **Triggers** tab, then click **Add Trigger**.
+  <Step title="Start a new trigger">
+    In the sidebar, click the arrow next to **New session** (**More create options**) and choose **New Trigger**. Give it a **Name**.
+  </Step>
+  <Step title="Choose On Event">
+    Under **Trigger**, choose **On Event**.
   </Step>
   <Step title="Find the event">
-    Search the list for the app or the thing you want to watch for — type "pull request", "new row", or "Slack". The list shows events for the apps you've connected.
+    Open the event list and type in **Search triggers…** — "pull request", "new row", or "Slack". Use **All integrations** to narrow the list to one app.
   </Step>
   <Step title="Pick the account">
     If you've connected more than one account for that app, choose which one the trigger should watch.
@@ -32,11 +35,11 @@ You can connect from **Settings → Integrations**, or just ask the agent — it
     Most events have a setting or two to narrow them down — which Slack channel, which Notion database, which spreadsheet, which Gmail search to match.
 
     <Tip>
-      Narrow the trigger as much as you can. A Gmail trigger scoped to one sender is more useful, and cheaper to run, than one that fires on every incoming message.
+      Narrow the trigger as much as you can. A Gmail trigger scoped to one search is more useful, and cheaper to run, than one that fires on every incoming message.
     </Tip>
   </Step>
   <Step title="Choose the script">
-    Pick the script to run, and fill in any inputs it needs.
+    Under **Action**, choose **Run Script**, pick the script, and fill in any inputs it needs.
   </Step>
   <Step title="Create the trigger">
     Click **Create Trigger**. It starts watching straight away.
@@ -51,7 +54,7 @@ Or skip all of that and describe it in chat: *"Run this whenever a new row is ad
   **This list isn't a limit.** If your app isn't here, or the event you want isn't in the list, you can still trigger on it. Connect the service as a [custom integration](/integrations/custom-integrations) — any REST API works — and ask the agent to build a [custom trigger](/triggers/custom) that watches it. The result behaves exactly like a built-in event: it lives in your script, has its own settings and run history, and travels with the script when you share it.
 </Note>
 
-The events below are ready to use out of the box — over 80 across these apps:
+The events below are ready to use out of the box — nearly 100 across these apps:
 
 | App | Events |
 |---|---|
@@ -64,7 +67,7 @@ The events below are ready to use out of the box — over 80 across these apps:
 | Discord | New message |
 | Dropbox | New file |
 | Freshdesk | New ticket |
-| GitHub | New pull request, PR merged, new push, new commit, new issue, new issue comment, new PR review comment, new release, new star, new fork |
+| GitHub | Pull request (opened, updated, merged, or closed), new pull request, PR merged, new push, new commit, new issue, new issue comment, new PR review comment, new release, new star, new fork |
 | GitLab | New issue, new merge request |
 | Gmail | New email, new email matching a search |
 | Google Calendar | New event, event updated, event cancelled, event starting soon |
@@ -74,10 +77,13 @@ The events below are ready to use out of the box — over 80 across these apps:
 | Google Sheets | New row, new tab, spreadsheet updated |
 | Google Tasks | New task, task completed |
 | HubSpot | New contact, new company, new deal, new ticket |
+| Instagram | New message, message edited, reaction added, reaction removed |
 | Intercom | New conversation |
 | Jira | Issue event, new project |
 | Linear | Issue event, comment created, project event |
+| LinkedIn | New message, message edited, reaction added, reaction removed, new connection |
 | Mailchimp | New subscriber |
+| Microsoft Teams | New channel message |
 | monday.com | New item |
 | Notion | New database item, database item updated |
 | OneDrive | New file |
@@ -85,29 +91,54 @@ The events below are ready to use out of the box — over 80 across these apps:
 | Pipedrive | New deal, new person |
 | Salesforce | New record |
 | Shopify | New order, new product |
-| Slack | New message, bot mentioned, reaction added, reaction removed, file shared, channel created |
+| Slack | New message, reaction added, reaction removed, file shared, channel created |
 | Stripe | New event, new customer |
-| Microsoft Teams | New channel message |
+| Telegram | New message, message edited, reaction added, reaction removed |
 | Todoist | New task |
 | Trello | New card, card updated, card archived, new board |
+| WhatsApp | New message, message edited, reaction added, reaction removed |
 | YouTube | New video |
 | Zendesk | New ticket, ticket updated |
 | Zoom | Meeting started, meeting ended, recording completed |
 
 We add to this regularly, so the list in the app is always the current one — check there first, and build a custom trigger for whatever isn't in it yet.
 
+### Messages on your own accounts
+
+The LinkedIn, WhatsApp, Telegram, and Instagram events watch **your own** account, linked as an integration. A script can then react to a new message, an edited message, or a reaction — and, on LinkedIn, a new connection. Message events can be limited to messages that contain certain text, and reaction events to one reaction.
+
+Linking one of these accounts costs credits each month. See [Messaging accounts](/integrations/messaging-accounts).
+
+<Note>
+  LinkedIn reports a new connection late, so **new connection** can fire a few hours after the invitation was accepted.
+</Note>
+
 ## How quickly a trigger fires
 
 It depends on the app:
 
-- **Instantly** — apps that notify Script.it directly the moment something happens. Slack, GitHub pushes, Stripe, Linear, Jira, Trello, Asana, Zoom, and Shopify orders work this way.
-- **On a regular check** — for everything else, Script.it checks the app periodically and runs your script when it finds something new. Expect a short delay rather than an instant reaction, and a slightly longer one for triggers that have been quiet for a while.
+- **Instantly** — apps that notify Script.it directly the moment something happens. Slack, Stripe events, GitHub pull request events and pushes, Linear, Jira, Trello, Asana, Zoom, Shopify orders, and the LinkedIn, WhatsApp, Telegram, and Instagram message events work this way.
+- **On a regular check** — for everything else, Script.it checks the app every 1–5 minutes, depending on the event, and runs your script when it finds something new. A trigger that has been quiet for a while checks less often, up to 15 minutes apart, and speeds up again after it fires.
+
+While the script is open on your screen, its checking triggers run every minute, so you can test one and see it fire quickly. See [Checking right now](/triggers/managing#checking-right-now).
 
 Either way you don't have to configure anything — each event already uses the fastest method its app supports.
 
-## Email your agent
+## Messages to your agent
 
-**Agent Email** is a trigger too: your agent gets its own email address, and mail sent to it can run a script. Useful for forwarding things in — a receipt to file, a report to summarize, a request to act on.
+The channels you use to talk to your own agent run on triggers too. Connecting a channel adds its trigger for you, so you rarely add one by hand:
+
+| Channel | Trigger it adds |
+|---|---|
+| [Email](/channels/email) | **Mail received** |
+| [Slack](/channels/slack) | **Slack DMs** and **Slack Mentions** |
+| [Microsoft Teams](/channels/microsoft-teams) | **Teams DMs** and **Teams Mentions** |
+| [Telegram](/channels/telegram) | **Telegram DMs** |
+| [WhatsApp](/channels/whatsapp) | **WhatsApp message received** |
+
+The same events are in the **On Event** list — **Agent Email**, **Slack DM**, **Slack Mention**, **Teams DM**, **Teams Mention**, **Agent Telegram**, and **Agent WhatsApp** — along with **Telegram Bot DM** for a Telegram bot of your own.
+
+Mail to your agent's own email address is accepted only from your own verified email address. A `+tag` address, like `you+support@…`, belongs to an External Agent, which anyone can write to. See [Reach your agent](/channels/overview) and [External Agents](/scripts/agents).
 
 ## What your script receives
 
@@ -117,4 +148,4 @@ If the script produces files, they're available in that run's session, just like
 
 ## Managing app event triggers
 
-Turn a trigger off and on from the script, and check its recent runs there too. See [Managing triggers](/triggers/managing) for run history, failures, and limits.
+Turn a trigger off and on from its card in the script, and check its **Recent runs** there too. See [Managing triggers](/triggers/managing) for run history, failures, and limits.

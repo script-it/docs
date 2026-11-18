@@ -1,7 +1,7 @@
 ---
 title: "Core concepts"
-description: "Understand the key building blocks of Script.it: workspaces, scripts, blocks, sessions, triggers, integrations, the AI agent, and credits."
-keywords: ["core concepts", "workspaces", "scripts", "blocks", "sessions", "triggers", "integrations", "credits", "agent"]
+description: "Understand the key building blocks of Script.it: workspaces, scripts, blocks, sessions, triggers, integrations, the agent, Agents in scripts, channels, permissions, and credits."
+keywords: ["core concepts", "workspaces", "scripts", "blocks", "sessions", "triggers", "integrations", "credits", "agent", "Agents", "channels", "permission profiles", "governance"]
 ---
 
 Before you start building on Script.it, it helps to understand the key ideas behind how the platform works. This page explains each core concept in plain terms — no technical background required.
@@ -12,8 +12,8 @@ A workspace is a shared place for collaboration. It holds scripts, members, trig
 
 Workspaces have two roles:
 
-- **Editors** can edit scripts and invite or remove members.
-- **Readers** can view and run scripts and use shared integrations, but cannot change workspace content.
+- **Editors** (**Can edit**) can edit scripts and invite or remove members.
+- **Readers** (**Can view**) can view and run scripts and use shared integrations, but cannot change workspace content.
 
 Workspaces also control which scripts are visible to which people. You can keep personal scripts in your private workspace and create team workspaces when you want others to use or maintain the same automations.
 
@@ -21,20 +21,17 @@ Workspaces also control which scripts are visible to which people. You can keep 
 
 A script is an automation workflow. It defines a sequence of steps to carry out, what each step does, and in what order. Scripts are stored in a workspace and can be run manually, on a schedule, or triggered by an external event.
 
-Each script has its own page where you can review its blocks, source files, reusable files, and recent changes. The AI agent manages the underlying setup for you, but you can still inspect what it creates.
+Each script has its own page where you can review its blocks, set its inputs, and run it. Each block explains in plain language how it works. To change something, you tell the agent or comment on the part you mean. Every change is saved as a version you can [restore](/scripts/outline-and-history).
 
-Scripts are reusable. You can run the same script multiple times, share it with teammates, or use it as the starting point for a new workflow.
+Scripts are reusable. You can run the same script multiple times, share it with teammates through a workspace, or [publish](/scripts/publishing) a read-only copy at a public link.
 
 ## Blocks
 
 Blocks are the individual steps inside a script. Each block does one thing, and a script runs its blocks in order.
 
-There are two types of block:
+Most blocks run code, usually Python, to do something: fetch data from an API, transform a file, or send a message. A block can also hand its step to an [Agent](#agents-in-scripts), run other blocks nested inside it, or stop and [wait](/scripts/approvals-and-waits) for your approval before it continues. **Markdown** blocks hold notes that explain the script; they don't run.
 
-- **Executable blocks** — these run code, usually Python or shell, to perform an action, such as fetching data from an API, transforming a file, or sending a message.
-- **Markdown blocks** — these contain documentation or notes. They don't run code, but they help you and your team understand what a script does.
-
-When you describe a workflow to the agent, it figures out what blocks are needed and writes the code or notes for each one. You can ask the agent to add, remove, or change individual blocks at any time.
+When you describe a workflow to the agent, it figures out what blocks are needed and writes each one. You can ask the agent to add, remove, or change individual blocks at any time. See [Blocks](/scripts/blocks).
 
 ## Assets
 
@@ -52,6 +49,8 @@ Each session runs in its own isolated working directory, so files created during
 
 Think of a session as the working context for a particular task. You can use it to build a new script, debug an existing one, or run a one-off automation. When a trigger fires a script automatically, that run gets a session too — sometimes a new one, and sometimes an ongoing session that groups related events together.
 
+Each session uses a model you can choose, such as **Auto**, **Fast**, or a specific model. See [Models](/sessions/models). To find, organize, or clean up sessions, see [Managing sessions](/sessions/managing).
+
 ## Triggers
 
 A trigger is a rule that runs a script automatically in response to something happening. Instead of clicking **Run** manually, triggers let your automations take care of themselves.
@@ -59,7 +58,7 @@ A trigger is a rule that runs a script automatically in response to something ha
 A trigger can watch for:
 
 - **A schedule** — a set time or a recurring cadence, from a preset, plain-English timing, or a cron expression.
-- **An app event** — something happening in a connected tool, such as a new email arriving, a form being submitted, or a row being added to a spreadsheet. Over 80 events across 40+ apps.
+- **An app event** — something happening in a connected tool, such as a new email arriving, a form being submitted, or a row being added to a spreadsheet.
 - **A webhook** — a request sent to a unique URL that Script.it provides, from a service that supports webhooks or from a form on your own website.
 - **Anything else** — if none of those fit, the agent can build a custom trigger for you.
 
@@ -89,11 +88,33 @@ When you describe what you want to automate, the agent writes the blocks, sets u
 
 The agent is designed to be transparent: every action it takes shows up in your chat, and the scripts it creates are yours to inspect and modify.
 
+## Channels
+
+You can reach your agent outside the app, too. Email it, message it on Slack, Microsoft Teams, Telegram, or WhatsApp, or use Script.it from an AI assistant such as ChatGPT or Claude. Each conversation is a session, just as in the app.
+
+See [Channels](/channels/overview).
+
+## Agents in scripts
+
+An **Agent** is an AI agent that a script runs for one of its steps. A block hands it work that needs judgment, such as research, with its own instructions, model, time limit, and permission. An Agent remembers earlier runs, so it can hold a conversation over time.
+
+An **External Agent** answers other people for you, for example through your own Telegram bot or Slack app. Only a restricted Agent reads their messages, so a stranger's message can't reach more than that Agent is allowed to.
+
+See [Agents in scripts](/scripts/agents).
+
+## Permissions and governance
+
+Every session runs under a **permission profile** that decides what the agent may read, write, and reach. **Full**, the default, lets the agent edit any file and use all your integrations. The built-in **Chat** profile and custom profiles allow less. Agents and integration connections can carry their own limits as well.
+
+In an organization, owners and admins also decide what each role and member may do, such as share integrations or publish scripts.
+
+See [Admin and governance](/governance/overview).
+
 ## Credits
 
 Credits are the usage-based currency that tracks the cost of running Script.it. AI usage (chat, building scripts, running automations) and execution time both consume credits.
 
-Your account starts with free included credits. When you need more, you can upgrade to a paid plan or purchase credits on demand. You can check your credit balance and usage history in the **Account** section of your workspace.
+Your account starts with free included credits. When you need more, you can upgrade to a paid plan or purchase credits on demand. Open **Settings → Usage** to check your credits and activity, and **Settings → Billing** to manage your plan.
 
 <Note>
   No credit card is required to sign up. Free credits are available for all new accounts.

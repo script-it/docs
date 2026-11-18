@@ -1,0 +1,128 @@
+---
+title: "Single sign-on"
+description: "Let members sign in with your company's identity provider over OpenID Connect, and set their roles and workspace access from provider groups."
+keywords: ["single sign-on", "SSO", "OpenID Connect", "OIDC", "Microsoft Entra ID", "Okta", "Google Workspace", "Keycloak", "Auth0", "groups", "enterprise", "Script.it"]
+---
+
+Single sign-on lets your members sign in to Script.it with the account they already have at your identity provider. They land straight in your organization. Their role and workspace access can follow the groups they're in at the provider.
+
+<Note>
+  Single sign-on is turned on per organization. Contact [support@script.it](mailto:support@script.it) to turn it on.
+</Note>
+
+## What's supported
+
+- **Any OpenID Connect provider**, including Microsoft Entra ID, Okta, Google Workspace, Keycloak, and Auth0.
+- **A sign-in link** for your members, which you can put behind a tile in your provider's app portal.
+- **Roles from groups** and **workspaces from groups**, read from the groups claim in the provider's ID token.
+- **A maximum sign-in age**, after which members go back through your provider.
+
+Script.it connects to providers over OpenID Connect only. Sign-in always starts from Script.it's sign-in link. Changes you make at your provider reach Script.it the next time the member signs in.
+
+## Before you start
+
+You need **Manage verified domains** in the organization. Owners and Admins hold it by default.
+
+Register an application at your identity provider:
+
+- Set its redirect URI to the **Redirect URI** shown in **Settings → Organization → Single sign-on**.
+- Make sure the ID token carries the `email` claim. Without it, members can't sign in.
+- To use group rules, add a claim that lists the member's groups.
+- Note the provider's issuer URL, the client ID, and a client secret.
+
+<Tip>
+  On Microsoft Entra ID, use the tenant-specific issuer, `https://login.microsoftonline.com/<tenant-id>/v2.0`, not `common`. Add `email` as an optional claim, and give each user a mail address in the directory.
+</Tip>
+
+## Connect your provider
+
+<Steps>
+  <Step title="Open single sign-on settings">
+    Go to **Settings → Organization** with the organization active, and expand **Single sign-on**.
+  </Step>
+  <Step title="Fill in the form">
+    | Field | What to enter |
+    |---|---|
+    | **Sign-in slug** | A short name for your sign-in link, such as `acme`. |
+    | **Name on the sign-in button** | What members see on the sign-in page, such as `Acme`. |
+    | **Issuer URL** | Exactly as the provider's tokens carry it. Okta: `https://<org>.okta.com`. Google: `https://accounts.google.com`. |
+    | **Client ID** and **Client secret** | From the application you registered. |
+    | **Sign-in valid for (hours)** | How long a sign-in lasts before members go back through your provider. 1 to 720, 24 by default. |
+    | **Groups claim** | The claim that lists groups. `groups` on Entra ID, Okta, and Keycloak. Auth0 uses a namespaced URL. |
+  </Step>
+  <Step title="Connect">
+    Select **Connect**. Script.it checks the issuer before it saves anything.
+  </Step>
+  <Step title="Share the sign-in link">
+    Copy **Sign-in link for your members**. It looks like `https://app.script.it/login?sso=acme`. Send it to your members, or put it behind a tile in your provider's app portal.
+  </Step>
+</Steps>
+
+You can't view the client secret after you connect. To use a new secret, remove single sign-on and connect again. Removing it deletes your group rules, so note them first.
+
+## How members sign in
+
+Members open your sign-in link and sign in at your provider. If they're already signed in there, it completes without a prompt.
+
+- **New to Script.it?** Their account is created, and they join your organization.
+- **Already have an account with the same email?** If the email's domain is one of your [verified domains](/account/organizations#configure-domain-auto-join), the accounts are linked on the first try. Otherwise, Script.it asks them to sign in once the way they usually do, then links the accounts.
+- **Either way,** signing in through your provider makes them a member of your organization, whatever their email domain. The organization opens as their active account.
+
+Who can sign in is decided at your provider, through which users it assigns to the application. A member you removed from the organization in Script.it stays removed.
+
+<Tip>
+  Verify your company's email domain under **Domain auto-join** as well. It links existing accounts on that domain automatically, and lets new accounts on it skip email verification.
+</Tip>
+
+## Sign-in age and offboarding
+
+A sign-in through your provider lasts as long as **Sign-in valid for (hours)** says. After that, Script.it sends the member back to your provider. An active member goes through without a prompt. A member you disabled at the provider is refused.
+
+<Warning>
+  Disabling someone at your provider stops their single sign-on once their sign-in expires. If they also have a password or Google sign-in for Script.it, that still works. When someone leaves, also remove them from your organization in **Settings → Organization**.
+</Warning>
+
+## Roles from groups
+
+Under **Roles from groups**, map provider groups to organization roles. Each rule says: members of this group get this role. The role can be a built-in one or a [custom role](/governance/roles-and-permissions#create-a-custom-role).
+
+- **Order matters.** A member gets the role of the first rule that names one of their groups. Move a rule up or down to change its priority.
+- **Everyone else** sets the role for members no rule matches. Without it, they get Member.
+- **Rules apply at every sign-in,** using the groups that sign-in carries. Editing the rules updates members right away, from the groups they had at their latest sign-in.
+- **A role given by hand wins.** If you change a member's role in the member list, the rules stop changing it. Choose **From SSO groups** in their role picker to hand them back to the rules.
+- **The Owner's role never comes from the rules.**
+
+To change these rules you need **Manage members**, and you must be able to give every role the rules give. Otherwise you see them read-only.
+
+## Workspaces from groups
+
+Under **Workspaces from groups**, give provider groups access to workspaces. Each rule says: members of this group are an **Editor** or a **Reader** of this workspace.
+
+- Access is updated each time a member signs in.
+- The rules only add and remove access they granted. Access someone gave by hand is never changed.
+- A sign-in that carries no groups claim leaves access as it was. A claim that lists no groups removes the access rules gave.
+- When you remove a rule, members keep the access until their next sign-in.
+- A workspace never loses its last Editor because of a group change.
+
+Both rule forms suggest the groups your members carried at their latest sign-in, so you can pick a group exactly as your provider spells it.
+
+## Where groups come from
+
+| Provider | What to set up |
+|---|---|
+| Microsoft Entra ID | The `groups` claim carries group object IDs. Emit "groups assigned to the application" so the claim is never dropped. For app roles, add `roles` to the groups claim, as `groups,roles`. |
+| Okta | Add a groups claim filter to the application. The `groups` claim then carries group names. |
+| Keycloak | Add a group membership mapper. Any claim name works. |
+| Auth0 | Add a post-login action that sets a namespaced claim, and enter that claim as the groups claim. |
+| Google Workspace | Doesn't put groups in the ID token. Sign-in works, but group rules don't. |
+
+You can change the groups claim later under the connection's details. Members' groups are read from the new claim at their next sign-in.
+
+## Remove single sign-on
+
+Select **Remove single sign-on** under the connection's details. Removing it:
+
+- Stops sign-in through your provider and frees the sign-in slug.
+- Deletes the role and workspace rules.
+- Withdraws the workspace access the rules granted, except where it's a workspace's last Editor.
+- Leaves each member's account, their membership, and the role they hold now.

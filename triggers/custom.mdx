@@ -46,7 +46,7 @@ The agent writes the watching logic — the part that's unique to your request. 
 
 - **Memory.** Script.it tracks what the trigger has already seen. Each new item fires exactly once, in order. The first check takes stock of what's already there instead of flooding you with everything that ever existed.
 - **Pacing.** A trigger watching a connected app can check as often as every minute. It eases off on its own when nothing has happened for a while. Schedules honor your time zone, including daylight saving.
-- **Safety.** Custom triggers get the same protections as every trigger: plain-English error explanations, automatic pausing after repeated failures, and the daily failure email. See [Managing triggers](/triggers/managing).
+- **Safety.** Custom triggers get the same protections as every trigger: plain-English error explanations, automatic pausing after repeated failures or when one fires far too often, and the daily failure email. See [Managing triggers](/triggers/managing).
 
 ## Two ways a custom trigger works
 
@@ -61,7 +61,7 @@ Both behave identically once running — same switch, same run history, same eve
 
 Once it exists, a custom trigger behaves like any other:
 
-- It shows up **in the script**, with an on/off switch and run history.
+- It shows up **in the script**, with a **Trigger** on/off switch and **Recent runs**.
 - It can have its own **settings** — which channel, which database, what threshold. The agent declares them, and you edit them in the script like any built-in event's settings. Adjusting a setting never means touching code.
 - It's **saved with the script**, like a block is. Share, export, or import the script and the trigger travels with it.
 - In a **shared workspace** it follows the same rules as every trigger. Teammates can enable their own copy, which runs on *their* connected accounts and credits. Nobody inherits your automation just by opening the script.

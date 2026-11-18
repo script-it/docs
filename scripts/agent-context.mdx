@@ -1,32 +1,36 @@
 ---
 title: "Agent context"
-description: "Choose how much of a script the agent can use as context."
-keywords: ["agent context", "Not Included", "Description Included", "Script Included", "Script.it"]
+description: "Choose how much of a script the agent reads on its own: nothing, its description, or the whole script."
+keywords: ["agent context", "Agent Context", "Not Included", "Description Included", "Script Included", "memory", "Script.it"]
 ---
 
-Agent context controls how much of a script the Script.it agent can use when it responds in chat.
+Agent context controls how much of a script the agent reads on its own when it works in chat. Set it from the **Agent Context** row in the script header.
 
-You can change this from the script header. The control is labeled **Agent context**.
-
-| Mode | What it does |
+| Setting | What it does |
 |---|---|
-| Not Included | Script not included in context, but searchable by the agent. |
-| Description Included | Agent will read the script if description is relevant. |
-| Script Included | The full script content is included in the agent context. |
+| **Not Included** | Script not included in context, but searchable by the agent. |
+| **Description Included** | Agent will read the script if description is relevant. |
+| **Script Included** | The full script content is included in the agent context. |
 
-## When to use each mode
+New scripts start as **Not Included**.
 
-Use **Description Included** for most runnable scripts. Keep the script description accurate, because the agent uses it to decide when the script is relevant.
+## When to use each setting
 
-Use **Not Included** when the script should not be added to the agent's context. This is useful for scripts that are sensitive, noisy, experimental, or only useful in narrow situations.
+**Not Included** is the usual setting. The agent doesn't read the script up front, but it can still find it by searching, and it reads any script you mention in chat. This keeps the agent's context small and focused.
 
-Use **Script Included** for persistent instructions, preferences, or memory that should guide the agent across sessions. For example, a private memory script can tell the agent how you like reports formatted, what tone to use, or which recurring assumptions to follow.
+**Description Included** lets the agent decide on its own when to use the script. The agent sees the script's description and reads the script when the description fits the task. Write the description as "when to use this script", and keep it accurate. You can also ask the agent: "When I ask for a weekly report, use this script". It updates the description and switches the setting for you.
+
+**Script Included** puts the whole script in front of the agent in every session. Use it for instructions or preferences that should always apply, such as how you like reports formatted. Keep these scripts short, since they're read every time.
+
+<Tip>
+  Your private workspace has a **Memory** script set to **Script Included**. When you ask the agent to remember something for future sessions, it writes it there.
+</Tip>
 
 ## Agent context and assets
 
 Agent context and assets solve different problems:
 
 - **Agent context** affects what the agent reads before it responds.
-- **Assets** are files stored with a script, such as templates, reference data, or small state files.
+- **Assets** are files stored with a script, such as templates, reference data, or small state files. See [Assets](/scripts/assets).
 
-You can use them together. For example, a **Script Included** memory script can explain which preferences matter, while a small asset file stores values that are updated over time.
+You can use them together. For example, a **Script Included** script can explain which preferences matter, while a small asset file stores values that change over time.

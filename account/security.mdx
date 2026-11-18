@@ -1,50 +1,81 @@
 ---
 title: "Security and privacy"
-description: "Script.it encrypts data in transit and at rest, runs scripts in isolated environments, and operates on Google Cloud with automatic failover and backups."
-keywords: ["security", "privacy", "encryption", "data protection", "Google Cloud", "TLS", "Script.it"]
+description: "How Script.it protects your connection, your credentials, and your environment, and the controls you have: two-factor authentication, single sign-on, permission profiles, and backups."
+keywords: ["security", "privacy", "encryption", "TLS", "two-factor authentication", "2FA", "authenticator app", "credentials", "isolation", "backups", "Script.it"]
 ---
 
-Script.it is built with security as a default, not an afterthought. Your data is encrypted wherever it travels or rests, scripts execute inside isolated environments that can't reach your other sessions, and the infrastructure is designed to stay available even when individual components fail. This page describes the specific protections in place.
+This page describes the protections Script.it applies for you, and the controls you can turn on yourself.
 
-## Data encryption
+## Data in transit
 
-### In transit
+Your browser connects to Script.it over HTTPS, with TLS 1.2 or higher. A plain HTTP request is redirected to HTTPS.
 
-All communication between your browser and Script.it is encrypted using HTTPS with TLS 1.2 or higher. This applies to every request — API calls, file uploads, webhook payloads, and everything in between.
+## Data at rest
 
-### At rest
+Script.it's database and its stored backups are encrypted at rest. Integration credentials get an extra layer, described below.
 
-Data stored in Script.it is encrypted at rest. This includes scripts, session files, and any credentials you've connected through integrations.
+## Credentials
 
-## Credential security
+When you connect an integration — Slack, Gmail, Google Sheets, or any other service — Script.it encrypts its credentials before storing them. That covers API keys and the tokens an OAuth provider issues.
 
-When you connect an integration — Slack, Gmail, Google Sheets, or any other service — Script.it stores the access credentials in encrypted form. Your credentials are never exposed in plain text, and they're never included in script source files or chat history.
+Your credentials never appear in script source files or in chat history. Scripts and the agent never see them: Script.it adds them to each request after it leaves your environment.
 
 To revoke access for an integration at any time:
 
 1. Go to **Settings → Integrations**.
-2. Find the integration you want to disconnect.
-3. Click **Disconnect**.
+2. Open the **⋮** menu on the integration you want to disconnect.
+3. Select **Disconnect**.
 
-Disconnecting removes the stored credentials immediately. Any script that relied on the integration will fail until you reconnect it.
+Disconnecting removes the stored credentials immediately. Any script that relied on the integration will fail until you reconnect it. See [Connect integrations](/integrations/connecting).
 
-## Isolated run environments
+## Two-factor authentication
 
-Every session runs in its own isolated environment. This means:
+Two-factor authentication adds a code from an authenticator app to your sign-in. Any app that supports time-based one-time codes (TOTP) works.
 
-- Concurrent sessions don't interfere with each other.
-- Runtime files are scoped to the session that produced them.
-- Script source and run output are stored separately.
+<Steps>
+  <Step title="Start setup">
+    Go to **Settings → Account**. Under **Security**, find **Two-factor authentication** and select **Set up**.
+  </Step>
+  <Step title="Add Script.it to your authenticator app">
+    Scan the QR code with your authenticator app. If you can't scan it, enter the key shown below the code instead.
+  </Step>
+  <Step title="Confirm">
+    Enter the 6-digit code from your app. When it's accepted, the section shows **Authenticator app enabled**.
+  </Step>
+</Steps>
 
-This isolation protects both your data and the Script.it platform from unintended interactions between workloads.
+From then on, you enter a code from the app each time you sign in. To turn it off, select **Remove**.
 
-## Workspace backups
+### When your organization requires it
 
-Your Script.it data — scripts, session history, trigger configurations, and connected integrations — is automatically backed up. You don't need to configure anything for backups to work.
+An organization can require two-factor authentication of a member or of everyone with a role, with **Must use two-factor authentication**. See [Roles and permissions](/governance/roles-and-permissions#requirements).
 
-## Infrastructure
+If you're required to and haven't set it up, Script.it asks you to set it up before you can continue, whichever account you have open. The **Security** section names the organizations that require it. If you remove it, you're asked to set it up again.
 
-Script.it runs on Google Cloud. The infrastructure includes redundancy at multiple levels and automatic failover, so a failure in one component doesn't bring down your automations. Scheduled triggers and webhook triggers are designed to continue operating even during maintenance windows.
+## Single sign-on
+
+Your organization can let members sign in through its own identity provider, such as Microsoft Entra ID, Okta, or Google Workspace. See [Single sign-on](/governance/sso).
+
+## Isolated environments
+
+Your work runs in an environment of its own. Each account has a separate one: your Personal account, and each organization you belong to. Other people's environments, and your environments in other accounts, are separate from it.
+
+Inside one environment, how much a session can reach depends on its [permission profile](/governance/permission-profiles):
+
+- **Under Full**, the default, a session works with your account's full view. It can read and change the files of your other sessions in that account, and every workspace you can edit.
+- **Under a restricted profile**, each job runs in its own container. The container sees only the folders the profile grants, and reaches the internet only if the profile allows it.
+
+To keep a session away from data it doesn't need, run it under a restricted profile. To limit what anyone can do through an integration, add an [integration policy](/governance/integration-policies).
+
+## Backups
+
+Script.it backs up your environment automatically, about every 15 minutes when something has changed. It also backs up before it pauses an environment that has been idle.
+
+To see when your environment was last backed up, or to back it up now, go to **Settings → Account → Environment** and select **Backup Now**.
+
+## Connected apps
+
+AI assistants you connect to Script.it, such as ChatGPT or Claude, appear under **Settings → Account → Connected apps**. Select **Disconnect** to end an app's access to your account. It also signs out every terminal that app signed in. See [AI assistants](/channels/ai-assistants).
 
 <Note>
   If you have specific compliance requirements or questions about data handling, contact [support@script.it](mailto:support@script.it).

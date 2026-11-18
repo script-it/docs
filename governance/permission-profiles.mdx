@@ -1,0 +1,117 @@
+---
+title: "Permission profiles"
+description: "Run a session with only the files, network, integrations, and models it needs, and see how Agent permissions and triggers fit in."
+keywords: ["permission profile", "Full", "Chat", "read only", "permission.yaml", "Agent permission", "restricted session", "least privilege", "Script.it"]
+---
+
+Every session runs under a permission profile. The profile decides which files the agent reads and writes, whether it reaches the internet, which integration calls it makes, and which models it runs.
+
+Most of the time you work under **Full**. Pick a restricted profile when you want the agent to look but not touch, or to reach only one integration.
+
+## The profiles you start with
+
+| Profile | What it allows |
+|---|---|
+| **Full** | The agent can edit any file and use all your integrations. It adds no restriction. It's the default, and it can't be edited. |
+| **Chat** | Reads every workspace and every platform record, and changes none. Writes only the session's own files. Has internet access and web search, and calls no other integration. |
+
+**Chat** is an ordinary profile file. You can edit it or delete it like any profile you create.
+
+A profile only narrows what you can do. It never grants more than your own access, and your organization's limits still apply on top. See [How access works](/governance/overview).
+
+## Pick a profile
+
+Choose the profile in the chat composer's profile menu before you send. A new session starts under the profile you picked.
+
+You can switch a session's profile later. The switch, and any edit to the profile file, applies from your next prompt. A turn already running keeps the profile it started with.
+
+Only you choose. The agent can't change its own session's profile, so a restricted session can never raise its own access.
+
+## Create a profile
+
+<Steps>
+  <Step title="Open the profile menu">
+    In the chat composer, open the profile menu and select **Create permission**.
+  </Step>
+  <Step title="Name it">
+    Use letters, digits, `.`, `_`, and `-`. The menu shows the name with each word capitalized, so `read-only` shows as **Read Only**.
+  </Step>
+  <Step title="Set what it allows">
+    The new profile opens from a template. Edit it as a form, or switch to **YAML**. Errors block saving. Warnings don't, but read them: they flag grants that give more than they seem.
+  </Step>
+  <Step title="Choose it">
+    Pick it from the profile menu for the session.
+  </Step>
+</Steps>
+
+Profiles are files named `<name>.permission.yaml` in your profile folder, `/workspaces/user_<uid>/.scriptit/profiles/`. A profile with errors stays in the menu, marked, and you can't send under it until you fix it or choose another.
+
+You can also ask the agent to write a profile with you. From a **Full** session it can save the file. From a restricted session it gives you the text to save yourself.
+
+## What a profile can say
+
+```yaml
+filesystem:
+  read: ["@workspaces"]               # every workspace you can read
+  write: [/workspaces/ws_123/reports] # one folder it may change
+network: "*"                          # internet access; leave it out for none
+platform:
+  allow:
+    - resource: "*"
+      actions: {read: "*"}            # read every platform record, change none
+    - resource: {integration: hubspot}
+      description: Reads HubSpot contacts.
+      actions:
+        call:
+          - endpoint: https://api.hubapi.com/crm/v3/objects/contacts/*
+            methods: [GET]
+agent_models: [scriptit/fast]         # the models it may run; leave it out for any
+```
+
+| Section | What it controls |
+|---|---|
+| `filesystem` | Folders and files it reads, and folders it writes. Writing implies reading. `@workspaces` is every workspace you can read. |
+| `network` | `"*"` for internet access. Left out, no internet. Script.it's own platform calls and web search still work without it. |
+| `platform` | Script.it records and integration calls. Records are workspaces, triggers, sessions, publications, the organization, and your account. Each is granted whole, as `read` or as `"*"`. Integration calls use the same rules as [integration policies](/governance/integration-policies#the-policy-format). |
+| `agent_models` | The models sessions, Agents, and subagents under the profile may run. |
+
+**Nothing is granted unless a rule grants it.** A section you leave out grants nothing, except `agent_models`, where leaving it out allows any model.
+
+Every session can always read its own files and write its own `data_files/` folder, whatever the profile says.
+
+### Grants that deserve a second look
+
+The editor warns about two kinds of grant:
+
+- **Effectively Full.** `"*"` on sessions or triggers lets the session prompt any session or create triggers that run with your full authority. `"*"` on integrations lets it manage integrations and change the policies that limit them.
+- **Write access to a workspace.** A write grant into a workspace lets the session change scripts that later run with your full authority. If a web page or a message tricks the agent, it could change them.
+
+Grant either only when you mean to.
+
+## How restricted work runs
+
+Work under **Full** runs with your account's full view of your environment.
+
+Work under a restricted profile runs in its own container, which sees only the folders the profile grants. It reaches the internet only if the profile grants a network. It installs no packages.
+
+<Warning>
+  A restricted profile limits what the agent changes and where it connects. It doesn't keep readable data secret. Any destination it's allowed to reach — the internet, an integration, a message it sends — can carry data out. To keep data in, grant no network and no integration that sends data where the agent chooses.
+</Warning>
+
+## Agents run inside their caller's limits
+
+An [Agent](/scripts/agents) has its own permission, written in its `.agent.md` definition or in a shared `.permission.yaml` file. When something calls the Agent, both apply: the caller's profile and the Agent's own permission. Every one of them must allow an action.
+
+So an Agent never gets more than whatever called it. A **Chat** session that calls an Agent with write access still can't write.
+
+## Triggers run under Full
+
+A trigger names no profile. Its runs work under **Full**, with the authority and connections of the person who owns the trigger.
+
+When a trigger handles input from people you don't control, such as incoming email or chat messages, have it run an [External Agent](/scripts/agents) with a restricted permission.
+
+## When a profile refuses something
+
+The action fails, and the error names the permission that refused it. The agent tells you the exact rule that would allow it. Add the rule to the profile, or switch the session to a profile that allows it.
+
+A profile can't lift your organization's limits. If the error names your organization, an Owner or Admin has to change them. See [Roles and permissions](/governance/roles-and-permissions).

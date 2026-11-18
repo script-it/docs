@@ -1,83 +1,97 @@
 ---
 title: "Templates"
-description: "Browse pre-built Script.it templates for reporting, research, content creation, and more."
-keywords: ["templates", "pre-built workflows", "automation templates", "script templates", "ready-made scripts"]
+description: "Start a script from one of 30 templates for marketing, operations, product, engineering, and sales work, then adapt it in chat."
+keywords: ["templates", "script templates", "starter prompts", "Templates for common Scripts", "automation templates", "ready-made scripts"]
 ---
 
-Templates are complete, ready-to-use scripts built by the Script.it team. Each template covers a common automation task and is configured with the right blocks, source code, and integrations out of the box. Browse the public templates page, choose a workflow, and use it as a starting point for your own automation.
+A template is a ready-made starting point for a common automation. Each one describes the steps and integrations a script needs. When you pick one, its prompt goes into your message box. You can adjust the prompt, then send it, and the agent builds the script with you.
 
-## Available templates
-
-<CardGroup cols={2}>
-  <Card
-    title="SEO Blog Post"
-    icon="newspaper"
-    href="https://script.it/templates"
-  >
-    Turns a topic idea into a researched, SEO-optimized post — keyword research, outline, draft, SEO polish — with optional publishing to WordPress.
-  </Card>
-  <Card
-    title="Weekly Report"
-    icon="chart-bar"
-    href="https://script.it/templates"
-  >
-    Aggregates CSV or JSON data, generates an AI-powered trend summary, and delivers the finished report to a Slack channel.
-  </Card>
-  <Card
-    title="Competitor Research"
-    icon="search"
-    href="https://script.it/templates"
-  >
-    Discovers competitors, gathers pricing, features, and review data, then builds a formatted battle card in Notion.
-  </Card>
-  <Card
-    title="PRD from Brief"
-    icon="file-text"
-    href="https://script.it/templates"
-  >
-    Transforms a product brief into a structured PRD with user stories and acceptance criteria, exported directly to Notion.
-  </Card>
-  <Card
-    title="Slide Generator"
-    icon="presentation"
-    href="https://script.it/templates"
-  >
-    Converts notes or a brief into a polished slide deck — generates an outline, writes the slides, and publishes to Google Slides.
-  </Card>
-  <Card
-    title="Campaign Data Analysis"
-    icon="trending-up"
-    href="https://script.it/templates"
-  >
-    Analyzes marketing campaign CSV or JSON data, extracts key metrics, generates AI-powered insights, and posts the summary to Slack.
-  </Card>
-</CardGroup>
-
-## Starting from a template
+## Open the templates
 
 <Steps>
-  <Step title="Browse templates">
-    Go to [script.it/templates](https://script.it/templates) to see all available templates with descriptions and previews. You can also browse templates from within the app by clicking **New script** and selecting **Start from template**.
+  <Step title="Start a new session">
+    Open a new session. Its empty chat shows a few starters.
   </Step>
-  <Step title="Choose a template in your workspace">
-    After you select a template in the app, Script.it copies the template instructions into your workspace. You get an editable script that the agent can adapt for your workflow.
+  <Step title="Choose Templates for common Scripts">
+    Click **Templates for common Scripts**. The templates open in the chat.
   </Step>
-  <Step title="Connect any required integrations">
-    Most templates use one or more integrations (Slack, Notion, Google Slides, and so on). If you haven't connected a required integration yet, the agent will prompt you to do so before running the first relevant block. You can also connect integrations ahead of time from **Settings → Integrations**.
-
-    See [Connecting integrations](/integrations/connecting) for step-by-step instructions.
+  <Step title="Find a template">
+    Filter by role (**All**, **Marketing**, **Operations**, **Product**, **Data**, **R&D**, or **Sales**), or type in **Search templates...**. Each card shows the template's steps and the integrations it uses.
   </Step>
-  <Step title="Run or customize the template">
-    Once the integrations are connected, you can run the script as-is by clicking **Run**, or ask the agent to tailor it first:
-
-    > "Change the report to pull from my Google Sheet instead of a CSV file."
-
-    > "Add a step that also sends a summary email to the team after the Slack message."
-
-    The agent will edit the blocks and source code to match your request.
+  <Step title="Pick one and send it">
+    Click a template. Its prompt fills the message box. Change anything you like, such as the sources, the schedule, or where results go, then send it.
   </Step>
 </Steps>
 
+Not in the list? Click **Custom**, type your role, and press Enter. The message box fills with a request for script ideas for that role. Send it, and the agent suggests a few.
+
+You can also browse templates outside the app at [script.it/templates](https://script.it/templates).
+
+## Available templates
+
+### Marketing
+
+| Template | What it does |
+|---|---|
+| SEO Blog Post | Research keywords, draft, and publish SEO-optimized blog posts |
+| Competitor Research | Research competitors, positioning, and market gaps |
+| Campaign Data Analysis | Analyze campaign performance and generate insights |
+| Social Media Monitor | Monitor Twitter, Reddit, and social channels for trends and mentions |
+| Slide / Presentation Generator | Generate slide decks from notes, data, or briefs |
+
+### Operations
+
+| Template | What it does |
+|---|---|
+| Email Forwarding | Auto-forward or route emails by rules |
+| Invoices & Receipts | Extract, categorize, and store invoices and receipts |
+| Weekly Report | Generate a weekly summary from your data files |
+| File Processing | Process files in a folder (rename, convert, extract) |
+| Travel & Flight Processor | Extract flight and hotel bookings from emails into organized itineraries |
+| Support Case Resolution | Triage support cases, draft responses, and route to the right team |
+| Google Drive to Notion Sync | Sync files and content from Google Drive into Notion |
+
+### Product
+
+| Template | What it does |
+|---|---|
+| User Feedback Synthesis | Aggregate feedback from support, surveys, and reviews into themes and insights |
+| PRD from Brief | Turn a product brief or requirements into a structured PRD |
+| Release Notes | Generate release notes from PRs, commits, or changelog |
+| Feature Request Triage | Group and prioritize feature requests from various sources |
+| Product Analytics Digest | Analyze product usage data and generate insights |
+
+### R&D
+
+| Template | What it does |
+|---|---|
+| Alerts Investigation | Investigate and triage alerts from monitoring systems |
+| Notion Ticket Grouping | Group and organize tickets from Notion by theme or priority |
+| Open Bug Tickets | Triage and prioritize open bug tickets |
+| API Sync | Sync data from an external API to a local file |
+| PR & Release Notifications | Notify the team when PRs are merged or releases are cut |
+| Daily Security Brief | Morning digest of security news, CVEs, and AI developments |
+
+### Sales
+
+| Template | What it does |
+|---|---|
+| Personalized Outreach | Generate personalized outreach messages for prospects |
+| CRM Hygiene | Clean and deduplicate CRM or lead data |
+| Synthesize & Clean Leads | Synthesize lead data from multiple sources into a clean list |
+| Meeting Prep | Prepare briefing for sales calls |
+| Lead Enrichment from Spreadsheet | Enrich a spreadsheet of leads with LinkedIn and web data |
+| Quote / RFQ Processing | Parse incoming quotes and RFQs into structured data |
+| CRM Daily Tasks | Daily digest of CRM tasks, deal updates, and follow-up reminders |
+
+The **Data** filter shows the templates that work with data across these groups, such as Weekly Report, File Processing, API Sync, and Product Analytics Digest.
+
+## After you send a template
+
+- **Connect integrations.** If the script needs an integration you haven't connected, the agent asks you to connect it before the step that uses it. You can also connect integrations ahead of time from **Settings → Integrations**. See [Connecting integrations](/integrations/connecting).
+- **Tailor it.** Keep chatting to change the script: "Pull from my Google Sheet instead of a CSV file", or "Also email the summary to the team after posting to Slack".
+- **Run it, or put it on a trigger.** See [Inputs and running](/scripts/inputs-and-running) and [Triggers](/triggers/overview).
+
 <Tip>
-  Templates are a great way to learn how scripts are structured. After opening one, browse the blocks and source files to see exactly how each step works — then customize from there.
+  You can also start from someone else's published script. Open its link and click **Use in Script.it** to import a copy. See [Publishing scripts](/scripts/publishing#what-visitors-can-do).
 </Tip>

@@ -1,0 +1,81 @@
+---
+title: "Email your agent"
+description: "Your agent has its own email address. Write to it from your own inbox, reply to keep a conversation going, and answer waiting runs by email."
+keywords: ["agent email", "email your agent", "scriptit.email", "mailbox", "email thread", "attachments", "agent@scriptit.email", "Script.it"]
+---
+
+Every Script.it account comes with an email address for your agent, such as `ada@scriptit.email`. There's nothing to connect. Write to it from your usual inbox, and the agent answers in the same thread.
+
+Email is a good fit for forwarding things in — a receipt to file, a report to summarize, a request with attachments — and for getting results back from scripts that run on their own.
+
+## Find your agent's address
+
+Use either of these:
+
+- In a session, click **Email** in the **Chat with me from an app you already use** banner above the message box. The **Email your agent** dialog shows the agent's address, the address to send from, and a button that opens your mail app.
+- Go to **Settings → Integrations** and find **Agent Email**. Its **Email address** is shown on the row.
+
+The address is based on your own email's name, with a short suffix if that name is taken.
+
+## Who can write to it
+
+Your agent's address accepts mail only from your own account's email address — the verified address you sign in with. Mail from any other address is dropped without a reply. The dialog says so: "Emails from other addresses won't reach your agent."
+
+Your mail also has to prove it came from you. Script.it accepts it when your email domain passes DMARC, or passes SPF and DKIM aligned with your domain. If your domain fails this check, you get a reply titled **Your email didn't reach your agent** that explains the DNS change to make.
+
+## Conversations and threads
+
+Each email thread is one session:
+
+- **A new email** starts a new session.
+- **A reply** in the thread continues the same session.
+- The agent always answers in the same thread, from its own address, to you.
+
+When the agent or a script emails you first — a weekly report, a "the run finished" note — your reply goes back to the session that sent it. That works even when the session started from a schedule or another trigger.
+
+Every session started by email appears in the app, so you can open it to see the agent's work and keep going there.
+
+## Answering a waiting run by email
+
+When a run pauses for your answer and emails you the question, reply to that email in your own words. The agent resumes the run with your answer. See [Approvals and waits](/scripts/approvals-and-waits).
+
+## Attachments
+
+- Attach files to your email as usual. The agent opens them when it needs them, inline images included.
+- The agent can attach files to its replies, up to 10 per email.
+
+## The shared address `agent@scriptit.email`
+
+If you'd rather not remember your agent's own address, write to `agent@scriptit.email` from your sign-in address.
+
+- If you have one agent mailbox, the message reaches it exactly as if you'd written to your agent's own address. The agent replies from its own address.
+- If you have several — one for your Personal account and one for each organization — the message reaches none of them. You get a reply listing your agents' addresses, so you can pick one.
+
+Someone without a Script.it account who writes to `agent@scriptit.email` or `signup@scriptit.email` gets a reply with a link to sign in, which creates their account on first use.
+
+## Several accounts, several addresses
+
+Each of your accounts — Personal and each organization — has its own agent address. Mail to an address runs in that account: its sandbox, its integrations, and its credits. See [Ways to reach your agent](/channels/overview#which-account-credits-and-permissions-apply).
+
+## Change the address
+
+1. Go to **Settings → Integrations** and find **Agent Email**.
+2. Open its **⋮** menu and select **Edit**.
+3. Change **Email address** — the part before `@scriptit.email` — and save.
+
+<Warning>
+  The old address stops working at once. Mail sent to it, including replies to earlier threads, no longer reaches your agent.
+</Warning>
+
+## Turn email off
+
+Agent Email is part of every account. To stop mail from reaching your agent, turn off its **Mail received** trigger. See [Manage triggers](/triggers/managing). If you email your agent while the trigger is off, you get a reply saying so.
+
+## Cost
+
+Each email your agent receives or sends adds a small per-message charge to the account's usage. The agent's work on the email is billed like any session. See [Billing, credits, and usage](/account/billing).
+
+## Related addresses
+
+- **`+tag` addresses.** An address with a tag, such as `ada+sales@scriptit.email`, doesn't reach your own agent. It belongs to an External Agent: an Agent in one of your scripts that answers *other people* who write to it. See [Agents](/scripts/agents).
+- **Your Gmail.** Connecting Gmail lets scripts read and send mail from your own mailbox. That's a regular integration, not a way to talk to your agent. See [Connect integrations](/integrations/connecting).

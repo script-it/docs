@@ -1,0 +1,106 @@
+---
+title: "Agents in scripts"
+description: "Hand a step of a script to an AI Agent with its own instructions, model, time limit, and permission, or build an External Agent that answers other people."
+keywords: ["Agent", "agent block", "External Agent", "agent definition", ".agent.md", "permission", "Telegram bot", "Slack app", "email tag", "Script.it"]
+---
+
+Most steps in a script are code: they do the same thing every run. Some steps need judgment. Research, a look-up that depends on what it finds, or a conversation with a person can't be written as fixed steps. For those, a block hands the work to an **Agent**: an AI agent with its own instructions, model, time limit, and permission.
+
+An Agent can also answer people outside your account, on Telegram, Slack, or email. That's an [External Agent](#external-agents).
+
+## When the agent uses one
+
+You don't have to ask for an Agent by name. Describe the step, and the agent picks the right shape:
+
+| The step | What the agent builds |
+|---|---|
+| Does the same thing every time: fetch, transform, send | Code |
+| Makes one judgment over text the script already has: classify, summarize, extract, rewrite | Code with one AI call |
+| Takes several steps whose path depends on what it finds, such as research | A block that runs an Agent |
+| Holds a conversation with people | A block that runs an Agent, which remembers the conversation |
+
+The agent tells you which shape it built, and why.
+
+## The Agent definition
+
+An Agent's settings live in a definition file, `<name>.agent.md`, in the script's `assets/` folder. The file name is the Agent's name. A block input points at the file, and the block's card shows the Agent's name.
+
+Open the definition from the block's card. It opens as a form; switch to **Source** to see the file itself.
+
+| Setting | What it does |
+|---|---|
+| **Model** | The model that runs the Agent. The Agent always runs this model; changing it in chat doesn't switch it. |
+| **Effort** | How much the model reasons, for models that offer a choice. **Default** lets the model decide. |
+| **Time limit** | How long the Agent may work on one task, in minutes. Defaults to 60. Turn on **Unlimited** to remove it. |
+| **Permission** | What the Agent may read, write, and reach. See [What an Agent can do](#what-an-agent-can-do). |
+| **Agent Instructions** | The Agent's instructions, in plain language. |
+
+You can edit the form directly, or ask the agent: "Give the researcher web search and a 10-minute limit".
+
+## What an Agent can do
+
+An Agent acts on its own: nobody sees an action before it happens. Its permission is what keeps it in bounds.
+
+- **None.** The Agent reads and writes only its own working folder. It reaches nothing else.
+- **Inline permission.** Rules written in the definition, such as "read these folders" or "call HubSpot's read endpoints".
+- **A permission file.** A `.permission.yaml` file that several Agents can share.
+
+Permissions use the same rules as [permission profiles](/governance/permission-profiles). An Agent can never do more than whatever runs it: its permission only narrows the limits of the session or trigger that started the run. An Agent can't start another Agent.
+
+Within its permission, an Agent can call your connected integrations and run scripts. It writes its files in its own working folder, inside the block's output. The script then decides what to do with the Agent's answer and files.
+
+<Warning>
+  Before the agent builds an Agent, it tells you which actions the Agent can take and on which accounts. Read that summary. An Agent with write access to your workspace could change your scripts and files.
+</Warning>
+
+## Memory across runs
+
+An Agent keeps a session: its conversation and working folder. The next time the block runs in the same session, the Agent remembers what came before.
+
+Use one Agent session per customer, ticket, or thread. The agent sets this up for you when you describe what one conversation is. For a script a trigger runs, the trigger's **Session grouping** setting decides which events share a session, and so what the Agent remembers. Without it, every event starts fresh. See [Triggers](/triggers/overview).
+
+To see what an Agent did, open its block's **Timeline**. It links to the Agent's session, where you can read the work step by step.
+
+## While an Agent works
+
+A block that runs an Agent waits for it to finish. The run shows as waiting meanwhile, and the block's card names the Agent it waits for. If more messages arrive for the same Agent session while it works, the Agent reads them as part of the same task.
+
+Stopping the run stops the Agent's work too. If the Agent runs past its time limit, its work stops and the block reports a timeout.
+
+## External Agents
+
+An External Agent answers people outside your account through a messaging channel. It's built from an Agent with a restricted permission, so a hostile message reaches only what that permission allows.
+
+<Note>
+  An External Agent is different from [reaching your own agent](/channels/overview) over email, Slack, or Telegram. Only you write to your own agent. Anyone who finds an External Agent's address can write to it.
+</Note>
+
+### Where people reach it
+
+| Channel | Address people write to | Good for |
+|---|---|---|
+| Agent Email tag | A `+tag` of your [Agent Email](/channels/email) address | Answering the people who write to it. It can't start a new thread with an outside person. |
+| Gmail tag | `you+tag@gmail.com` on your own Gmail | Writing as you, starting threads, or replying to people on Cc. Needs your Gmail connection with send access. |
+| Your own Telegram bot | Your bot's chat | A bot you create and connect |
+| Your own Slack app | Your app in your Slack workspace | A Slack app whose replies an Agent writes |
+
+### How it works
+
+An External Agent is a script with three parts:
+
+1. A **messaging trigger** runs the script on each new message.
+2. The **script** reads the message, hands it to the Agent, and sends the reply. The script, not the Agent, decides what goes out.
+3. A **restricted Agent** reads the message and writes the answer. It's the only part that reads the sender's text.
+
+The trigger runs the script with your authority, so the Agent's permission is what limits a stranger's influence. Grant only the look-ups the answers need, such as web search or read access to one service.
+
+### Before you turn it on
+
+- **Decide who may write to it.** Use the trigger's sender filter where the channel has one, such as allowed Telegram user IDs, or have the script check the sender.
+- **Check the permission.** Every sender can, in effect, read what the Agent can read.
+- **Ask for approval where it matters.** If the Agent could commit you to something, such as a refund, a booking, or a price, ask the agent to add your approval before the reply goes out. See [Approvals and waits](/scripts/approvals-and-waits).
+- **Test it.** The agent tests the script on a sample message before you enable the trigger. Then send a real message from an account of your own.
+
+<Tip>
+  Start by describing the assistant you want: "A Telegram bot that answers questions about our opening hours from our website, only for customers who've booked before". The agent asks what it needs and builds the trigger, the script, and the Agent.
+</Tip>

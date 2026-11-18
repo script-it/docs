@@ -1,73 +1,106 @@
 ---
 title: "Managing triggers"
-description: "Check a trigger's run history, understand why one failed or paused, turn triggers on and off, and know the limits."
-keywords: ["trigger runs", "run history", "paused trigger", "failed trigger", "trigger limits", "Script.it"]
+description: "Check a trigger's run history, understand why one failed or paused, turn triggers on and off, and know the safeguards and limits."
+keywords: ["trigger runs", "run history", "paused trigger", "failed trigger", "trigger limits", "runaway trigger", "Script.it"]
 ---
 
-Once a trigger is running, everything you need is on the script itself: whether it's on, what it's done recently, and whether anything went wrong.
+Once a trigger is running, everything you need is on its card in the script: whether it's on, what it's done recently, and whether anything went wrong.
 
 ## Turning a trigger on and off
 
-Each trigger has a switch on the script. Turn it off to stop it firing without losing its settings, its webhook URL, or its history. Turn it back on and it picks up from there.
+Each trigger card has a **Trigger** switch. Turn it off to stop it firing without losing its settings, its webhook URL, or its history. Turn it back on and it picks up from there.
 
 This only affects **your** copy. If teammates have enabled the same trigger, theirs keep running.
 
 ## Run history
 
-Open a trigger's recent runs to see what it's been doing. Each run shows what happened:
+Click **Recent runs** on a trigger's card to see what it's been doing. **All** shows every run, newest first; **Fired** shows only the runs that started your script. Each run shows what happened:
 
 | Result | What it means |
 |---|---|
-| **Fired** | It found something and started your script |
-| **Nothing new** | It checked and there was nothing to do — completely normal |
+| **Fired** | It found something and started your script. **Open session** takes you to that run. |
+| **No new events** | It checked and there was nothing to do — completely normal |
 | **Running** | In progress right now |
-| **Failed** | Something went wrong — see below |
+| **Error**, **Timed out**, **Blocked**, **Trigger limit**, **Source missing**, **Lost** | The run failed — see below |
 
-A trigger that checks on a cadence will show a lot of "nothing new" runs between the real ones. That's healthy, not a problem.
+A trigger that checks on a cadence shows a lot of **No new events** runs between the real ones. That's healthy, not a problem.
 
-If the most recent run failed, the trigger is marked in the script so you can spot it without opening anything.
+If the most recent run failed, **Recent runs** turns red, so you can spot it without opening anything.
+
+Run history is kept for 30 days.
+
+### Checking right now
+
+Some triggers work by checking an app on an interval — most app events and many custom triggers. While a script is open on your screen, Script.it runs its checking triggers every minute instead of waiting for their usual interval. So when you're testing — sending yourself the email, adding the row — the run shows up within about a minute.
+
+To check straight away, click **Refresh** (the circular arrow) at the top of the **Recent runs** window. It runs the check now and shows the result. A trigger checks at most once a minute, however often you click. Schedules keep their time, and events that arrive instantly don't need it.
 
 ## When a run fails
 
-Expand a failed run and you'll get a plain-English explanation, with the technical detail tucked behind **Show error details** if you want it. The common ones:
+Expand a failed run to see a plain-English explanation, with the technical detail behind **Show error details**. The common ones:
 
-- **The trigger hit an error** — usually the connected app returned something unexpected, or the account no longer has access.
-- **It took too long and was stopped.**
-- **It tried to do too much at once** — for example, it found thousands of items on its first run.
-- **Its setup is missing** — the trigger was removed from the script but a copy is still switched on.
+- **The trigger code hit an error while running** — usually the connected app returned something unexpected, or the account no longer has access.
+- **The run took too long and was stopped.**
+- **The run was blocked** — the trigger tried to do something it isn't allowed to.
+- **The run exceeded a trigger limit** — for example, it found far too many items at once. Open its session to see what it found.
+- **The trigger's source file couldn't be found** — the trigger was removed from the script but a copy is still switched on.
 
-A single failure isn't unusual — services have blips. Repeated failures are worth looking at, and you can ask the agent to investigate: *"Why is my Notion trigger failing?"*
+A failed run also offers to ask the agent to fix it, or you can ask in chat: *"Why is my Notion trigger failing?"*
+
+A single failure isn't unusual — services have blips. When a run fails because of a problem on Script.it's side, it's retried automatically after 1 minute, then 5 minutes, 15 minutes, and 1 hour before it counts as failed.
 
 ## Triggers that pause themselves
 
-If a trigger fails **five times in a row**, Script.it pauses it and stops retrying. This protects you from a broken trigger burning credits in a loop.
+Script.it switches a trigger off on its own when it can't do useful work. The card then shows why, and what to do. Three kinds of pause lift on their own once the cause is fixed. The other two need you to switch the trigger back on.
 
-Fix the cause — reconnect the app, ask the agent to correct the script — and switch it back on. The count resets.
+| Notice on the card | Why it paused | What to do |
+|---|---|---|
+| "Paused: an app this trigger uses is no longer connected." | Two runs in a row failed because a connected account was disconnected or its access expired | Reconnect the app from **Open Integrations**. The trigger resumes on its own. |
+| "Paused: you ran out of credits." | The account it bills had no credits left | Top up from **Open Billing**, or wait for your credits to renew. The trigger resumes on its own. |
+| "Paused by your organization's permissions: Create and edit triggers is off for you…" | An admin turned off your **Create and edit triggers** permission | Nothing on your side. It resumes on its own when the permission is turned back on. |
+| "Paused: several runs in a row failed." | Five runs in a row failed | Read the error in **Recent runs**, fix the cause, then switch it back on. |
+| "Paused: it fired far more often than expected in a short window…" | It fired more than the hourly limit — often a loop where the script writes back into what the trigger watches | Check **Recent runs** before switching it back on. |
 
-A trigger can also pause if the app it depends on gets disconnected or its access expires. Reconnect the app and re-enable it.
+Switching a trigger back on resets its failure count.
+
+### Runaway protection
+
+A trigger that fires too often is paused even when every run succeeds. The usual cause is a loop: the script forwards an email into the mailbox the trigger watches, or adds a row to the sheet it scans, so every run creates the next event.
+
+The limit is per trigger, per hour:
+
+| Plan | Events per hour |
+|---|---|
+| Free | 100 |
+| Pro | 240 |
+
+When you switch a paused trigger back on, the count starts fresh. If a trigger legitimately needs more, contact [support@script.it](mailto:support@script.it).
 
 ## Failure emails
 
-If any of your triggers fail or pause, Script.it emails you a short daily summary of what needs attention. It's at most one email a day, and it stops on its own if a trigger keeps failing for a long time — so a broken automation doesn't turn into a daily inbox habit.
+If any of your triggers fail or pause, Script.it emails you a short summary of what needs attention. It's at most one email a day. If your triggers keep failing three days in a row, the emails stop for a week and then resume with one catch-up summary — so a broken automation doesn't turn into a daily inbox habit.
 
 ## Deleting a trigger
 
 <Warning>
-  Deleting a trigger is a shared change. It removes the trigger from the script, and removes it for **every workspace member** who had enabled it. Deleting the whole script does the same.
+  If you can edit the script (**Can edit**), deleting a trigger is a shared change. It removes the trigger from the script, and removes it for **every workspace member** who had enabled it. Deleting the whole script does the same.
 
   If you only want to stop your own, turn it off instead.
 </Warning>
+
+If you can only view the script (**Can view**), deleting removes just your own copy. The trigger stays in the script for everyone else.
 
 Webhook triggers are worth an extra beat: deleting one permanently invalidates its URL. Anything still sending to that URL will stop working, and creating a new trigger gives you a different URL.
 
 ## Limits
 
-- **50 triggers per person.** Triggers that are switched off still count. If you hit the limit, delete ones you no longer need.
+- **Up to 1,000 triggers switched on per person.** Triggers that are switched off don't count, so you can keep as many as you like turned off.
 - **Schedules run at most every 30 minutes.** See [Schedule triggers](/triggers/schedule).
-- **App events that work by checking** have a minimum gap between checks, and back off when there's been nothing new for a while. Events that arrive instantly aren't affected.
+- **App events that work by checking** check every 1–5 minutes, depending on the event. They ease off to at most every 15 minutes when nothing has happened for a while, and return to their normal pace after they fire. Events that arrive instantly aren't affected.
+- **Runaway protection** pauses a trigger that fires more than 100 times an hour on Free, or 240 on Pro.
 
 ## Credits
 
-Triggers use credits like any other run — the work happens in your environment, on your account. A trigger that checks and finds nothing costs very little; the cost is in the script runs it starts.
+Triggers use credits like any other run — the work happens on your account. A check that finds nothing costs little or nothing; the cost is in the script runs it starts. See [Billing, credits, and usage](/account/billing).
 
 If teammates enable the same trigger, each of them pays for their own runs.

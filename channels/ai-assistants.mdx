@@ -1,0 +1,92 @@
+---
+title: "ChatGPT, Claude, and other AI assistants"
+description: "Add Script.it as a connector in ChatGPT, Claude, Cursor or another MCP client, approve it once, and let the assistant run your scripts and work in your sandbox."
+keywords: ["ChatGPT", "Claude", "Claude Code", "Cursor", "Grok", "MCP", "MCP connector", "connector", "remote MCP server", "Connected apps", "Script.it"]
+---
+
+Script.it is an MCP server. Add it to an AI assistant you already use — ChatGPT, Claude, Cursor, and others — and approve it once. From then on, you can ask the assistant to run your scripts, check on runs, set up triggers, or do new work in your Script.it sandbox, without leaving the assistant.
+
+The connector address is:
+
+```text
+https://api.script.it/mcp
+```
+
+On a self-hosted installation, use your installation's API address followed by `/mcp`.
+
+## What the assistant can do
+
+Everything the assistant does happens in a session in your sandbox, with your skills, scripts and connected integrations.
+
+| The assistant can | What happens |
+|---|---|
+| Start a session | Opens a session in your sandbox and reads how your account is set up: your connections and your scripts |
+| Run commands and write files | Runs commands and writes files in that session, then reads their output |
+| Show which account it's using | Reports the Script.it account the connection acts for |
+| List your connected apps | Shows your own connections and the ones shared with your workspaces |
+| Find apps to connect | Searches the integration catalog |
+| Help you connect an app | Gives you a link to the connection screen in Script.it. It never asks for passwords or API keys in the chat |
+| Add a custom API | Registers a custom integration type for an API that isn't in the catalog. You still connect your own credentials in Script.it |
+| Check a script | Validates a script before it runs |
+| Run a saved script | Starts the script with the inputs you give it, in a new session |
+| Check a run | Reports a run's status, results, files, errors, and any questions it's waiting on |
+| Set up triggers | Lists trigger types and your existing triggers, creates a schedule or event trigger (off at first), and turns triggers on or off |
+| Connect its own terminal | Signs the `scriptit` CLI in on the assistant's machine for 24 hours, so it can move files in and out. See [Terminal sign-in](#terminal-sign-in) |
+
+You can follow along in the app. Each session the assistant starts appears in your session list, named after the assistant — for example, "ChatGPT (chatgpt.com) session". Open it to watch the commands, look at files, or stop a command.
+
+## Connect an assistant
+
+<Steps>
+  <Step title="Add the connector in your assistant">
+    In your assistant's settings, add a custom connector or remote MCP server, and give it the address `https://api.script.it/mcp`. Where these settings live depends on the assistant.
+  </Step>
+  <Step title="Sign in to Script.it">
+    The assistant opens Script.it in your browser. Sign in if you aren't already.
+  </Step>
+  <Step title="Review and allow">
+    The page is titled **Connect** followed by the assistant's name and website, for example "Connect ChatGPT (chatgpt.com) to Script.it". It shows your account and lists what the assistant will be able to do:
+
+    - See which Script.it account you are signed in to
+    - Run commands and scripts in your Script.it sandbox
+
+    It also asks how the assistant may sign in its terminal: **Ask me before each sign-in** (the default) or **Let** the assistant **sign in on its own**. Then click **Allow**. You return to the assistant.
+  </Step>
+</Steps>
+
+Assistants that connect this way include ChatGPT, Claude (on the web, desktop and mobile), Claude Code, Cursor and Grok. Any assistant that supports remote MCP servers with OAuth sign-in can try. In Claude Code, the Script.it plugin also adds the connector for you. See [Set up a coding agent](/developers/cli#set-up-a-coding-agent).
+
+Once connected, ask for what you want — "Use Script.it to run my weekly report", or "@Script.it, check on my last run".
+
+<Note>
+  The connection page names the assistant by what its own website calls it, together with that website's address. Check that the address is the assistant you meant to connect, and only continue if you started connecting it yourself.
+</Note>
+
+## Terminal sign-in
+
+Some assistants have a terminal of their own. For work that moves files between the assistant's machine and your sandbox, the assistant can sign in the [`scriptit` CLI](/developers/cli) there. That sign-in lasts 24 hours, and only while the assistant stays connected.
+
+- **Ask me before each sign-in** — the assistant shows you a link and a code. The link opens a page that says the assistant "is asking to connect its terminal to your Script.it account for 24 hours". Enter the code the assistant showed you, then click **Connect CLI**.
+- **Let the assistant sign in on its own** — the assistant approves its terminal without asking you.
+
+To change this choice later, disconnect the assistant and connect it again.
+
+## Which account and credits it uses
+
+The assistant works in your active account — the one you have selected in Script.it. If you switch accounts in the app, the assistant moves to that account's sandbox too. Its work uses that account's credits, like any session. If the account has no credits left, its commands are refused until credits are available. See [Billing, credits, and usage](/account/billing).
+
+## If your organization doesn't allow it
+
+Organizations decide whether members can use Script.it from outside agents, with the **Use third-party agents** permission. If it's turned off for you, approving the connection fails with "Your organization has not allowed you to use this account from a third-party agent or the CLI." The permission is checked on every request, so it also applies when you switch to that organization later. See [Roles and permissions](/governance/roles-and-permissions).
+
+## See and disconnect connected assistants
+
+Go to **Settings → Account → Connected apps**. Each assistant is listed with the date you connected it and what it can do. The section appears once you've connected at least one.
+
+To remove one, click **Disconnect** and confirm. The assistant loses access to your account at once, and every terminal it signed in is signed out.
+
+An assistant that doesn't use its connection for 30 days loses access on its own. Connect it again to keep using it.
+
+## Not to be confused with
+
+This page is about using Script.it *from* another assistant. To go the other way — connect someone else's MCP server *into* Script.it, so your agent and scripts can use its tools — see [MCP servers](/integrations/mcp-servers).

@@ -1,74 +1,122 @@
 ---
 title: "Blocks"
-description: "Blocks are the steps inside a Script.it script. Learn how executable and Markdown blocks work, what they produce, and how to manage them in chat."
-keywords: ["blocks", "executable", "markdown", "script steps", "automation blocks"]
+description: "Blocks are the steps inside a script. Learn the kinds of blocks, what a block card shows, how block outputs look, and how to change blocks."
+keywords: ["blocks", "code block", "Agent", "markdown", "prompt block", "block outputs", "timeline", "annotate", "JSON Views", "script steps"]
 ---
 
-Every script in Script.it is made up of blocks — the individual units of work that run in sequence when you execute a workflow. Each block does one thing, and together they form a complete automation.
+Every script is made up of blocks: the steps that run, in order, when the script runs. Each block does one thing, such as fetching data, writing a summary, or sending a message. Together they form the automation.
 
-## Executable blocks
+## Kinds of blocks
 
-An executable block runs code when the block is executed. This is how your automation actually does things: fetches data from an API, processes a file, sends a message, transforms records, and so on.
+| Kind | What it does |
+|---|---|
+| **Code block** | Runs code to do a step: call an API, process a file, send a message. Most blocks are code blocks. |
+| **Agent block** | A code block that hands its step to an AI Agent with its own instructions and permission. See [Agents in scripts](/scripts/agents). |
+| **Block with nested blocks** | Runs the blocks inside it, once for each item in a list or in sequence. The nested blocks show inside its card. |
+| **Markdown** | Text that explains the script. It doesn't run. |
+| **Prompt** | A button inside Markdown text that sends a prompt to the agent. It doesn't run with the script. |
 
-### What executable blocks do
+A script's [triggers](/triggers/overview) also appear in it, as cards beside its blocks.
 
-When the agent runs an executable block, Script.it runs the source file for that block and shows the result in the session. The agent normally handles the implementation for you, but the source file remains inspectable if you want to review it.
+## Code blocks
 
-Each executable block has a clear label in the script view. Use those labels when you ask the agent to change a specific step.
+A code block runs a source file, usually Python. The agent writes the code for you, and the block's card explains what it does in plain language, so you rarely need to read the code itself. To see it, choose **View Source** from the block's **⋮** menu.
 
-### Supported languages
+A block can take inputs, use your connected integrations, read [script assets](/scripts/assets), and use what earlier blocks produced. The files it writes become its outputs.
 
-Executable blocks support Python and shell scripts. The agent chooses the right approach for the job, so you usually don't need to decide which language to use.
+Each block has its own output folder. It's normally cleared before the block runs again, so a rerun doesn't mix old and new results.
 
-### Output and artifacts
+## What a block card shows
 
-When an executable block runs, any files it writes become artifacts that you can inspect or download. Standard output and errors are streamed back to the chat panel so you can see what happened in real time.
+Click a block to open its card. From top to bottom, a card shows:
 
-When you open a block run, the output area has three tabs:
+- **Name and description.** The block's name, the icons of the integrations it uses, and what it does.
+- **Block inputs.** The values that change how the block behaves each run. See [Inputs and running](/scripts/inputs-and-running).
+- **Assets.** Files the block reads from the script's assets.
+- **Dependencies.** The outputs this block pulls from earlier blocks.
+- **How this block works.** The block's steps in plain language. See [Outlines, comments, and history](/scripts/outline-and-history).
+- **Outputs.** What the block produced in its latest run in this session.
 
-- **Timeline** — shows the block's progress while it is running. Use it to see which step is active, whether the block is still working, and where a failure happened if the run stops.
-- **Files** — shows the artifacts created by that block run. These are the generated reports, datasets, downloaded files, logs, or other files the block wrote during execution.
-- **Output** — shows the first layer of inspection for the run, including the output file names the block produced. Start here to understand what the block returned, then open files from **Files** when you need to inspect the full artifact.
+A block that waits, ends the run early, or runs an Agent has a mark beside its name. Point at it to see what it waits for or when it can end the run.
+
+## Block outputs
+
+When a block has run, its outputs appear at the bottom of its card. A bar across the top of the outputs holds:
+
+- **Timeline.** The block's progress, step by step, with its log lines. Use it while the block runs and to find where a failure happened.
+- **File chips.** One chip for each file or folder the block wrote. Click a chip to show that file. Click a folder to open it.
+- **Annotate.** For JSON and CSV files, spreadsheets, and HTML pages: lets you click a value, a cell, or an element and comment on it.
+- **Open file in popup.** Opens the file in a larger view.
+
+When a block has run more than once in the session, a bar above lets you pick the run to show.
+
+If the block failed, its card shows **Show error details** and a prompt that asks the agent to fix it. Click the prompt to send it.
 
 <Note>
-  Runtime artifacts — files produced during a run — are stored in the session, not the script. This means the same script can be run in many sessions without the outputs conflicting with each other. If a file should persist with the script, store it as a [script asset](/scripts/assets).
+  Outputs are stored in the session, not the script. The same script can run in many sessions without the outputs mixing. If a file should stay with the script, keep it as a [script asset](/scripts/assets).
 </Note>
 
-## Markdown blocks
+## How results look
 
-A Markdown block contains plain text formatted with Markdown. It doesn't run any code — it's purely for documentation and notes.
+The agent shapes each block's outputs so you can check them at a glance.
 
-Use Markdown blocks to describe what a script does, explain the purpose of a group of steps, or leave instructions for teammates. They appear inline in the script view, making it easier to understand a workflow at a glance.
+- **A summary first.** A file named `output`, such as `output.md` or `output.html`, opens first and acts as the block's summary.
+- **Interactive HTML.** HTML files render as live pages, with scripts and forms working.
+- **Data you can edit.** JSON files open in JSON Views, as tables, record pages, Kanban boards, or custom layouts. CSV files open as tables.
+- **Documents and media.** PDFs, images, audio, video, Word documents, Excel workbooks, and PowerPoint decks open in place.
 
-## Managing blocks via chat
+Ask for the presentation you want: "Show the leads as a Kanban board by status", or "Write a one-paragraph summary as the block's output".
 
-You never need to edit script files by hand. The AI agent creates and maintains all blocks for you based on your chat instructions.
+### Cover and theme
 
-<Note>
-  You can ask the agent to add, edit, or remove blocks at any time by describing the change in plain English — for example: "Add a step that sends the output to Slack" or "Remove the data validation step."
-</Note>
+A script's header has a cover: an animated theme generated from the script, or an image. Click **Edit cover** to pick a theme, adjust its color, or use your own image. You can also ask the agent to change it.
 
-Here's how the agent handles common block operations:
+## Markdown and prompt blocks
+
+Markdown blocks hold the script's documentation: its purpose, what it needs, and notes for teammates. Double-click Markdown text to edit it in place. To add one, choose **Add Markdown Below** from a block's **⋮** menu.
+
+Markdown can also hold **prompt blocks**: buttons that send a prompt to the agent, which you can edit before sending. They suit templates and shared scripts, such as a "Customize this for my team" button. Ask the agent to add one.
+
+## Block actions
+
+A block's **⋮** menu offers:
+
+| Action | What it does |
+|---|---|
+| **Run block** | Runs only this block |
+| **Reference block in chat** | Adds a tag for the block to your message, so the agent knows which block you mean |
+| **Open full view** | Shows the block alone, in full, in place of the script |
+| **View Source** | Shows the block's code |
+| **Explain this block** | Asks the agent to write the block's outline, when it has none |
+| **Rename** | Renames the block |
+| **Add Markdown Below** | Adds a Markdown block after this one |
+| **Delete Block** | Removes the block from the script |
+
+Some actions need edit access to the script's workspace.
+
+## Changing blocks through chat
+
+The agent creates and maintains the blocks for you. Describe the change you want in plain language.
 
 <Steps>
   <Step title="Adding a block">
-    Describe the new step you want: "Add a block that reads a CSV file and filters rows where the status is 'active'." The agent writes the source file, creates the block, and places it in the right position in the sequence.
+    Describe the new step: "Add a block that reads a CSV file and keeps only rows where the status is 'active'." The agent writes the code, adds the block in the right place, and runs it to check it works.
   </Step>
-  <Step title="Editing a block">
-    Describe the change: "Update the fetch block to also include the author field in the response." The agent edits the block and its source file directly — you don't need to open an editor.
+  <Step title="Changing a block">
+    Describe the change, or [comment](/scripts/outline-and-history#commenting-on-a-script) on the block's outline: "Also include the author field." The agent updates the code and the outline together.
   </Step>
   <Step title="Removing a block">
-    Ask the agent to remove it: "Remove the email notification step." The agent removes the block and updates the script.
+    Ask the agent: "Remove the email notification step." The agent removes the block and updates the script.
   </Step>
 </Steps>
 
 ## Reviewing a script
 
-The script view shows blocks in the order they run. For a weekly report script, you might see:
+The script page shows blocks in the order they run. For a weekly report script, you might see:
 
-- **About this script** — a Markdown block that explains the goal and what the script needs.
-- **Fetch report data** — an executable block that collects the latest data.
-- **Create summary** — an executable block that turns the data into a readable summary.
-- **Post summary to Slack** — an executable block that sends the result to the right channel.
+- **About this script.** A Markdown block that explains the goal and what the script needs.
+- **Fetch report data.** A code block that collects the latest data.
+- **Write the summary.** An Agent block that reads the data and writes a short report.
+- **Approve and post to Slack.** A code block that asks you to approve the report, then posts it to the right channel.
 
-You can click a block to review its purpose, see recent results, or ask the agent to change it.
+Open a block to review what it does and its latest results, or ask the agent to change it.

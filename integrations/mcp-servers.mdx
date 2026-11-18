@@ -1,0 +1,103 @@
+---
+title: "MCP servers"
+description: "Connect a remote MCP server by its URL so your agent and scripts can use the tools, resources, prompts, and skills it offers."
+keywords: ["MCP", "MCP server", "Model Context Protocol", "remote MCP", "Add MCP", "tools", "OAuth", "access token", "integration", "Script.it"]
+---
+
+Many services now publish an MCP (Model Context Protocol) server: a URL that offers tools an AI agent can call. You can add any remote MCP server to Script.it by its URL. Your agent then uses the server's tools in sessions and scripts, next to your other integrations.
+
+<Note>
+  This page is about connecting another service's MCP server **into** Script.it. To use Script.it **from** ChatGPT, Claude, Cursor, or another AI assistant, see [AI assistants](/channels/ai-assistants).
+</Note>
+
+## When to add an MCP server
+
+| Use | When |
+|---|---|
+| A built-in integration | The app is already in the catalog in **Settings → Integrations**. |
+| An MCP server | The service publishes a remote MCP server URL, and you want the tools it built for AI agents. |
+| A [custom integration](/integrations/custom-integrations) | The service has a REST API but no MCP server, or you need to control how its key is sent. |
+
+## What you need
+
+- **The server's URL.** Use the remote endpoint the provider documents, such as `https://example.com/mcp`. It must use HTTPS and be reachable from the internet.
+- **How the server signs you in.** Check the provider's docs: sign in with your account, paste an access token, or no sign-in at all.
+
+Script.it connects to remote servers over Streamable HTTP. Servers you start with a command on your own computer aren't supported. Neither are older SSE-only endpoints.
+
+Adding a server needs the **Connect and manage integrations** permission. Every role has it by default. Without it, **Add MCP** doesn't appear.
+
+## Add an MCP server
+
+<Steps>
+  <Step title="Open Settings → Integrations">
+    In Script.it, click **Settings** in the sidebar, then select **Integrations**.
+  </Step>
+  <Step title="Click Add MCP">
+    Next to **Add Integration**, click **Add MCP**. The **Add MCP server** dialog opens.
+  </Step>
+  <Step title="Enter the server details">
+    - **Server URL**: the server's endpoint. Leave out any credentials, `#` fragments, or `{placeholders}`. You sign in on the next step.
+    - **Name** (optional): what the server is called in your integrations list. If you leave it empty, Script.it uses the server's host name.
+    - **Authentication**: how the server signs you in. See the table below.
+  </Step>
+  <Step title="Connect">
+    Click **Continue**. Script.it adds the server and opens the **Connect** dialog to finish signing in.
+  </Step>
+</Steps>
+
+| Authentication | Use it when | What happens next |
+|---|---|---|
+| **Sign in** | The server asks you to log in with your account at the provider. | Script.it reads the server's sign-in settings and registers itself with the provider. You approve access in a new tab. |
+| **Access token** | The provider gives you an API token or personal access token for its server. | You paste the token. Script.it sends it as `Authorization: Bearer <token>` on every request. |
+| **No authentication** | The server is public and needs no account or token. | The server connects right away. |
+
+If **Sign in** can't be set up for a server, Script.it shows the reason and doesn't add the server. This happens when the server doesn't publish standard OAuth sign-in settings or doesn't let new apps register automatically. If the provider offers access tokens, add the server again with **Access token**.
+
+If you close the **Connect** dialog before finishing, the server stays in your catalog with a **Custom** badge. Open its tile later to connect.
+
+<Tip>
+  You can also ask the agent: *"Connect the MCP server at https://example.com/mcp."* The agent adds the server and asks you to approve the connection.
+</Tip>
+
+## What the agent can use
+
+Once the server is connected, the agent can use everything the server offers:
+
+- **Tools**: actions the server exposes, called with the arguments the server describes.
+- **Resources**: documents and data the server makes available to read.
+- **Prompts**: prompt templates the server provides, which the agent uses as guidance.
+- **Skills**: instructions the server publishes for working with its service. Reading a skill doesn't run anything.
+- **Server instructions**: usage notes the server sends when the agent connects.
+
+The agent looks up what the server offers when it needs it, then calls tools the same way it calls any integration. Script.it adds your sign-in to each request. Scripts never hold your token.
+
+If a tool call fails partway, Script.it doesn't retry it automatically. A tool that changes data never runs twice by accident.
+
+Features where the server asks you a question mid-call, live subscriptions, and interactive MCP app views aren't supported.
+
+## Share an MCP server
+
+An MCP server is a custom integration type, so you share it the same way:
+
+| Share | What others get | Who they act as |
+|---|---|---|
+| The server, with a workspace or with everyone in your company | The server in their catalog | Each person connects with their own sign-in or token. |
+| Your connection, with a workspace | Use of your connected account | Everyone in the workspace calls the server as you. |
+
+Sharing a server needs the **Share custom integration types** permission, which Owners and Admins have by default. Sharing with everyone in your company is available in company accounts only. See [Sharing custom integrations](/integrations/custom-integrations#sharing-custom-integrations) and [Connect integrations](/integrations/connecting).
+
+## Control which tools the agent can call
+
+An integration policy limits what a server can be used for. Set one on the server to cover every connection, or on a single connection. For example, a policy can allow a server's read-only tools and block the tools that change data. Your organization's **Integration calls** and the session's permission profile apply as well. See [Integration policies](/governance/integration-policies).
+
+<Note>
+  A policy on an MCP server must also allow the agent to list what the server offers. If it doesn't, nobody can discover the server's tools, including you.
+</Note>
+
+## Change or remove a server
+
+- **Rename or set a policy**: in **Settings → Integrations**, open the server's **⋮** menu and choose **Edit**.
+- **Point at a different server**: add a new MCP server. The **MCP Server URL** can't be changed after you add a server.
+- **Disconnect**: find the connection in your integrations list, open its **⋮** menu, and choose **Disconnect**.
+- **Delete**: open the server's **⋮** menu in the catalog and choose **Delete**. Disconnect every connection to it first.

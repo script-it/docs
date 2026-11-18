@@ -1,0 +1,218 @@
+---
+title: "Command-line interface"
+description: "Install the scriptit CLI to drive your Script.it sandbox from a terminal or a coding agent such as Claude Code or Codex, with every command recorded as a session in the app."
+keywords: ["CLI", "scriptit", "command line", "terminal", "Claude Code", "Codex", "coding agent", "scriptit auth login", "scriptit exec", "companion mode", "Script.it"]
+---
+
+The `scriptit` CLI drives your Script.it sandbox from your machine. Use it to run scripts, read their logs, check triggers, run shell commands and move files without opening the browser. It's also how coding agents such as Claude Code and Codex work in Script.it.
+
+The CLI is a thin remote client. Every command runs **in your Script.it sandbox**, not on your machine: no script executes locally, and your integration credentials are never copied to your machine. Everything you run lands in a session you can watch live in the app.
+
+## Install
+
+You need Python 3.9 or newer and a Script.it account. Install the CLI in its own environment with `uv` or `pipx`:
+
+<CodeGroup>
+
+```bash uv
+uv tool install scriptit-cli
+```
+
+```bash pipx
+pipx install scriptit-cli
+```
+
+```bash pip
+pip install scriptit-cli
+```
+
+</CodeGroup>
+
+`uv tool` and `pipx` keep the CLI's dependencies out of your projects. To install the latest unreleased version instead, use `git+https://github.com/script-it/cli.git` in place of `scriptit-cli`.
+
+Check that it installed:
+
+```bash
+scriptit version
+```
+
+To update or remove it, run `uv tool upgrade scriptit-cli` or `uv tool uninstall scriptit-cli` (or the `pipx` equivalents).
+
+## Sign in
+
+```bash
+scriptit auth login
+```
+
+<Steps>
+  <Step title="Open the approval page">
+    The CLI prints a short code such as `AB12-CD34` and opens Script.it in your browser. Where no browser can open — over SSH, in a container, or when a coding agent runs the command — it prints the link instead. Open it in any browser where you're signed in to Script.it.
+  </Step>
+  <Step title="Enter the code">
+    The page says a `scriptit` CLI is asking to connect to your Script.it account. Only continue if you started this login yourself. Type the code your terminal shows, then click **Connect CLI**.
+  </Step>
+  <Step title="Done">
+    The page shows **CLI connected**, and the terminal finishes signing in on its own.
+  </Step>
+</Steps>
+
+The link carries nothing anyone else can sign in with, so it's safe to pass through a chat. If the command is interrupted before you approve, run it again: it resumes the same link. Add `--no-browser` to always print the link instead of opening a window.
+
+Your password never reaches the CLI. It stores a refresh token in `~/.config/scriptit/credentials.json`, readable only by you.
+
+| Command | What it does |
+|---|---|
+| `scriptit auth status` | Shows which account and installation you're signed in to |
+| `scriptit auth logout` | Forgets the stored sign-in on this machine |
+| `scriptit auth login --profile work` | Stores a sign-in under a named profile, so you can keep several side by side |
+| `scriptit auth use work` | Switches to a named profile |
+| `scriptit auth login --api-url https://<your-installation>` | Signs in to a self-hosted installation instead of Script.it's cloud. The CLI uses that installation's own sign-in and prints the link to approve |
+
+<Note>
+  Organizations decide whether members can use the CLI and other outside agents, with the **Use third-party agents** permission. If it's turned off for you, signing in fails with "Your organization has not allowed you to use this account from a third-party agent or the CLI." See [Roles and permissions](/governance/roles-and-permissions).
+</Note>
+
+## Sessions
+
+Every command runs inside a session — the same kind of session the in-app agent works in. The CLI keeps one current session across commands and shells until you start another.
+
+```bash
+scriptit session current              # which session you're on, with its link in the app
+scriptit session new                  # start a fresh session
+scriptit session use ses_abc123       # go back to an earlier one
+scriptit session list                 # recent sessions
+scriptit context                      # this session's instructions for a coding agent
+```
+
+The session appears in the app like any other. Each command you run shows up there as it runs, so you — or a teammate — can watch the work, open its files, and stop a command.
+
+Commands run in the session's own directory. Your workspaces are mounted inside it, so a script at `/workspaces/<workspace-id>/my-script` is also `workspaces/<workspace-id>/my-script` from where commands run. Changes you make there show up in the app at once. `data_files/` is the session's own scratch space.
+
+To run one command in a different session without changing the current one, set `SCRIPTIT_SESSION`:
+
+```bash
+SCRIPTIT_SESSION=ses_abc123 scriptit exec -- ls
+```
+
+The CLI works in the sandbox of your active account — the one you have selected in Script.it — and its work uses that account's credits, like any session.
+
+## Run scripts and check on them
+
+```bash
+scriptit skills list                  # your scripts and the platform's skills
+scriptit start weekly-report          # run a script by name
+scriptit logs <run-id>                # read what a run did
+scriptit trigger list                 # your schedules and event triggers
+scriptit integrations list            # the connections your scripts can use
+scriptit describe --concepts          # the full platform reference
+```
+
+`scriptit start` takes a script's name from `skills list` and finds it across your workspaces.
+
+## Run shell commands
+
+```bash
+scriptit exec -- ls /workspaces
+scriptit exec --timeout 300 -- pytest -q
+scriptit exec --cwd /workspaces/<workspace-id> -- ls
+```
+
+`--timeout` is enforced in the sandbox, so a command that runs too long stops there with exit code `124`.
+
+A session runs one command at a time; a second command waits for the first. There's no interactive shell, so commands that need keyboard input, such as `vim`, can't work. If your sandbox is paused, any command wakes it and waits until it's ready.
+
+## Move files
+
+```bash
+scriptit fs push ./report.csv /workspaces/<workspace-id>/assets/report.csv
+scriptit fs pull /workspaces/<workspace-id>/logs/run.log .
+scriptit fs read data_files/report/output.html
+```
+
+A relative path in the sandbox starts in the session's directory, the same place `exec` runs.
+
+## Which commands are which
+
+The CLI answers `auth`, `context`, `exec`, `fs`, `session`, `sandbox` and `version` itself. Every other command — `start`, `status`, `logs`, `wait`, `validate`, `describe`, `trigger`, `integrations`, `skills` and the rest — is passed to Script.it and answered there. New platform commands work without updating the CLI.
+
+`scriptit --help` covers the CLI's own commands. `scriptit describe --concepts` covers the rest.
+
+Add `--json` to any of the CLI's own commands for machine-readable output. Standard output becomes exactly one JSON document, and progress, warnings and errors go to standard error. On a failure the document is `{"error": "..."}` and the exit code is non-zero.
+
+```bash
+scriptit sandbox status --json | jq -r '.sandboxes[].state'
+```
+
+## Set up a coding agent
+
+The CLI was built for coding agents. Install it, sign in, then install the Script.it skill so the agent knows how to use it.
+
+<CodeGroup>
+
+```text Claude Code
+/plugin marketplace add script-it/cli
+/plugin install scriptit@script-it
+```
+
+```bash Codex
+codex plugin marketplace add script-it/cli
+codex plugin add scriptit@script-it
+```
+
+```bash Other agents
+mkdir -p ~/.claude/skills/scriptit
+curl -sSL https://raw.githubusercontent.com/script-it/cli/main/agent-skills/scriptit/SKILL.md \
+  -o ~/.claude/skills/scriptit/SKILL.md
+```
+
+</CodeGroup>
+
+In Claude Code, the plugin also connects Script.it's MCP server; sign in to it from `/mcp`. For a host that reads only an `AGENTS.md` file, paste the skill's contents there.
+
+Then tell the agent: **Use Script.it.** The skill has the agent start a session and fetch that session's instructions with `scriptit context`, so it always works from your current integrations and scripts.
+
+Set `SCRIPTIT_CLIENT` to label the session with the agent driving it, such as `claude-code` or `codex`.
+
+### Companion mode
+
+While a coding agent does the work, you can hide the app's built-in chat and keep Script.it open as a view of what the agent is doing.
+
+- Go to **Settings → Account**, and under **Appearance** click **Enter companion mode**.
+- The agent's links to scripts and connection screens also open in companion mode.
+- To leave, click the button in the bottom-right corner — it reads **Companion mode**, or **Connected** with the agent's name — which turns into **Exit companion mode** when you point at it. Or click **Exit companion mode** in **Settings → Account**.
+
+### Let the agent show you its work
+
+An agent can drive Script.it through the CLI but has no signed-in browser. `scriptit auth browser-url` prints a one-time link that opens the app already signed in as you:
+
+```bash
+scriptit auth browser-url --next /app/s/<session-id>
+```
+
+The link lends this machine's sign-in to a browser. It works once, expires after 60 seconds, and you get an email when one is used from somewhere new. Treat it like a password for that minute. It's available on Script.it's cloud only.
+
+## Exit codes
+
+| Code | Meaning |
+|---|---|
+| The command's own | A command that ran in the sandbox exits with its own code |
+| `2` | Not signed in — run `scriptit auth login` |
+| `124` | `--timeout` expired, and the command was stopped |
+| `125` | The command ran, but its result couldn't be recovered. This is not success |
+| `130` | You interrupted the CLI; the command may still be running |
+
+## Environment variables
+
+| Variable | What it does |
+|---|---|
+| `SCRIPTIT_PROFILE` | Uses a named profile for one command |
+| `SCRIPTIT_SESSION` | Runs one command in a named session |
+| `SCRIPTIT_CLIENT` | Labels the session with the agent driving it |
+| `XDG_CONFIG_HOME` | Where the CLI keeps its sign-in and state (default `~/.config`) |
+| `SCRIPTIT_NO_UPDATE_CHECK=1` | Turns off the once-a-day notice about a newer release |
+| `DO_NOT_TRACK=1` | Turns off anonymous usage analytics (command names and exit codes only) |
+
+## Related
+
+- [ChatGPT, Claude, and other AI assistants](/channels/ai-assistants) — use Script.it from an assistant without installing anything.
+- [Technical reference](/developers/overview) — script files, `SKILL.md`, and trigger payloads.

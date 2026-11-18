@@ -1,70 +1,127 @@
 ---
 title: "Connect integrations"
-description: "Connect built-in and custom integrations, share them with workspaces, and understand how Script.it handles credentials."
-keywords: ["connect integration", "shared integration", "OAuth", "API key", "Settings", "Integrations", "authorize", "disconnect", "Script.it"]
+description: "Connect built-in and custom integrations, share them with workspaces, control who can manage them, and understand how Script.it handles credentials."
+keywords: ["connect integration", "shared integration", "OAuth", "API key", "Settings", "Integrations", "authorize", "disconnect", "reconnect", "expired", "editors", "Script.it"]
 ---
 
 Connecting an integration takes a few clicks. You authorize a tool from your account settings, then scripts can use it without storing credentials in the script itself. Script.it supports OAuth for tools like Gmail and Slack, API key authorization for tools like Airtable, and custom REST API definitions for tools outside the built-in catalog.
+
+Two other kinds of connection have their own pages:
+
+- **A remote MCP server**, added by its URL with **Add MCP**. See [MCP servers](/integrations/mcp-servers).
+- **Your personal LinkedIn, WhatsApp, Telegram, or Instagram account**, linked so scripts can read and send messages as you. See [Messaging accounts](/integrations/messaging-accounts).
 
 ## Connecting an integration
 
 <Steps>
   <Step title="Open Settings → Integrations">
-    In Script.it, click **Settings** in the sidebar, then select **Integrations**. This page shows your connected tools, shared integrations, and a search field for the full catalog.
+    In Script.it, click **Settings** in the sidebar, then select **Integrations**. This page shows your connected tools, shared integrations, and the catalog under **Add Integration**.
   </Step>
   <Step title="Find the tool you want to connect">
-    Type the name of the tool in the search field. The catalog includes 600+ apps — scroll the results or refine your search until you find the one you need.
+    Type the name of the tool in **Search integrations...**, and scroll the results until you find it.
   </Step>
-  <Step title="Click Connect">
-    Click **Connect** next to the tool. Script.it opens the authorization flow for that integration.
+  <Step title="Add it">
+    Select **+** next to the tool. Script.it opens the connection dialog for that integration.
 
-    - **OAuth tools** (Gmail, Slack, Google Sheets, Notion, and most others) — you'll be redirected to the tool's own sign-in page to grant access. Sign in and approve the requested permissions.
-    - **API key tools** (Airtable, and others that use token-based access) — a dialog prompts you to paste your API key or personal access token.
+    If you don't see **+**, your organization hasn't given you **Connect and manage integrations**. Ask an Owner or Admin.
   </Step>
   <Step title="Complete the authorization">
-    Follow the prompts until the authorization is complete. For OAuth tools, you'll be redirected back to Script.it automatically once you approve access. For API key tools, click **Save** after entering your credentials.
+    - **OAuth tools** (Gmail, Slack, Google Sheets, Notion, and most others) — you're sent to the tool's own sign-in page. Sign in and approve the requested permissions. You come back to Script.it once you approve.
+    - **API key tools** (Airtable, and others that use token-based access) — paste your API key or personal access token, then select **Connect**.
   </Step>
   <Step title="Confirm the connection">
-    The tool now appears in your connected integrations list with a **Connected** badge. It is immediately available to your scripts.
+    The tool now appears in your connected integrations with an **Active** badge. It is immediately available to your scripts.
   </Step>
 </Steps>
 
-Some premium connections, including LinkedIn, WhatsApp, Telegram, and Instagram, cost **50 credits per connected account each month**. Script.it shows this recurring cost before authorization. Your active account must have enough usable credits to connect; if it does not, the connection screen shows an upgrade or billing action instead.
+Linking a personal messaging account — your own LinkedIn, WhatsApp, Telegram, or Instagram — costs **50 credits per connected account each month**. Script.it shows this recurring cost before authorization. Your active account must have enough usable credits to connect; if it does not, the connection screen shows an upgrade or billing action instead. See [Messaging accounts](/integrations/messaging-accounts).
 
-Disconnecting a credit-priced integration stops future renewals but does not refund the current month's charge. If a renewal cannot be paid, Script.it warns you before unlinking the connection.
+This fee is only for linked personal accounts. **Agent WhatsApp**, **Agent Telegram**, and the other channels you use to reach your own agent have no connection fee. See [Reach your agent](/channels/overview).
+
+Disconnecting a linked account stops future renewals but does not refund the current month's charge. If a renewal can't be paid, Script.it emails you a warning and keeps the account linked for three days. If the charge still can't be paid by then, it unlinks the account.
 
 <Note>
   The AI agent can also prompt you to connect a missing integration during a session. If you describe an automation that requires a tool you haven't connected yet, the agent will pause and ask you to authorize it before continuing. You can complete the connection without leaving the chat.
 </Note>
 
+## Connection status
+
+Each connection shows a status badge:
+
+| Badge | Meaning |
+|---|---|
+| **Active** | Working. |
+| **Pending** | The authorization hasn't finished yet. |
+| **Expired** | The provider no longer accepts the connection's tokens. Calls through it fail until you reconnect. |
+| **Reconnect** | The connection is missing permissions the integration now needs. |
+| **Invalid** or **Error** | The provider refused the credentials, or the connection failed. |
+
+To fix an expired connection, open its **⋮** menu and select **Reconnect**, then sign in again as the same account. Script.it restores the connection in place when it can, so its shares, editors, and triggers keep working. A sign-in as a different account is refused.
+
+## Who can do what with a connection
+
+Using a connection and managing it are separate rights.
+
+| | Use it in scripts and sessions | Edit it, rotate its credentials, change its policy, share it | Manage its editors | Disconnect it |
+|---|---|---|---|---|
+| **Owner** — you connected it | ✓ | ✓ | ✓ | ✓ |
+| **Editor** — the owner made you one | ✓ | ✓ | ✓ | — |
+| **Everyone it's shared with** through a workspace | ✓ | — | — | — |
+
+- Editor rights are never inherited from a workspace. Being a workspace Editor doesn't let you manage the connections shared into it.
+- Editors can be added only to connections of custom integrations. For built-in integrations, each person connects their own account. To add or remove editors, open the connection's **⋮** menu and select **Manage editors**.
+- Your organization's permissions apply on top. Editing needs **Connect and manage integrations**, sharing needs **Share integrations**, and managing editors needs **Manage integration editors**. See [Roles and permissions](/governance/roles-and-permissions#integrations).
+- Organization admins can see and disconnect members' connections. See [Overseeing your organization](/governance/admin-oversight#manage-members-integrations).
+
+A custom integration type works the same way, with one difference: its editors can also delete it, because it holds no one's credentials.
+
 ## Sharing a connection with a workspace
 
-When you share a connection, workspace members can call the upstream API using your connected account. This is useful for team-owned tools such as a shared Slack bot, a reporting mailbox, or a company CRM account.
+When you share a connection, everyone in the workspace can call the upstream API using your connected account. This is useful for team-owned tools such as a shared Slack bot, a reporting mailbox, or a company CRM account.
 
 <Steps>
   <Step title="Open the connected integration">
     Go to **Settings → Integrations** and find the connected account you want to share.
   </Step>
-  <Step title="Open sharing settings">
-    Use the sharing control on the integration row. It shows which workspaces already have access.
+  <Step title="Open sharing">
+    Select **Share** on the integration's row. It shows which workspaces already have access.
   </Step>
   <Step title="Choose a workspace">
-    Select the workspace that should be able to use the connection. The share is scoped to that workspace. You can share the same connection with more than one workspace.
+    Select the workspace that should be able to use the connection. You can share the same connection with more than one workspace. You must be a member of the workspace, and you can't share into a Private workspace.
   </Step>
   <Step title="Confirm the trust boundary">
-    Confirm that members of the target workspace should be able to use the connection under your upstream account.
+    Read the confirmation, which says who will be able to act as you, then confirm.
   </Step>
 </Steps>
 
 <Warning>
-  A shared connection delegates use of your upstream account. Every Editor and Reader in the workspace can call it, and provider logs may show requests as you.
+  A shared connection delegates use of your upstream account. Everyone the workspace reaches can call it — direct members, members of an organization the workspace is shared with, and guests. Provider logs may show their requests as you.
 </Warning>
+
+Every call through a shared connection is still checked against:
+
+- The connection's own permission policy, if one is set. Store one to keep a shared connection read-only, for example.
+- The caller's Integration calls, if their organization limits them.
+- The caller's session profile.
+
+See [Integration policies](/governance/integration-policies).
+
+Some connections can't be shared: Script.it's own built-in services, such as its model and web search, and the channels you use to reach your own agent — **Agent Email**, **Agent WhatsApp**, **Agent Telegram**, and **Teams Bot**. See [Reach your agent](/channels/overview).
 
 ## Sharing a custom integration type
 
-Custom integration types are different from connections. A type is the API recipe: base URL, auth mode, OAuth client details, schema, and display metadata. It does not share member credentials.
+Custom integration types are different from connections. A type is the API recipe: base URL, auth mode, OAuth client details, schema, and display metadata. It does not share anyone's credentials.
 
-When you share a custom integration type with a workspace, members see it in their integration catalog and can connect their own accounts through it. Scripts can reference the same integration type, while each run uses the runner's own credentials.
+When you share a custom integration type, the people it reaches see it in their integration catalog and connect their own accounts through it. Scripts can reference the same integration type, while each run uses the runner's own credentials. They can't change or remove the definition unless you add them as an editor.
+
+You can share a type in two ways:
+
+- **With a workspace.** Everyone in that workspace can connect to it.
+- **With everyone in your organization.** In the type's sharing menu, choose **Everyone in *organization***, then **Share with everyone**. Every member, including people who join later, finds it in their catalog.
+
+Sharing a type needs **Share custom integration types**, which only Owners and Admins hold by default. Sharing a custom connection can share its type too; the confirmation tells you when it will.
+
+If you stop sharing a type with everyone, members no longer see it in their catalog unless a workspace shares it with them. Connections they already made keep working, but can't be reconnected once they expire.
 
 This works well for internal APIs, customer-specific APIs, or partner APIs where every teammate should connect their own account.
 
@@ -74,11 +131,11 @@ To remove a tool's access to your account:
 
 1. Go to **Settings → Integrations**.
 2. Find the connected tool.
-3. Click the **···** menu next to it and select **Disconnect**.
+3. Click the **⋮** menu next to it and select **Disconnect**.
 
 Disconnecting an integration immediately revokes Script.it's access to that connected account. Any scripts that use that connection will fail if they try to call it after disconnection. To restore access, connect the integration again.
 
-If the connection was shared with one or more workspaces, disconnecting it removes the underlying account for everyone. If you only want to stop one workspace from using it, remove the workspace share instead.
+Only the connection's owner can disconnect it. If the connection was shared with one or more workspaces, disconnecting it removes the underlying account for everyone. If you only want to stop one workspace from using it, remove the workspace share instead.
 
 ## Authorization types
 
@@ -89,8 +146,8 @@ Different tools use different authorization methods. Script.it handles both tran
 | OAuth | You sign in to the tool directly and grant permission. Tokens are managed automatically. | Gmail, Slack, Google Sheets, Notion, HubSpot, Linear, Jira |
 | API key | You paste a key or token from the tool's developer settings. | Airtable, and other tools with personal access tokens |
 
-For OAuth integrations, Script.it stores only the access token — your credentials are never visible to Script.it. For API key integrations, your key is encrypted at rest.
+For OAuth integrations, you sign in at the tool itself, so Script.it never sees your password there. The tokens the tool issues, including the refresh token that keeps the connection working, are stored encrypted and refreshed automatically. For API key integrations, your key is encrypted at rest. Scripts never see either: Script.it adds the credentials to each request on its way out.
 
 ## Custom APIs
 
-If the API you need is not in the built-in catalog, create a [custom integration](/integrations/custom-integrations). Custom integrations support API keys, bearer tokens, basic auth, custom headers, and OAuth2 flows.
+If the API you need is not in the built-in catalog, create a [custom integration](/integrations/custom-integrations). Custom integrations support API keys, bearer tokens, basic auth, custom headers, and OAuth2 flows. If the service offers a remote MCP server, you can [add it by URL](/integrations/mcp-servers) instead.

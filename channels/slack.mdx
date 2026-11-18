@@ -1,0 +1,71 @@
+---
+title: "Message your agent on Slack"
+description: "Connect Slack Bot to direct-message your agent in Slack or @mention it in a channel, with each Slack thread kept as one session."
+keywords: ["Slack", "Slack Bot", "direct message", "DM", "mention", "Slack thread", "Script.it app", "Script.it"]
+---
+
+Connect **Slack Bot** and your agent is one message away in Slack. Direct-message the **Script.it** app for anything you'd ask in the web app, or @mention it in a channel to have it answer in front of the team.
+
+## Connect Slack Bot
+
+<Steps>
+  <Step title="Start the connection">
+    In a session, click **Slack** in the **Chat with me from an app you already use** banner. Or go to **Settings → Integrations**, find **Slack Bot**, and click **Connect**.
+  </Step>
+  <Step title="Approve in Slack">
+    Slack opens in a new tab. Pick the workspace and approve the **Script.it** app. If Script.it asks which permissions to grant, the ones messaging needs are always included.
+  </Step>
+  <Step title="Open your DM">
+    Back in Script.it, click **Slack** in the banner again to open your direct-message conversation with the **Script.it** app. You can also find it under your apps in Slack.
+  </Step>
+</Steps>
+
+Connecting creates two triggers, **Slack DMs** and **Slack Mentions**, that deliver your messages to your agent. To use several Slack workspaces, connect Slack Bot once in each.
+
+## Direct messages
+
+Message the **Script.it** app as you'd message a person. While the agent works, Slack shows that Script.it **is on it…** in the thread.
+
+Each Slack thread is one conversation, and one session in the app:
+
+- **A new top-level message** starts a new session.
+- **A reply in its thread** continues that session.
+- The agent always answers in the thread, so the conversation stays in one place.
+
+When the agent or a script sends you a Slack message first, your reply in that thread goes back to the session that sent it.
+
+## Mentions in a channel
+
+@mention **Script.it** in a channel to ask your agent something in front of the team. Add the app to the channel if it isn't there yet.
+
+- The agent runs in **your** sandbox, with **your** integrations, as it does for a direct message.
+- Its answer posts in the thread you mentioned it in, where everyone in the channel can read it. Keep that in mind before asking it to look something up in your private tools.
+- One thread is one session. Mention it again in the same thread to continue.
+
+Only your own mentions reach your agent. When a teammate mentions **Script.it**, their own agent answers. If they haven't connected Slack Bot, the app replies in the thread with a link to connect it.
+
+<Note>
+  A mention in a channel can't answer a run that's waiting for you, because anyone in the channel can post in that thread. Reply to the agent's direct message instead. See [Approvals and waits](/scripts/approvals-and-waits).
+</Note>
+
+## Files and formatting
+
+- Send files in a DM, with or without a message. The agent opens them when it needs them.
+- The agent can upload files into the thread with its reply.
+- The agent writes in Slack's own formatting, so bold text, links and code show up as Slack displays them.
+
+## Account and sharing
+
+Slack Bot belongs to the account you connected it in, Personal or an organization. Conversations run there and use that account's credits. See [Ways to reach your agent](/channels/overview#which-account-credits-and-permissions-apply).
+
+Scripts can also use your Slack Bot connection to post as the bot. You can share the connection with a workspace so its scripts post as the bot too. Direct messages and mentions are never shared: they reach only the agent of the person who sends them, so teammates connect Slack Bot for themselves.
+
+## Pause or disconnect
+
+- **To pause Slack**, turn off the **Slack DMs** or **Slack Mentions** trigger. See [Manage triggers](/triggers/managing).
+- **To disconnect**, go to **Settings → Integrations**, open the **Slack Bot** row's **⋮** menu, and select **Disconnect**.
+
+## Not to be confused with
+
+- **Slack (Personal)** is a separate integration that lets scripts act in Slack *as you*. It doesn't let you message your agent.
+- **A Slack bot that answers other people** — customers or a whole team — uses your own Slack app and an External Agent. See [Agents](/scripts/agents).
