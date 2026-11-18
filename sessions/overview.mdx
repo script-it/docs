@@ -1,35 +1,65 @@
 ---
 title: "Sessions"
-description: "A session is a chat conversation with the Script.it AI agent. Build scripts, run them, review output, and iterate through natural language."
-keywords: ["sessions", "AI agent", "chat", "automation", "session files", "conversation"]
+description: "A session is one conversation with your Script.it agent. Learn what a session holds, where sessions come from, and how they relate to scripts."
+keywords: ["sessions", "AI agent", "chat", "session files", "conversation", "sub-sessions", "model", "permission profile"]
 ---
 
-A session is a conversation you have with the Script.it AI agent. Every time you open a new chat, you're starting a new session — and within it you can build scripts from scratch, run them, review their output, and refine them through follow-up messages. The agent understands context across the whole conversation, so you can iterate naturally without repeating yourself.
+A session is one conversation with your Script.it agent. In a session you ask the agent to build a script, run it, explain a result, or fix a failure, and you watch it work. The agent keeps the context of the whole conversation, so you can iterate without repeating yourself.
+
+## What a session holds
+
+Each session keeps its own:
+
+- **Conversation** — your messages, the agent's replies, and the steps it took.
+- **Files** — the session's **Session Files**: attachments you send and everything its runs write. See [Session files](/sessions/files).
+- **Model** — the AI model the agent uses, picked in the composer. See [Models](/sessions/models).
+- **Permission profile** — what the agent may do in this session, picked in the composer. See [Permission profiles](/governance/permission-profiles).
+- **Scripts it touched** — shown as chips above the message box, each marked **new**, **updated** or **removed**.
 
 ## Sessions and scripts
 
-Sessions and scripts are closely related but serve different purposes. A **script** is the reusable automation workflow. A **session** is the working context in which you build and run those scripts.
+A **script** is a reusable workflow saved in a workspace. A **session** is where you build and run it.
 
-When the agent edits a script inside a session, that change is immediately visible anywhere the script's workspace is available. But the files your scripts produce during a run — downloaded files, generated outputs, and results — belong to the session, not the script. This keeps your scripts clean and reusable while giving each session its own isolated working directory.
+- When the agent changes a script, the change is saved to the script's workspace. Everyone who can see that workspace sees the new version.
+- Script.it saves a version of the script at the end of every agent turn that changed it. You can restore any earlier version from the script's history. See [Outlines, comments, and history](/scripts/outline-and-history#history).
+- Files a run produces belong to the session that ran it, not to the script. Running the same script in two sessions never mixes their outputs.
 
-## What you can do in a session
+## Where sessions come from
 
-Sessions are where most of the work happens in Script.it:
+| How it starts | Where it appears in the **Sessions** list |
+|---|---|
+| You click **New session** at the bottom of the sidebar, or press `Cmd+Shift+S` (`Ctrl+Shift+S` on Windows) | **Opened** |
+| You click **Run** on a script's page and confirm the run | **Opened** |
+| A trigger runs a script | **Triggered** |
+| You message your agent by email, Slack, Teams, Telegram or WhatsApp | One session per conversation. See [Ways to reach your agent](/channels/overview). |
 
-- **Build scripts** — describe an automation in plain English and let the agent generate the workflow for you.
-- **Run scripts** — trigger a script from chat and watch the execution results appear in real time.
-- **Review output** — inspect block results, read files produced during the run, and see what your automation actually did.
-- **Iterate** — ask the agent to modify a block, debug a failure, add a new step, or restructure the workflow entirely, all in the same conversation.
-- **Manage files** — view and download files your scripts created during the session.
+A new session stays a draft until you send its first message, so opening one and leaving creates nothing.
 
-## Session working directories
+Work that a session starts can get its own **sub-session**, listed under the session that started it: an Agent a script runs, a subagent the agent hands work to, or a script run that continues after a wait. See [Managing sessions](/sessions/managing#sub-sessions).
 
-Each session has its own isolated working directory. When a script runs, any files it creates — fetched data, generated reports, temporary outputs — are stored in that session. Those files won't appear in other sessions, which means concurrent sessions never interfere with each other.
+## Your sessions are yours
 
-The script itself is the one exception: because scripts are shared, any change the agent makes to a script in one session is immediately reflected everywhere. The agent tracks these changes and can revert them if you ask.
+Sessions belong to you and to the account you're working in. Switching between your **Personal** account and an organization shows that account's sessions. Teammates in a shared workspace see the scripts you change, not your sessions. The exception is a session you choose to include when you publish a script. See [Publishing](/scripts/publishing).
 
 ## Picking up where you left off
 
-Session history persists. You can leave a session and return later — your chat history will be there, and the agent will have full context from your previous conversation. When you reconnect, the session restores its state so you can continue right where you left off.
+Session history persists. Leave a session and come back later: the conversation, files and model are where you left them, and the agent still has the context.
 
-The pages in this section cover the two main parts of a session in detail: the agent chat and the session files panel.
+If your environment is asleep when you come back, a session you opened recently shows its latest messages right away, read-only, while the environment starts. You can send again once the session finishes loading.
+
+## In this section
+
+<CardGroup cols={2}>
+  <Card title="Agent chat" icon="message-square" href="/sessions/chat">
+    The composer, `@` references, attachments, dictation, and how to read the agent's work.
+  </Card>
+  <Card title="Models" icon="cpu" href="/sessions/models">
+    Pick Auto, Fast, or a specific model, and what limits the choice.
+  </Card>
+  <Card title="Managing sessions" icon="list-filter" href="/sessions/managing">
+    Search, filter, pin, group, tag, export, and delete sessions.
+  </Card>
+  <Card title="Session files" icon="folder-open" href="/sessions/files">
+    Browse, upload, preview, and download a session's files.
+  </Card>
+</CardGroup>

@@ -1,0 +1,63 @@
+---
+title: "Models"
+description: "Choose which AI model your agent uses in a session — Auto, Fast, or a specific model — and see what your plan, your organization, and permission profiles allow."
+keywords: ["models", "model picker", "Auto", "Fast", "AI model", "LLM", "premium models", "credits", "agent models"]
+---
+
+Every session runs on one AI model at a time. You pick it in the composer, next to the permission selector. Most of the time **Auto** is the right choice: Script.it picks the model for you.
+
+## Choose a model
+
+Click the model picker in the composer to open the list. Specific models come first; **Auto** and **Fast** sit below a divider.
+
+| Option | What it does |
+|---|---|
+| Specific models | Models from several AI providers, each marked with its provider's icon. Pick one when you want a particular model for this session. |
+| **Auto** | Script.it picks the model for you. This is the default for new sessions. |
+| **Fast** | Faster and cheaper, less capable. Good for simple, quick tasks. |
+
+The list stays open after you pick, with a check next to your choice. The new model applies to the agent's next step.
+
+Script.it updates the list of models as new ones are released, so the picker always shows the current set. You can also ask the agent to switch, for example "switch to Fast for this session."
+
+### What your choice applies to
+
+- **This session.** Each session keeps its own model. Changing it doesn't change other sessions.
+- **Your next new session.** A new session starts with the model you picked last in this browser.
+- **Not Agents in scripts.** An Agent a script runs uses the model in its own definition, and the picker in its session is locked. See [Agents](/scripts/agents).
+
+## What limits the list
+
+Three things can limit which models you can pick. The picker always shows what applies to you.
+
+### Your plan
+
+On the **Free** plan, you can use **Auto** and **Fast**. Other models show a lock icon and the tooltip **Upgrade to Pro**. Clicking a locked model opens **Settings → Billing**.
+
+On **Pro**, and in organizations on a paid plan, every model in the picker is available. See [Billing, credits, and usage](/account/billing).
+
+### Your organization
+
+An organization can limit the models a member or a role may use. When it does, the picker shows only those models, under **Limited by** and the organization's name. See [Roles and permissions](/governance/roles-and-permissions).
+
+### The session's permission profile
+
+A permission profile can list the models allowed under it. When the session's profile does, the picker shows only those models, under **Limited by** and the profile's name.
+
+- If you switch to a profile that doesn't allow your current model, the session uses the first model the profile allows.
+- If a profile allows no model you can use, the picker reads **No model**, and Send is off until you pick another profile or edit the profile's models.
+- If you change the profile while the agent is working, the new profile applies from your next message. Until then, the picker lists the new profile's models under **A pick applies from the next prompt, under** and the profile's name.
+
+An organization's limit and a profile's list both apply: a profile can't allow a model your organization doesn't. See [Permission profiles](/governance/permission-profiles).
+
+## Models and credits
+
+The agent's work uses credits based on what the model costs to run. A larger model uses more credits for the same work; **Fast** uses fewer.
+
+To see what a session has cost so far, open the **Message options** menu on any of the agent's replies. **Credits used so far** shows the total up to that reply, and you can expand it to see the breakdown by model and integration. See [Billing, credits, and usage](/account/billing).
+
+## If a model is refused
+
+If a profile or your organization changed since you opened the picker and no longer allows the model you pick, the picker says which one refused it and asks you to choose a model it allows. Pick another model from the list.
+
+If a model is removed from the picker, sessions that used it move to your default model.

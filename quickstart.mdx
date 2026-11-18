@@ -1,65 +1,68 @@
 ---
 title: "Quickstart"
 description: "Go from zero to a running automation in minutes — sign up, describe your workflow, and watch the AI agent build and run it for you."
-keywords: ["quickstart", "getting started", "first script", "automation", "tutorial"]
+keywords: ["quickstart", "getting started", "first script", "automation", "tutorial", "new session"]
 ---
 
 This guide walks you through creating and running your first automation on Script.it. You'll sign up, describe a workflow, and have the AI agent build and run it — no coding required. The whole process takes about five minutes.
 
 <Steps>
   <Step title="Sign up for Script.it">
-    Go to [app.script.it/login](https://app.script.it/login) and create a free account. No credit card is required. Once you sign in, you'll land in your private workspace where you can start building right away.
+    Go to [app.script.it/login](https://app.script.it/login) and create a free account. No credit card is required.
+
+    The first time you sign in, Script.it sets up your workspace and takes you on a short tour of the app: **Sessions**, where you talk to the agent, **Scripts**, where your saved workflows live, and the integrations that come already connected.
 
     <Tip>
       Your free account comes with included credits so you can build and run scripts straight away.
     </Tip>
   </Step>
 
-  <Step title="Choose a template or start from scratch">
-    You can begin in one of two ways:
+  <Step title="Start a session">
+    The tour ends with a starter prompt in the message box that asks the agent to interview you and suggest an automation. Send it, or replace it with your own idea.
 
-    - **Browse templates** at [script.it/templates](https://script.it/templates) — ready-made workflows for common tasks like reporting, research, data processing, and content creation. Use the public page to compare templates, then choose one from the app template picker.
-    - **Start from scratch** — open a new session and describe what you want to automate.
+    Any other time, click **New session** at the bottom of the sidebar, or press `Cmd+Shift+S` (`Ctrl+Shift+S` on Windows). A new session offers three starting points:
 
-    If this is your first time, starting from a template is a great way to see how scripts are structured before customising them.
+    - **Guide me to automation** — the agent asks about your work and suggests an automation.
+    - **Teach me about Script.it** — the agent explains scripts and sessions and answers your questions.
+    - **Templates for common Scripts** — browse ready-made workflows by role and start from one. You can also compare templates at [script.it/templates](https://script.it/templates).
   </Step>
 
-  <Step title="Chat with the agent to build your script">
-    In the chat panel, type a description of what you want your automation to do. Be as specific as you like — the agent handles the rest.
+  <Step title="Describe what you want to automate">
+    Type what your automation should do in the message box and press `Enter`. Be as specific as you like — the agent handles the rest.
 
     For example:
 
     > "Every morning, fetch the top 5 headlines from Hacker News and send them to my Slack channel."
 
-    The agent will ask any clarifying questions it needs, then generate a script with the appropriate blocks. You'll see the script appear in your workspace as it's being built.
+    The agent asks any questions it needs, then builds the script one block at a time, running each block as it goes. The script opens beside the chat so you can watch it take shape. A chip for it, marked **new**, appears above the message box; click it any time to open the script again.
 
     <Note>
-      You can iterate freely — just keep chatting to refine the script. Ask the agent to add steps, change behaviour, or explain what a block does.
+      Keep chatting to refine the script. Ask the agent to add steps, change behavior, or explain what a block does. Use `@` to point at a specific script, block, or file. See [Agent chat](/sessions/chat).
     </Note>
   </Step>
 
-  <Step title="Review and run the script">
-    Once the agent finishes building, take a moment to review the script. You can see each block listed in order, with a description of what it does.
+  <Step title="Run the script and check the results">
+    Ask the agent to run it — "Run it now" — or click **Run** on the script's page. **Run** opens the run in the message box so you can check the script's inputs, then click the run button to start it in a new session.
 
-    When you're ready, click **Run** to execute the script. The agent runs it in a secure isolated environment and streams the output back to your chat session so you can see what happened.
+    Each block's results show on the script and in the chat as they finish. Files the run writes are in the session's **Session Files**: click the folder button above the message box to browse, preview, and download them. See [Session files](/sessions/files).
 
     If anything doesn't look right, describe the issue in chat and the agent will fix it.
   </Step>
 
   <Step title="Connect integrations if needed">
-    If your script reads from or writes to an external service — Slack, Gmail, Notion, Google Sheets, and so on — you'll need to connect that integration first.
+    Some integrations, such as AI models, web search, and email, come already connected, with no account or API key needed. If your script reads from or writes to one of your own accounts — Slack, Gmail, Notion, Google Sheets, and so on — you connect it once.
 
-    The agent will prompt you if a connection is missing. You can also connect integrations ahead of time from **Settings → Integrations**. If you are working with teammates, you can share a connection or custom integration type with a workspace. See [Connecting integrations](/integrations/connecting) for details.
+    The agent asks you to connect an integration when a script needs one. You can also connect integrations ahead of time from **Settings → Integrations**. If you work with teammates, you can share a connection or custom integration type with a workspace. See [Connecting integrations](/integrations/connecting).
   </Step>
 
   <Step title="Set up a trigger to automate it">
-    Running the script manually is useful for testing, but the real power comes from automation. Triggers let your script run itself:
+    Running a script by hand is useful for testing. Triggers let it run on its own:
 
-    - **A schedule** — run on a recurring cadence using plain-English timing like "every day at 9 AM" or a cron expression.
+    - **A schedule** — run on a recurring cadence, such as "every day at 9 AM", or on a cron expression.
     - **An app event** — run when something happens in a connected tool, like a new email or a new row in a spreadsheet.
-    - **A webhook** — run when an external service, or a form on your own website, sends a request to a unique URL Script.it provides.
+    - **A webhook** — run when an external service, or a form on your own website, sends a request to a URL Script.it provides.
 
-    To set up a trigger, describe it in chat: "Run this every weekday morning at 8 AM." The agent will create the trigger for you.
+    To set one up, describe it in chat: "Run this every weekday morning at 8 AM." The agent creates the trigger for you.
 
     See [Triggers](/triggers/overview) for everything a trigger can watch for.
   </Step>
@@ -73,8 +76,8 @@ Now that your first script is running, here are some things to explore:
   <Card title="Core concepts" icon="book-open" href="/core-concepts">
     Understand workspaces, scripts, sessions, triggers, and credits.
   </Card>
-  <Card title="Browse templates" icon="layout-template" href="https://script.it/templates">
-    Find ready-made workflows to customise for your use case.
+  <Card title="Reach your agent from anywhere" icon="send" href="/channels/overview">
+    Message your agent by email, Slack, Teams, Telegram, or WhatsApp.
   </Card>
   <Card title="Connect more integrations" icon="plug" href="/integrations/overview">
     See all 600+ supported tools and how to connect them.

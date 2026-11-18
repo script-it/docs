@@ -1,0 +1,122 @@
+---
+title: "Managing sessions"
+description: "Find, organize, and clean up your sessions: search and filter, pin, mark done, group, tag, rename, export, import, and delete."
+keywords: ["sessions list", "search sessions", "filter sessions", "pin", "done", "custom groups", "tags", "export session", "import session", "delete session", "sub-sessions"]
+---
+
+The **Sessions** tab in the sidebar lists every session in your active account. Use it to find a past conversation, keep current work at the top, and clear out what's finished.
+
+## How the list is organized
+
+By default, the list is grouped by status:
+
+| Section | What's in it |
+|---|---|
+| **Pinned** | Sessions you pinned to the top |
+| **Opened** | Sessions you started yourself |
+| **Triggered** | Sessions created by triggers |
+| **Done** | Sessions you marked done |
+
+A session that's working, waiting for you, or has a failed trigger run shows that on its row.
+
+To change the layout, open **Session list options** (the **⋯** button at the top of the list):
+
+- **Group by** — **Status**, **Tag**, **Script** (the scripts each session worked on), or **Custom groups**.
+- **Sort by** — **Last activity**, **Created**, or **Name**.
+- **Show all sub-sessions** — expands every session's sub-sessions.
+
+## Search and filter
+
+Click the search button (**Search sessions**) at the top of the list and type to find sessions by name.
+
+To narrow the list further, click the filter button (**Filter sessions by status, tag or script**):
+
+| Filter | Shows sessions that |
+|---|---|
+| **Status** | Are **Waiting** (a script run is waiting, or the session waits for your answer), **Running**, or **Failed** (a trigger run on the session failed) |
+| **Tags** | Carry any of the tags you pick |
+| **Scripts** | Worked on any of the scripts you pick |
+
+Active filters show as chips under the search box. Click **Clear** to remove them all.
+
+<Tip>
+  Search matches session names. To find something said inside a conversation, ask the agent — for example, "Find the session where we fixed the invoice parser." See [Agent chat](/sessions/chat#ask-about-other-sessions).
+</Tip>
+
+## The session menu
+
+Hover a session and click its **⋮** menu:
+
+| Action | What it does |
+|---|---|
+| **Rename** | Edits the session's name in place. |
+| **Pin** / **Unpin** | Keeps the session at the top of the list, under **Pinned**. |
+| **Tags** | Adds or removes tags. |
+| **Move to group** | Moves the session into a custom group, a **New group…**, or out of its group (**Remove from group**). |
+| **Mark read** / **Mark unread** | Marks the session as read or unread. |
+| **Export** | Downloads the session as a `.zip` file. See [Export and import](#export-and-import). |
+| **Done** / **Reopen** | Moves the session to **Done**, or back out of it. |
+| **Done older** | Marks every older session in the same section done. |
+| **Delete** | Deletes the session permanently. |
+
+A **Done** button also appears on each row when you hover it.
+
+You can drag sessions too: onto **Pinned** to pin, onto **Done** to mark done, or onto a custom group to move it there.
+
+## Mark sessions done
+
+Marking a session done moves it out of your way without deleting it. Its conversation and files stay, and you can **Reopen** it any time.
+
+**Done older** clears a backlog in one step. It marks every session older than the one you picked in the same section — **Opened** or **Triggered** — as done. It's available when the list is grouped by **Status**.
+
+## Custom groups
+
+Custom groups are folders for sessions that you name yourself, such as one per project or client.
+
+1. Open **Session list options** and set **Group by** to **Custom groups**.
+2. Create a group with **New group…** in the same menu, or from a session's **Move to group → New group…**.
+3. Drag sessions onto a group, or use **Move to group**.
+
+The **⋯** menu on a group's header has **Rename…**, **Move to top**, and **Delete group**. You can also drag a group's header to reorder groups. Deleting a group keeps its sessions; they move to **No group**.
+
+## Tags
+
+Tags label sessions across groups. Choose **Tags** from a session's menu to open **Edit Tags**, then add or remove tags. Filter by tag, or set **Group by** to **Tag** to see one section per tag.
+
+## Sub-sessions
+
+Some work a session starts gets its own session, listed under the session that started it:
+
+| Kind | What it is |
+|---|---|
+| **Agent** | An Agent that a script in this session runs. See [Agents](/scripts/agents). |
+| **Subagent** | Work the agent handed to a helper agent. |
+| **Script run** | A script run that waited for something and continued in a session of its own. See [Approvals and waits](/scripts/approvals-and-waits). |
+
+A session with sub-sessions shows a count on its row. Hover the count to preview them, or click it to expand them under the session. Click a sub-session to open it.
+
+## Export and import
+
+**Export** in a session's menu downloads the session as a `.zip` file. The file holds the conversation and the session's files.
+
+To bring an exported session back, go to **Settings → Account** and click **Import** next to **Import Session or Script**. The same button imports an exported script (`.zip` or `.skill`). If you can write to more than one workspace, Script.it asks which one to use.
+
+To move workspaces, integrations, and sessions to another account, use **Transfer** in the same section.
+
+## Delete a session
+
+Choose **Delete** from a session's menu and confirm. Deleting a session permanently removes its conversation history and can't be undone.
+
+<Warning>
+  Export a session first if you might need it later. To get it out of the way without losing it, mark it **Done** instead.
+</Warning>
+
+Scripts the session created or changed stay in their workspace. Deleting a session never deletes a script.
+
+## Opening a session while your environment wakes up
+
+Your sessions run in an environment that sleeps when you're away. When you open a session you used recently, its latest messages show right away, read-only, while the environment starts. Once it's ready, the full session loads and you can send again.
+
+## Companion mode
+
+If a coding agent does your work through the [CLI](/developers/cli), you can hide the built-in chat: go to **Settings → Account** and, under **Appearance**, click **Enter companion mode**. In companion mode, a session's menu also has **Copy for agent**, which copies the session's ID so you can hand it to that agent. See [Companion mode](/developers/cli#companion-mode).

@@ -1,129 +1,259 @@
 ---
 title: "Technical reference"
-description: "Technical details for developers who want to inspect Script.it scripts, understand SKILL.md files, work with trigger payloads, or integrate custom systems."
-keywords: ["developers", "technical reference", "SKILL.md", "DSL", "sandbox", "assets", "triggers", "integrations"]
+description: "How a Script.it script is built: the SKILL.md format, block fields, Python blocks, expressions, output summaries, Agents and permission files, runtime files, and version history."
+keywords: ["developers", "technical reference", "SKILL.md", "block", "Python", "@block", "Inputs", "Outputs", "expressions", "link()", "continue_on_error", "env", "output.md", "agent.md", "permission.yaml", "triggers", "versioning"]
 ---
 
-This section is for developers and technical operators. You do not need these details to build automations in Script.it, but they are useful if you want to inspect generated scripts, review changes, debug a run, or connect Script.it to internal systems.
+This page is for developers and technical operators. You don't need any of it to build automations in Script.it — the agent writes and maintains scripts for you. It helps when you want to read a generated script, review a change, debug a run, or work on scripts from your own tools.
+
+<CardGroup cols={2}>
+  <Card title="Command-line interface" icon="terminal" href="/developers/cli">
+    Run scripts, read logs, and move files from your terminal or a coding agent.
+  </Card>
+  <Card title="ChatGPT, Claude, and other AI assistants" icon="plug" href="/channels/ai-assistants">
+    Run your scripts and check runs from another AI assistant.
+  </Card>
+</CardGroup>
 
 ## Script file structure
 
-Each script is stored as a small project with a `SKILL.md` definition, source files, and optional assets.
+Each script is a folder in a workspace, with a `SKILL.md` definition, source files, and optional assets.
 
 ```text
-workspaces/<workspace_id>/my-script/
-├── SKILL.md               # Script definition in Agent Skills format
-├── scripts/               # Source files used by executable blocks
-│   ├── fetch-data.py
-│   └── process.sh
-└── assets/                # Persistent files bundled with the script
+workspaces/<workspace_id>/
+├── requirements.txt           # Extra Python packages for every script in the workspace
+└── weekly-summary/
+    ├── SKILL.md               # Script definition in Agent Skills format
+    ├── scripts/               # Source files for the blocks
+    │   ├── fetch_report.py
+    │   └── post_to_slack.py
+    └── assets/                # Files kept with the script across sessions
+        ├── summary_prompt.md
+        ├── researcher.agent.md
+        └── readonly.permission.yaml
 ```
 
-The AI agent manages these files for you. You can still inspect them, export them, or version-control them if your workflow requires it.
+The agent manages these files for you. You can still read them, export them, or work on them with the [CLI](/developers/cli).
 
 ## Script definition
 
-`SKILL.md` is the canonical Script.it script definition. It follows the Agent Skills format: YAML frontmatter at the top, followed by a Markdown body. Each fenced `yaml` block in the body declares one executable block or one Markdown block.
+`SKILL.md` is the script's definition. It follows the Agent Skills format: YAML frontmatter, then a Markdown body. Each fenced `yaml` block in the body declares one block. Prose between the fences is the script's documentation in the app.
 
 ````markdown
 ---
 name: weekly-summary
-description: Fetch report data and post a summary to Slack
+display-name: Weekly Summary
+description: Fetches this week's report data and posts a summary to Slack
 disable-model-invocation: true
 metadata:
   id: scr_xxxxxxxxxx
 ---
 
-## About this script
-
-Fetches the latest report data, creates a concise summary, and posts it to Slack.
+Fetches the latest report data, writes a short summary, and posts it to Slack.
 
 ```yaml
 id: fetch-report
 name: Fetch report data
-description: Fetches source data and writes `report.json`.
-source_file: ${{ src }}/fetch-report.py
+description: Fetches source data into `report.json`
+source_file: ${{ src }}/fetch_report.py
 output_directory: fetch/
 ```
 
 ```yaml
 id: post-to-slack
 name: Post summary to Slack
-description: Posts the generated summary to Slack.
-source_file: ${{ src }}/post-to-slack.py
+description: Posts the summary to Slack
+source_file: ${{ src }}/post_to_slack.py
 output_directory: slack/
 inputs:
   report_path: ${{ block.fetch-report.output_directory }}/report.json
 ```
 ````
 
-Blocks run in document order. Prose between block fences is preserved as documentation in the script view.
+Blocks run in the order they appear.
 
 ### Frontmatter fields
 
-Common frontmatter fields:
+| Field | Purpose |
+|---|---|
+| `name` | Required slug: lowercase letters, digits, and single hyphens, up to 64 characters. It matches the script's folder name. |
+| `display-name` | The title people see, with spaces and punctuation. |
+| `description` | Required. Used for discovery and display. |
+| `arguments` | Script input names, in display order. |
+| `argument-hint` | Metadata for each script input: `type`, `description`, `required`, `default`, and `ui_hint` (the widget). |
+| `disable-model-invocation` | Keeps the script out of the agent's context unless it's referenced. The agent can still find it by searching. |
+| `always-include` | Puts the whole `SKILL.md` in the agent's context on every prompt. |
+| `metadata.id` | Stable script ID that Script.it assigns. Don't edit it. |
+
+Legacy scripts may still contain `flow.script.yaml`. Importing one converts it to `SKILL.md`.
+
+### Block fields
 
 | Field | Purpose |
 |---|---|
-| `name` | Required slug. It matches the script directory name. |
-| `display-name` | Optional user-facing title with spaces and punctuation. |
-| `description` | Required description used for discovery and display. |
-| `arguments` | Optional ordered list of script input names. |
-| `argument-hint` | Optional metadata for script inputs, including type, default, description, and UI hints. |
-| `disable-model-invocation` | Prevents the agent from auto-invoking the script unless referenced explicitly. |
-| `always-include` | Includes the full `SKILL.md` in the agent's context on every prompt turn. |
-| `metadata.id` | Stable script ID assigned by Script.it. Do not edit it manually. |
+| `id` | Required. Unique, in kebab-case. The app keys the block's run history by it. |
+| `name` | The block's name on its card. |
+| `description` | What the block does. Put file names in backticks. |
+| `source_file` | Required. The block's Python file, as an expression such as `${{ src }}/fetch.py`. |
+| `output_directory` | The block's own output folder in the session's files. Each block needs its own. |
+| `inputs` | Values for the block's inputs. Each can be a literal or an expression. |
+| `env` | Environment variables for the block, such as `DEBUG: "true"`. |
+| `continue_on_error` | `true` lets the script go on when this block fails. Default `false`: a failed block stops the run. |
+| `clean_output` | `false` keeps the output folder between runs. Default: emptied before every run of the block. A block that runs an Agent uses `false`. |
 
-Legacy scripts may still contain `flow.script.yaml`, but new and migrated scripts use `SKILL.md`.
+Don't write `type`, `outputs`, or `integrations` in a fence. Script.it reads them from the block's source.
 
-### Path expressions
+## Writing a block in Python
 
-Use `${{ ... }}` expressions in block fields and inputs:
+A block is a Python file with a function decorated with `@block()`. Its typed `Inputs` class is what people see and edit on the block's card. Returning a dict succeeds, and each key becomes an output later blocks can read. Raising an exception fails the block.
+
+```python
+import json
+from pydantic import Field
+from scriptit.blocks import block, BlockContext, Inputs, Outputs
+
+
+class FetchInputs(Inputs):
+    shop_url: str = Field(title="Shop API", description="Where to fetch the orders from")
+    limit: int = Field(default=100, description="The most orders to fetch")
+
+
+class FetchOutputs(Outputs):
+    orders: str = Field(default="orders.json", description="This week's orders",
+                        json_schema_extra={"output_type": "json"})
+
+
+@block(inputs=FetchInputs, outputs=FetchOutputs)
+def fetch_orders(ctx: BlockContext, shop_url: str, limit: int):
+    ctx.log(f"Fetching orders from {shop_url}")
+    orders = ctx.http(shop_url, "shop", params={"limit": limit}).json()
+    with open("orders.json", "w") as f:  # the working directory is the output folder
+        json.dump(orders, f, indent=2)
+    ctx.log_artifact("orders.json", name="This week's orders")
+    return {"count": len(orders)}
+
+
+if __name__ == "__main__":
+    fetch_orders.main()
+```
+
+- **Inputs.** `title` is the field's label and `description` its help text. `json_schema_extra={"ui_hint": {...}}` picks a widget, such as `dropdown`, `slider`, `checkbox`, `file-reference`, `folder-picker`, or `date-picker`. Defaults belong on the `Inputs` fields.
+- **Outputs.** An optional `Outputs` class declares the files the block writes, so the app can show them.
+- **Integrations.** `ctx.http(url, "<integration>", ...)` calls an API through a connected integration and takes the usual `requests` arguments. Your code never handles credentials.
+- **Logging.** `ctx.log(message)` adds a line to the block's timeline. `ctx.log_artifact(path, name=...)` names a file on it.
+- **Folders.** The working directory is the block's output folder (`ctx.data_dir`). `ctx.script_data_dir` is the script's `assets/`.
+
+### Python packages
+
+Common packages come pre-installed, including `pandas`, `numpy`, `httpx`, `openpyxl`, `python-docx`, `pypdf`, `beautifulsoup4`, `jinja2`, and `pyyaml`. For anything else, add a line to the workspace's `requirements.txt`. Script.it installs it for everyone who uses the workspace, including triggered runs.
+
+## Expressions
+
+Use `${{ ... }}` in a block's `source_file`, `output_directory`, `inputs`, and `env`, and in script input defaults.
 
 | Expression | Resolves to |
 |---|---|
-| `${{ src }}` | The script's `scripts/` source directory. |
-| `${{ script.assets }}` | The script's persistent `assets/` directory. |
-| `${{ session.data_files }}` | The current session's runtime data directory. |
-| `${{ builtins }}` | Built-in Script.it blocks. |
-| `${{ inputs.name }}` | A script-level input value. |
-| `${{ block.fetch.outputs.file }}` | A value returned by an earlier block. |
-| `${{ block.fetch.output_directory }}` | The output directory for an earlier block. |
+| `${{ inputs.<name> }}` | A script input |
+| `${{ block.<id>.outputs.<key> }}` | A value an earlier block returned. Nested keys and list indexes follow with dots, such as `outputs.users.0.id`. |
+| `${{ block.<id>.output_directory }}` | An earlier block's output folder |
+| `${{ src }}` | The script's `scripts/` folder |
+| `${{ script.path }}` | The script's folder |
+| `${{ script.assets }}` | The script's `assets/` folder, kept across sessions |
+| `${{ session.data_files }}` | The session's files (`data_files/`), for this session only |
+| `${{ session.id }}`, `${{ session.path }}` | The session's ID and folder |
+| `${{ session.link }}` | The app link to this session |
+| `${{ env.<NAME> }}` | An environment variable (read-only) |
+| `${{ builtins }}` | Script.it's built-in blocks |
+| `${{ scripts }}` | The current workspace's root, which holds its script folders |
+| `${{ workspaces }}` | The folder that holds your mounted workspaces |
 
-Use script assets for persistent files. Use session data files and block output directories for run-specific output.
+A value that is only an expression keeps its type, so `${{ inputs.replicas }}` stays a number. An expression inside a longer string makes a string.
+
+```yaml
+inputs:
+  count: ${{ inputs.replicas }}                                   # stays a number
+  message: "Deploying ${{ inputs.service }} to ${{ inputs.region }}"   # a string
+  source: ${{ workspaces }}/<workspace-id>/other-script/scripts/shared.py
+```
+
+### Functions
+
+| Kind | Functions |
+|---|---|
+| Text | `lower`, `upper`, `trim`, `replace`, `split`, `join`, `format`, `contains`, `startsWith`, `endsWith` |
+| Conversion | `toString`, `toInt`, `toFloat`, `toBool`, `toJson`, `fromJson` |
+| Lists | `length`, `first`, `last`, `keys`, `values`, `slice`, `concat`, `unique`, `sort`, `reverse` |
+| Math | `min`, `max`, `abs`, `floor`, `ceil`, `round` |
+| Dates | `now`, `timestamp`, `formatDate`, `parseDate` |
+| App links | `link(path)` |
+
+`link(path)` returns the app link that opens a script on its page, or a file or folder in the file view, beside the session. Use it when a script sends someone a link to something it made, instead of building app URLs by hand:
+
+```yaml
+inputs:
+  report_link: ${{ link(format("{0}/report.md", session.data_files)) }}
+```
+
+`link()` takes two options: `layout` — `"split"` (the default, beside the session) or `"full"` — and `session` — `"current"` (the default) or `"new"`.
+
+To write a literal `${{ text }}`, escape it as `$${{ text }}`.
+
+## What people see of a block's results
+
+- **Summary.** A file named `output.md` or `output.html` in a block's output folder is shown as that block's summary on its card.
+- **HTML.** `.html` files render in a sandboxed frame with JavaScript on. Browser storage and cookies aren't available inside it.
+- **JSON.** `.json` files open in an editor that can show tables, record pages, and boards.
+
+## Agents and permission files
+
+A script can run an **Agent**: an AI agent with its own instructions, model, time limit, and permission, invoked from a Python block. An Agent is defined in an `.agent.md` file, usually in the script's `assets/`:
+
+```markdown
+---
+timeout_seconds: 300
+permission:
+  filesystem:
+    read: ["@workspaces"]
+---
+Research the question in the prompt and write the report it asks for.
+```
+
+The Markdown body is the Agent's system prompt. The file name, without `.agent.md`, is its name. See [Agents](/scripts/agents).
+
+A **permission file** (`*.permission.yaml`) holds a permission in its own file, so several Agents can share one. The same format defines the permission profiles you pick for a session in the composer. The app shows a permission file as a form, with a toggle to see the YAML. See [Permission profiles](/governance/permission-profiles).
 
 ## Runtime files
 
 Script files and session files are separate:
 
-- Script files live with the script and are shared across sessions.
+- Script files live in the script's folder and are shared with everyone who can see the workspace.
 - Script assets live in `assets/` and persist across sessions.
-- Session files live in the session's `data_files/` directory and contain outputs from a specific run.
-- Runtime artifacts, logs, and block outputs belong to the session that produced them.
+- Session files live in the session's `data_files/`: block outputs (each in its block's `output_directory`), attachments, and trigger payloads.
+- Run records and logs belong to the session that ran them.
 
-Each session runs in an isolated sandbox environment. That keeps concurrent sessions from reading or overwriting each other's runtime files.
+Each session has its own folder, so concurrent sessions never read or overwrite each other's run files. See [Session files](/sessions/files).
 
 ## Agent context fields
 
-Script.it uses `SKILL.md` frontmatter to control **Agent context**:
+The script header's **Agent Context** setting maps to the frontmatter:
 
-| App mode | Frontmatter update | Effect |
+| Setting | Frontmatter | Effect |
 |---|---|---|
-| Not Included | `disable-model-invocation: true` and `always-include: null` | Script not included in context, but searchable by the agent. |
-| Description Included | `disable-model-invocation: false` and `always-include: null` | Agent will read the script if description is relevant. |
-| Script Included | `always-include: true` and `disable-model-invocation: null` | The full script content is included in the agent context. |
+| **Not Included** | `disable-model-invocation: true` | The script isn't in the agent's context, but the agent can find it by searching. |
+| **Description Included** | Neither field set | The agent sees the description and reads the script when it fits the task. |
+| **Script Included** | `always-include: true` | The whole script is in the agent's context on every prompt. |
 
 See [Agent context](/scripts/agent-context) for user-facing guidance.
 
 ## Trigger payloads
 
-When a trigger starts a script, Script.it creates a new session and passes event data into that session.
+When a trigger runs a script, Script.it runs it in a session and passes the event data into that session.
 
-- Webhook triggers receive an HTTP POST body.
-- Integration event triggers receive event data from the connected tool.
+- Webhook triggers receive the HTTP request body.
+- App event triggers receive event data from the connected tool.
 - Schedule triggers receive schedule metadata such as the scheduled time.
 
-For scripts that need to read trigger data directly, the payload is available as a session file, commonly `data_files/trigger_event.json`.
+A script that needs the trigger data reads it from the session's files at `${{ session.data_files }}/trigger_event.json`.
 
 ## Schedules and cron
 
@@ -132,8 +262,6 @@ Schedule triggers can use presets or a custom five-field cron expression:
 ```text
 minute  hour  day-of-month  month  day-of-week
 ```
-
-Examples:
 
 | Cron expression | Meaning |
 |---|---|
@@ -145,15 +273,17 @@ Cron expressions use the timezone configured on the trigger.
 
 ## Integrations and credentials
 
-Integrations use OAuth, API keys, or custom headers depending on the connected service. Script.it stores integration credentials in encrypted form and does not write them into script source files or chat history.
+Integrations use OAuth, API keys, or custom headers depending on the service. Script.it stores integration credentials encrypted and never writes them into script source files or chat history. Blocks call integrations through `ctx.http`, so code never sees the credentials.
 
 Custom integrations use a two-layer model:
 
 - The integration type defines the API shape: base URL, auth mode, OAuth URLs, docs URL, logo, and schema.
 - The connection stores one user's credentials for that type.
 
-Connections and custom integration types can be shared with workspaces. Connection sharing delegates use of the owner's upstream account. Custom type sharing exposes the API definition so each member can connect their own credentials.
+Connections and custom integration types can be shared with workspaces. Sharing a connection lets others use the owner's account. Sharing a custom type shares the API definition, so each member connects their own credentials.
 
 ## Versioning
 
-Script changes are tracked as version snapshots. If the agent changes a script and you want to go back, ask it to revert the last change or restore a previous version.
+Scripts in a workspace are version-controlled. Script.it saves a version at the end of every agent turn that changed a script.
+
+To go back, click the history button beside **Run** in the script header, pick a version, click **Restore version**, and confirm with **Restore this version**. Restoring brings back `SKILL.md` and the script's source files as they were in that version, and removes source files added since. Assets, logs, and run outputs stay as they are. The restore is saved as a new version, so nothing in the history is lost. You can also ask the agent to undo a change. See [Outlines, comments, and history](/scripts/outline-and-history#history).
