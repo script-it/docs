@@ -178,7 +178,7 @@ A webhook trigger's settings are flat keys. In the app they're the trigger's set
 
 ## Managing webhook triggers
 
-- **Turn it off and on** from the script. The URL is kept, so turning it back on resumes with the same setup.
+- **Turn it off and on** with the **Trigger** switch on its card in the script. The URL is kept, so turning it back on resumes with the same setup.
 - **Delete it** to permanently invalidate the URL. Anything still calling it stops working, and a new trigger gets a different URL.
 
 ## Setting it up in the app
@@ -186,14 +186,17 @@ A webhook trigger's settings are flat keys. In the app they're the trigger's set
 ### Creating a webhook trigger
 
 <Steps>
-  <Step title="Open the Triggers tab">
-    Open the script you want to run, click the **Triggers** tab, then click **Add Trigger**.
+  <Step title="Start a new trigger">
+    In the sidebar, click the arrow next to **New session** (**More create options**) and choose **New Trigger**.
   </Step>
   <Step title="Choose Webhook">
-    Give it a name that says where the calls will come from — "Stripe payment received", "Deploy finished" — and choose **Webhook**.
+    Give it a **Name** that says where the calls will come from — "Stripe payment received", "Deploy finished" — and under **Trigger**, choose **Webhook**.
+  </Step>
+  <Step title="Choose the script">
+    Under **Action**, choose **Run Script** and pick the script the webhook should run.
   </Step>
   <Step title="Create the trigger">
-    Click **Create Trigger**. Script.it shows you the **webhook URL** and the **signing secret**, with example code for sending a signed request. Copy them — you'll need them to set up the sending service.
+    Click **Create Trigger**. Script.it shows you the **Webhook URL** and the **Signing Secret**, with example code for sending a signed request. Copy them — you'll need them to set up the sending service.
   </Step>
   <Step title="Point your service at the URL">
     Paste the URL into whatever should call it. Most services have a **Send test event** button — use it, and check that the run shows up on your trigger. For a provider's own signing, set **Provider** and **Signing secret** in the trigger's settings first.

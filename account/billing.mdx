@@ -1,34 +1,42 @@
 ---
 title: "Billing, credits, and usage"
-description: "Understand Personal and organization credits, Pro packages, on-demand usage, member caps, and recurring integration costs."
-keywords: ["billing", "credits", "plans", "Pro", "organization billing", "Stripe", "on-demand", "spend limit", "member cap", "Script.it"]
+description: "Understand what uses credits, the Free and Pro plans, on-demand credits, coupons, member caps, credit requests, and the usage report."
+keywords: ["billing", "credits", "plans", "Free", "Pro", "organization billing", "Stripe", "on-demand", "spend limit", "member cap", "credit request", "coupon", "usage report", "Script.it"]
 ---
 
-Script.it uses credits for AI model calls, script execution, and selected built-in integrations. Usage is charged to your active account: Personal or an organization.
+Script.it runs on credits. Everything you do is charged to your active account: Personal or an organization. This page covers what uses credits, how plans and packages work, and how to see where credits went.
 
-## How credits work
+## What uses credits
 
-Credits are consumed each time you interact with the AI agent, run a script, or use a credit-priced integration. Three things drive credit usage:
+Credits pay for the work Script.it does for you:
 
-- **AI model calls** — every message to the agent, every script build, and every automated run that involves the AI uses credits proportional to the amount of text processed.
-- **Execution time** — running script blocks consumes credits based on how long the execution takes.
-- **Gateway integrations** — calls made through the **LLM Gateway**, **Social Media Gateway**, and **Web Search Gateway** consume credits when used.
+- **AI models** — the model your agent uses in chat, and agents inside scripts. You're charged what the model costs for the text it processes, so a long conversation or a big document uses more than a quick question.
+- **Compute** — the time your environment is up while the agent works and scripts run. It's billed at a steep discount, so it's usually a small part of the total.
+- **Built-in gateways** — calls a script makes through the **LLM Gateway**, **Web Search Gateway**, and **Social Media Gateway**. Each call costs what the underlying service charges for it.
+- **Some integrations** — some integrations charge per call, some charge a recurring fee for the connection, and many are free. See [Recurring integration credits](#recurring-integration-credits).
+- **WhatsApp messages your agent sends** — when WhatsApp charges for a message sent from your agent's WhatsApp number, that cost comes out of your credits. See [WhatsApp](/channels/whatsapp).
 
-Personal accounts start with free included credits. A newly created organization must choose a credit plan before it can run billable actions.
+Triggers use credits the same way: the script runs they start are charged like any other run. See [Managing triggers](/triggers/managing#credits).
 
-## Pro packages
+## Plans
 
-Pro packages are recurring plan sizes. Each package includes a monthly credit allowance, premium models, and the option to buy additional on-demand credits.
+| | Free | Pro |
+|---|---|---|
+| Credits | 50 every 30 days for a Personal account, counted from when you signed up. A new organization on Free starts with none. | 300, 750, 1,500, 3,000, 6,000, or 10,000 a month — you choose the package |
+| Models | **Auto** and **Fast** only | Every model, including premium models |
+| More credits | — | On-demand credits beyond your package, up to a limit you set |
 
-See the [Script.it pricing page](https://script.it/pricing/) for current package sizes and monthly or yearly pricing.
+See [Models](/sessions/models) for what **Auto** and **Fast** do, and the [Script.it pricing page](https://script.it/pricing/) for current prices.
 
-<Note>
-  Premium models require Pro. Credit-priced integrations use the active account's available credits.
-</Note>
+A new organization needs credits before anyone can use it. Choose a Pro package for it, or apply a coupon.
+
+### Monthly or yearly
+
+Pro is billed monthly or yearly. Yearly billing saves 10%. Your credits still renew every month on a yearly plan — you get the package's monthly credits each month, not a year's worth at once.
 
 ## Upgrade or change a package
 
-Owners and billing admins can manage an organization's billing. Personal billing is available only to the account owner.
+Owners and billing admins manage an organization's billing — in a custom role, that's the **Manage billing** permission. In Personal, you manage your own.
 
 <Steps>
   <Step title="Choose the account">
@@ -38,14 +46,23 @@ Owners and billing admins can manage an organization's billing. Personal billing
     Open **Settings → Billing**.
   </Step>
   <Step title="Choose a package and interval">
-    Select a monthly credit package, then choose monthly or yearly billing.
+    Choose **Monthly** or **Yearly**, then use the slider to pick how many credits a month you want.
   </Step>
-  <Step title="Complete checkout">
-    Continue to Stripe and confirm the subscription.
+  <Step title="Confirm">
+    On Free, click **Upgrade to Pro** and complete checkout in Stripe. On Pro, click **Change package**.
   </Step>
 </Steps>
 
-Moving to a larger package on the same billing interval applies immediately and may be prorated. Downgrades, and any change of billing interval, take effect at renewal. You can manage payment methods, invoices, and cancellation through the Stripe customer portal.
+What happens next depends on the change:
+
+- **A larger package on the same interval** takes effect now, and you get its full monthly credits this month.
+  - **Monthly:** you're charged the price difference for the current month, counted from the start of the month.
+  - **Yearly:** you're charged the yearly price difference for the rest of your annual term, counted from the start of the current month.
+- **A smaller package, or a switch between monthly and yearly**, is scheduled for renewal — the end of the month on a monthly plan, or the end of the annual term on a yearly one. Billing shows the scheduled change until then.
+
+The app shows exactly what you'll be charged before you confirm. If a payment needs more from you, **Complete payment** takes you to Stripe; your current plan stays as it is until the payment goes through.
+
+Use **Manage Billing** to update your payment method in Stripe's customer portal, and **View Invoices** for invoices and receipts. **Cancel Plan** cancels at the end of the billing period; you keep Pro until then.
 
 <Tip>
   Script.it does not store your payment card details. Stripe handles checkout and payment methods.
@@ -53,40 +70,80 @@ Moving to a larger package on the same billing interval applies immediately and 
 
 ## Additional on-demand credits
 
-Personal owners, organization owners, and billing admins can allow usage beyond the plan at **$0.12 per credit**. Set a monthly USD limit under **Settings → Billing → Additional on-demand credits**.
+On Pro, you can keep working after your package's credits run out. On-demand credits cost **$0.12 per credit**, and you set a monthly limit in dollars.
 
-The limit is additional to the recurring package. When the active account uses its included credits and reaches its on-demand limit, Script.it pauses new billable actions until credits become available or the next credit window begins.
+1. Open **Settings → Billing → Additional on-demand credits**.
+2. Turn the limit on and enter the most you want to spend each month.
+3. Click **Set Limit**.
+
+On-demand credits are used only after your monthly package credits and any granted credits. When those and your limit are used up, Script.it pauses new work until your credits renew or someone raises the limit. Turn the limit off and there are no additional usage charges.
+
+## Coupons
+
+A coupon adds credits to your account. When you open a coupon link, Script.it shows an **Apply coupon** dialog with the code — if you're signed out, sign in or create an account first. Click **Apply** to add the credits to your active account. **Not now** dismisses it.
 
 ## Recurring integration credits
 
-LinkedIn, WhatsApp, Telegram, and Instagram connections currently cost **50 credits per connected account each month**. The connection dialog shows the recurring cost before you connect.
+Linking a personal [LinkedIn, WhatsApp, Telegram, or Instagram account](/integrations/messaging-accounts) as an integration costs **50 credits per linked account each month**. The connection dialog shows the cost before you connect, and you need enough credits for the first month to connect.
 
-Disconnecting does not refund the current month's charge. If a renewal cannot be paid, Script.it warns you before unlinking the connection.
+This fee is only for linking your own messaging accounts. Connecting Script.it's own channels — like **Agent WhatsApp** and **Agent Telegram**, which you use to reach your agent — has no monthly fee. See [WhatsApp](/channels/whatsapp) and [Telegram](/channels/telegram).
+
+Disconnecting does not refund the current month's charge. If a month's renewal can't be paid, Script.it emails a warning and keeps the account linked for three days. If credits still aren't available after that, the account is unlinked.
 
 ## View usage
 
-Open **Settings → Usage** to see the active account's credit status and daily activity.
+Open **Settings → Usage** to see the active account's credits and how they're being used.
 
-- In Personal, you see your own usage and remaining credits.
-- Organization owners and admins can expand **Organization usage** to review usage by member, script, and active trigger.
-- Organization members and billing admins see only their own usage. If an administrator set a member cap, they also see that cap and its reset date.
+The top of the tab shows how many credits are left and when they reset. In an organization, members without the **See billing** or **See per-member usage** permission see their own monthly cap, if they have one, rather than the whole organization's balance.
+
+### Usage report
+
+Below that, the usage report breaks spending down:
+
+- **Organization usage** — for owners, admins, and anyone with the **See per-member usage** permission. It shows usage by member, script, integration, and workspace, plus every trigger in the organization. Pick a member from **All members** to see just their usage, and their spend against their cap.
+- **Your usage** — for everyone else, and in Personal. It shows your own usage by script, integration, and workspace, plus your triggers.
+
+Choose a range — **7D**, **30D**, **90D**, **This month**, **Last month**, or your own dates, up to a year — and show the chart by **Day**, **Week**, or **Month**. The trigger list shows which triggers are on and which are paused, and why.
+
+For a deeper look, ask your agent: *"Analyze our credit usage this month and find the hotspots."*
 
 Billing and usage are separate: **Billing** manages the plan and payments, while **Usage** explains where credits were spent.
 
+### Usage warnings
+
+When the account's credits, or your own cap, reach **75%** and then **90%**, a warning appears above the message box. You can dismiss each warning. At 100%, it tells you what's blocking you and what to do next.
+
 ## Member usage caps
 
-Organization owners and admins can set an optional monthly cap for a member from **Settings → Organization**. The cap limits how many credits that member can spend from the organization's shared pool.
+Owners and admins — anyone with the **Manage members** permission — can give a member a monthly cap from **Settings → Organization**. The cap limits how many credits that member can spend from the organization's shared credits each month. Select several members to give them all the same cap with **Set usage cap**.
 
-Clearing the cap returns the member to shared-pool-only access. A cap does not reserve credits for the member and does not change credits already used.
+Clearing the cap returns the member to the shared credits with no personal limit. A cap does not reserve credits for the member and does not change credits already used.
+
+## Credit requests
+
+In an organization, a member who is running out of credits can ask for more instead of tracking someone down.
+
+1. The member clicks **Request credits** — from the usage warning once they reach 75%, or from the message box when they're blocked.
+2. They pick who to ask. Script.it emails that person, and everyone else who can help sees the request in the app.
+3. The person they asked answers it:
+   - If the member hit **their own cap**, someone with **Manage members** raises it in the **Monthly usage cap** dialog and clicks **Approve**.
+   - If **the organization** is out of credits, someone with **Manage billing** clicks **Add credits**, which opens Billing to upgrade the package or raise the on-demand limit.
+   - Either can click **Decline**.
+
+A member has one open request at a time per organization. A request closes on its own once the member has credits again — for example, when a new month starts.
 
 ## What happens when credits run out
 
 When the active account has no usable credits:
 
-- New agent messages and billable script runs are blocked.
-- Triggers cannot run until the account can spend again.
-- A credit-priced integration cannot be connected if the account cannot cover its recurring charge.
+- New agent messages and script runs are blocked.
+- Triggers pause. They resume on their own once the account has credits again.
+- A credit-priced integration can't be connected.
 
-The notice links eligible owners to Billing. Organization members without billing permission see guidance to contact an owner or billing admin. You can switch back to Personal if that account still has credits.
+What you see depends on the account:
 
-See [Organizations and active accounts](/account/organizations) to understand what changes when you switch accounts.
+- **Personal on Free:** **Upgrade to Pro** to keep going, or wait for your credits to renew.
+- **Personal on Pro:** **Increase Limit** to raise your on-demand limit.
+- **Organization:** people with **Manage billing** are sent to Billing. Everyone else sees **Request credits**, and the organization's workspaces stay read-only until credits are available.
+
+You can switch back to Personal if that account still has credits. See [Organizations and active accounts](/account/organizations) to understand what changes when you switch accounts.

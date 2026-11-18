@@ -1,7 +1,7 @@
 ---
 title: "Triggers"
 description: "Triggers let your scripts run on their own — on a schedule, when something happens in a connected app, or when a webhook URL receives a request."
-keywords: ["triggers", "automation", "schedule", "webhook", "app events", "Script.it"]
+keywords: ["triggers", "automation", "schedule", "webhook", "app events", "session grouping", "Script.it"]
 ---
 
 Triggers let your scripts run automatically — no need to open the app and start them by hand. You attach a trigger to a script, tell it what to watch for, and Script.it runs the script every time that thing happens.
@@ -11,7 +11,7 @@ Triggers let your scripts run automatically — no need to open the app and star
 There's one kind of trigger, with a menu of things it can watch for:
 
 - **A schedule** — every weekday at 8 AM, every six hours, the first of the month. See [Schedule triggers](/triggers/schedule).
-- **An app event** — a new Notion database item, a GitHub pull request, a Slack mention, a Calendly booking, a new row in a Google Sheet. Over 80 events across 40+ apps. See [App events](/triggers/app-events).
+- **An app event** — a new Notion database item, a GitHub pull request, a Slack message, a Calendly booking, a new row in a Google Sheet, a new LinkedIn message. Nearly 100 events across more than 40 apps. See [App events](/triggers/app-events).
 - **A webhook** — your own URL that any service can send a request to, or that a form on your own website can post to. See [Webhook triggers](/triggers/webhook).
 - **Anything else** — if nothing in the menu fits, the agent can build a custom trigger for you. See [Custom triggers](/triggers/custom).
 
@@ -27,7 +27,13 @@ The easiest way is to ask the agent in chat:
 
 The agent picks the right trigger, fills in the settings, and switches it on.
 
-You can also create one yourself: open the script, click the **Triggers** tab, and click **Add Trigger**. A searchable list shows every event available for the apps you've connected.
+You can also create one yourself:
+
+1. In the sidebar, click the arrow next to **New session** (**More create options**) and choose **New Trigger**.
+2. Give it a **Name**.
+3. Under **Trigger**, choose **Schedule**, **Webhook**, or **On Event**. **On Event** opens a searchable list of every app event.
+4. Under **Action**, choose **Run Script**, pick the script, and fill in any inputs it needs.
+5. Click **Create Trigger**.
 
 Either way, the trigger starts working as soon as it's created.
 
@@ -37,13 +43,27 @@ A trigger runs a script. You choose which script, and optionally the input value
 
 When the trigger fires, the details of what happened are handed to your script, so it can act on them — the contents of the Slack message, the fields on the new Notion item, the body of the webhook request.
 
-Runs show up in your session history alongside sessions you started yourself. Related events can be grouped into a single ongoing session instead of opening a new one every time, so a busy trigger doesn't flood your history.
+Each run opens a session, and runs show up in your session history alongside sessions you started yourself.
+
+## Advanced options
+
+Every trigger has an **Advanced** section in its settings. You rarely need it, but it controls how runs share sessions and how long the trigger lives.
+
+| Option | What it does |
+|---|---|
+| **Session grouping** | Whether events reuse the same session. Leave it empty for a new session every time — the right choice for almost every trigger. A fixed word, like `support`, sends every event to one ongoing session. A `{field}` from the event gives one session per value: `{thread_ts}` means one session per Slack thread, and `{channel_id}:{user_id}` one per person per channel. |
+| **Interrupt active turn** | If the session is in the middle of a turn when the trigger fires, stop that turn and handle the new event right away. Without it, the event waits for the turn to finish. Mostly useful together with session grouping — for example, an agent that should always answer the newest message. |
+| **Auto-delete after runs** | Delete the trigger automatically after it has run successfully this many times. Enter `1` for a one-time trigger. Empty means keep it forever. Failed runs don't count. |
+
+<Tip>
+  Only use session grouping when events really belong to one conversation, like a Slack thread or an email thread. Grouping unrelated events into one session makes each run slower and harder to follow.
+</Tip>
 
 ## Triggers are part of the script
 
 A trigger isn't a separate thing hanging off your script — it lives inside it, like a block does:
 
-- It appears **in the script**, with its own settings, an on/off switch, and its recent run history.
+- It appears **in the script** as a card, with its settings, a **Trigger** on/off switch, and its **Recent runs**.
 - It's saved with the script's files.
 - So it **travels with the script**. Export the script, import it into another workspace, or share it with a teammate, and its triggers come along.
 
@@ -51,18 +71,24 @@ There's no separate place to keep in sync: change the trigger and the script upd
 
 ## Triggers in a shared workspace
 
-Scripts are shared with your workspace, but triggers run **for a person**. So when a teammate opens a shared script, its triggers appear switched **off**, with an **Enable** button.
+Scripts are shared with your workspace, but triggers run **for a person**. So when a teammate opens a shared script, its triggers appear switched **off**.
 
-Turning one on creates their own copy. It runs with their connected accounts and their credits, and it has its own settings and run history.
+Turning one on with its **Trigger** switch creates their own copy. It runs with their connected accounts and their credits, and it has its own settings and run history. Readers (**Can view**) can turn on their own copy too. It doesn't change the script or affect anyone else's copy.
 
 <Note>
   This is deliberate. A Gmail trigger your teammate enables watches *their* inbox, never yours — and nobody is signed up for someone else's automation just by opening a shared script.
 </Note>
 
-Any member of the workspace can enable a script's triggers. Doing so doesn't change the script or affect anyone else's copy.
+A guest from outside the organization runs their copy from their own Personal account, and pays for it from there.
+
+### Who can create and turn on triggers
+
+In an organization, creating, changing, and turning on triggers needs the **Create and edit triggers** permission. Every role has it by default.
+
+An admin can turn it off for a member or a role. That pauses the member's triggers in that organization, including their agent channels (WhatsApp, Telegram, Teams, Slack, and email). When the permission is turned back on, their triggers resume on their own. See [Roles and permissions](/governance/roles-and-permissions).
 
 <Warning>
-  Deleting a trigger is a shared change: it removes the trigger from the script and removes **every member's** copy of it. Turning a trigger off only affects your own. See [Managing triggers](/triggers/managing).
+  Deleting a trigger is a shared change for anyone who can edit the script: it removes the trigger from the script and removes **every member's** copy of it. Turning a trigger off only affects your own. See [Managing triggers](/triggers/managing).
 </Warning>
 
 ## Next steps
@@ -78,6 +104,6 @@ Any member of the workspace can enable a script's triggers. Doing so doesn't cha
     Give your script a URL any service — or a form on your website — can call.
   </Card>
   <Card title="Managing triggers" icon="activity" href="/triggers/managing">
-    Run history, failures, pausing, and limits.
+    Run history, failures, safeguards, and limits.
   </Card>
 </CardGroup>

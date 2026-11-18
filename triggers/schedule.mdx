@@ -9,11 +9,11 @@ A schedule trigger fires your script on a recurring basis without any manual act
 ## Setting up a schedule trigger
 
 <Steps>
-  <Step title="Open the Triggers tab">
-    Open the script you want to schedule. Click the **Triggers** tab, then click **Add Trigger**.
+  <Step title="Start a new trigger">
+    In the sidebar, click the arrow next to **New session** (**More create options**) and choose **New Trigger**.
   </Step>
   <Step title="Name the trigger and choose Schedule">
-    Enter a name for the trigger — something descriptive like "Daily sales report". In the **Trigger Type** dropdown, select **Schedule**.
+    Enter a **Name** for the trigger — something descriptive like "Daily sales report". Under **Trigger**, choose **Schedule**.
   </Step>
   <Step title="Choose a frequency">
     Use the **How often?** dropdown to pick a preset or write a custom cron expression:
@@ -27,17 +27,17 @@ A schedule trigger fires your script on a recurring basis without any manual act
     - **Every month on…** — runs once a month on the day (1–28) and time you select
     - **Advanced (custom cron)** — enter a cron expression directly
 
-    The UI shows a plain-English summary of your schedule as you build it (for example, "At 9:00 AM, every day").
+    With **Advanced (custom cron)**, a **Runs:** line describes your expression in plain English (for example, "At 9:00 AM, every day").
 
     <Note>
       The minimum allowed interval is every 30 minutes. Schedules that would fire more frequently than that are not accepted.
     </Note>
   </Step>
   <Step title="Set the timezone">
-    Use the **Timezone** picker to choose the timezone your schedule should be interpreted in. By default, this is set to your browser's timezone. If you share a trigger with a team member in another timezone, make sure the timezone is set explicitly so the schedule fires when you expect.
+    Use the **Timezone** picker to choose the timezone your schedule runs in. It starts as your browser's timezone. If teammates in other timezones will use the script, set the timezone explicitly so the schedule fires when you expect.
   </Step>
   <Step title="Choose the script">
-    Pick the script to run, and fill in any inputs it needs.
+    Under **Action**, choose **Run Script**, pick the script, and fill in any inputs it needs.
   </Step>
   <Step title="Create the trigger">
     Click **Create Trigger**. The trigger activates immediately and will fire at its next scheduled time.
@@ -56,15 +56,17 @@ When you select **Advanced (custom cron)**, you write a standard five-field cron
 minute  hour  day-of-month  month  day-of-week
 ```
 
-Each field accepts a specific set of values:
+Each field accepts:
 
-| Field | Allowed values | Special characters |
-|---|---|---|
-| Minute | 0–59 | `*` `,` `/` |
-| Hour | 0–23 | `*` `,` `/` |
-| Day of month | 1–31 | `*` `,` `/` |
-| Month | 1–12 | `*` `,` `/` |
-| Day of week | 0–6 (0 = Sunday) | `*` `,` `/` `-` |
+| Field | Allowed values |
+|---|---|
+| Minute | 0–59 |
+| Hour | 0–23 |
+| Day of month | 1–31 |
+| Month | 1–12 |
+| Day of week | 0–6 (0 = Sunday) |
+
+In any field, `*` means every value, `,` separates a list (`1,15`), `-` gives a range (`1-5`), and `/` gives a step (`*/6`).
 
 ### Common examples
 
@@ -78,17 +80,19 @@ Each field accepts a specific set of values:
 | `*/30 * * * *` | Every 30 minutes |
 
 <Note>
-  All cron expressions are evaluated in the timezone you selected. `0 9 * * 1` means Monday at 9:00 AM in your chosen timezone, not UTC — unless you explicitly choose UTC as the timezone.
+  All cron expressions are evaluated in the timezone you selected. `0 9 * * 1` means Monday at 9:00 AM in your chosen timezone, not UTC — unless you explicitly choose UTC as the timezone. Daylight saving time is handled for you, so 9:00 AM stays 9:00 AM all year. A schedule saved without a timezone runs in UTC.
 </Note>
 
 ## What happens when a schedule fires
 
 When a scheduled trigger fires, Script.it runs your script. The run appears in your session history like any other, and if the script produces output files they're available there.
 
+Runs can start up to a minute after the exact time. This spreads out the many schedules set for the top of the hour.
+
 If a scheduled run fails — because the script has an error, say — the trigger stays active and tries again at the next scheduled time. If it fails five times in a row, Script.it pauses it and lets you know. See [Managing triggers](/triggers/managing).
 
 ## Turning a schedule off
 
-Use the switch on the trigger in your script to stop it firing without losing its settings, and the same switch to start it again.
+Use the **Trigger** switch on the trigger's card in your script to stop it firing without losing its settings, and the same switch to start it again.
 
-Deleting a trigger removes it for everyone in the workspace who had enabled it — see [Managing triggers](/triggers/managing) before you delete a schedule on a shared script.
+Deleting a trigger from a script you can edit removes it for everyone in the workspace who had enabled it — see [Managing triggers](/triggers/managing) before you delete a schedule on a shared script.
