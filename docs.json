@@ -55,15 +55,39 @@
         "pages": [
           "scripts/overview",
           "scripts/blocks",
+          "scripts/inputs-and-running",
+          "scripts/outline-and-history",
           "scripts/assets",
           "scripts/agent-context",
+          "scripts/agents",
+          "scripts/approvals-and-waits",
+          "scripts/publishing",
           "scripts/templates"
         ]
       },
       {
         "group": "Sessions",
         "icon": "message-square",
-        "pages": ["sessions/overview", "sessions/chat", "sessions/files"]
+        "pages": [
+          "sessions/overview",
+          "sessions/chat",
+          "sessions/models",
+          "sessions/managing",
+          "sessions/files"
+        ]
+      },
+      {
+        "group": "Reach your agent",
+        "icon": "send",
+        "pages": [
+          "channels/overview",
+          "channels/email",
+          "channels/slack",
+          "channels/microsoft-teams",
+          "channels/telegram",
+          "channels/whatsapp",
+          "channels/ai-assistants"
+        ]
       },
       {
         "group": "Triggers",
@@ -83,13 +107,23 @@
         "pages": [
           "integrations/overview",
           "integrations/connecting",
-          "integrations/custom-integrations"
+          "integrations/custom-integrations",
+          "integrations/mcp-servers",
+          "integrations/messaging-accounts"
         ]
       },
       {
-        "group": "For developers",
-        "icon": "terminal",
-        "pages": ["developers/overview"]
+        "group": "Admin and governance",
+        "icon": "shield-check",
+        "pages": [
+          "governance/overview",
+          "governance/roles-and-permissions",
+          "governance/integration-policies",
+          "governance/permission-profiles",
+          "governance/admin-oversight",
+          "governance/sso",
+          "account/security"
+        ]
       },
       {
         "group": "Account",
@@ -97,9 +131,13 @@
         "pages": [
           "account/organizations",
           "account/workspace",
-          "account/billing",
-          "account/security"
+          "account/billing"
         ]
+      },
+      {
+        "group": "For developers",
+        "icon": "terminal",
+        "pages": ["developers/overview", "developers/cli"]
       }
     ]
   },

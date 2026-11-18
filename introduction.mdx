@@ -8,14 +8,18 @@ Script.it is an AI-powered automation platform that lets you describe what you w
 
 You can build privately or collaborate in shared workspaces. Workspaces hold scripts, members, triggers, and shared integrations, so a team can run the same automations and reuse the same connected tools.
 
+You don't have to be in the app to use your agent. You can message it by email, Slack, Microsoft Teams, Telegram, or WhatsApp, or call it from ChatGPT, Claude, and other AI assistants. See [Ways to reach your agent](/channels/overview).
+
 ## How it works
 
 Every automation on Script.it follows the same pattern:
 
 1. **Describe** — you type what you want to automate in the chat interface.
 2. **The agent builds** — Script.it's AI agent creates a script with the right blocks and supporting code.
-3. **Runs safely** — each run uses its own isolated environment, so your automation runs without affecting anything else.
+3. **Runs in a sandbox** — scripts run in a cloud environment that belongs to your account, kept separate from other accounts.
 4. **Connects your tools** — scripts can read from and write to 600\+ integrations including Slack, Gmail, Notion, HubSpot, and more.
+
+Organizations decide who can do what. Admins set roles and permissions, limit what each integration may do, and choose how much a session's agent is allowed to change. See [How access works](/governance/overview).
 
 <Note>
   No credit card is required to get started. Sign up at [app.script.it/login](https://app.script.it/login) and start automating with included free credits.
@@ -36,6 +40,7 @@ Here's a quick overview of the building blocks you'll encounter:
 - **Sessions** — chat conversations with the AI agent, each with its own isolated run files.
 - **Triggers** — rules that run a script automatically: on a schedule, when something happens in a connected app, or when a webhook URL is called.
 - **Integrations** — connected third-party services that your scripts can interact with.
+- **Permissions** — organization roles, integration policies, and permission profiles that decide what people and agents can do.
 - **Credits** — the usage-based currency that tracks AI and execution costs.
 
 See [Core concepts](/core-concepts) for a full explanation of each.
@@ -57,5 +62,13 @@ See [Core concepts](/core-concepts) for a full explanation of each.
 
   <Card title="Triggers" icon="zap" href="/triggers/overview">
     Run scripts on a schedule, via webhook, or from integration events.
+  </Card>
+
+  <Card title="Reach your agent" icon="send" href="/channels/overview">
+    Message your agent from email, Slack, Teams, Telegram, WhatsApp, or another AI assistant.
+  </Card>
+
+  <Card title="Admin and governance" icon="shield-check" href="/governance/overview">
+    Set roles, integration policies, permission profiles, and single sign-on.
   </Card>
 </CardGroup>
