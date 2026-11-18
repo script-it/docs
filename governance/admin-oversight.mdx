@@ -1,0 +1,106 @@
+---
+title: "Overseeing your organization"
+description: "See every workspace and integration your organization owns, act on members' connections, control what each member can do, and hand the organization over."
+keywords: ["admin", "oversight", "governance", "workspaces", "members' integrations", "take ownership", "transfer ownership", "move workspace", "remove member", "Script.it"]
+---
+
+Owners and Admins can see and act on what the organization owns, including workspaces they never joined and integrations other members connected. Each action below needs a specific permission. Owners and Admins hold all of them by default, and you can give them to a [custom role](/governance/roles-and-permissions#create-a-custom-role).
+
+| You want to | Where | Permission |
+|---|---|---|
+| See every shared workspace | **Settings → Sharing → Workspaces** | **See every shared workspace** |
+| Look inside a workspace, or join it | **Settings → Sharing → Workspaces** | **Join any shared workspace** |
+| See and act on members' integrations | **Settings → Organization → Members' integrations** | **Manage members' integrations** |
+| See usage by person | **Settings → Usage** | **See per-member usage** |
+| Change what a member can do | **Settings → Organization**, member list | **Manage members** |
+| Move a workspace to another account | **Settings → Sharing → Workspaces** | **Move workspaces between accounts** |
+| Hand over the organization | **Settings → Organization**, organization menu | Owner only |
+
+## See every workspace
+
+Open **Settings → Sharing → Workspaces** with the organization active. Below your own workspaces, **Other workspaces in *organization*** lists every shared workspace the organization owns that you haven't joined, with its member count.
+
+A listed workspace gives you no access to it. To go further:
+
+- **Look without joining.** Select the workspace's name. You see its members and its scripts, read-only, marked "You're viewing without joining."
+- **Join.** Select **Join**. You become an Editor of the workspace, like any member invited with **Can edit**.
+
+Private workspaces never appear here.
+
+## Manage members' integrations
+
+Open **Settings → Organization** and expand **Members' integrations**. It lists what everyone in the organization has built and connected. Use **Show integrations of** to narrow it to one person.
+
+### Custom integrations
+
+Each custom integration type shows who made it, how many people connected it, and how far it's shared: **Shared with everyone**, in some workspaces, or **Not shared**. Its **⋮** menu offers:
+
+- **Take ownership.** You become the type's owner and can edit, share, or delete it. If the person who made it is still a member, they keep using it and stay connected, but can no longer change it. You can also share it with everyone in the organization in the same step.
+- **Delete.** Deletes the type for everyone and disconnects everyone who connected it. Scripts that call it stop working until someone sets it up again.
+
+### Connected integrations
+
+Connections are grouped by the member who connected them. Select **Disconnect** to remove that member's saved credentials. Scripts and triggers that use the connection stop working until the member connects it again.
+
+You can disconnect a member's connection, but you can't take it over. The credentials belong to the member's own account at the provider.
+
+## Control what a member can do
+
+From the member list in **Settings → Organization**, open a member's permissions to turn individual permissions on or off. The ones admins most often change:
+
+| Turn off | To |
+|---|---|
+| **Create workspaces** | Keep someone working only in the workspaces you share with them. |
+| **Have a private workspace** | Remove their Private workspace. Its contents are kept and return if you turn it back on. |
+| **Create and edit triggers** | Stop their automations. Their triggers in the organization pause, including their agent channels, until you turn it back on. |
+| **Connect and manage integrations** | Stop them connecting new accounts. Connections shared with them keep working. |
+| **Share integrations** | Stop them sharing their credentials into workspaces. |
+| **Share workspaces with everyone** | Stop them opening workspaces to the whole organization. |
+| **Publish scripts publicly** | Keep scripts off public links. |
+
+You can also require things of a member: **Must use two-factor authentication**, or **Hide the Scripts tab** for people who should only chat. And you can limit their [Integration calls](/governance/integration-policies#integration-calls-for-members-and-roles) and Agent models.
+
+To change it for everyone with a role, change the role instead. See [Roles and permissions](/governance/roles-and-permissions).
+
+## Remove a member
+
+In the member list in **Settings → Organization**, select the remove button (the trash icon) on the member's row. You can remove only members who hold nothing you lack, and never the Owner.
+
+Before you confirm, Script.it shows what the removal stops. When you remove a member:
+
+- They lose access to the organization immediately.
+- Their triggers in the organization are turned off.
+- Their premium connections in the organization, such as LinkedIn or WhatsApp accounts, are disconnected, and their monthly charges stop.
+- They lose the access they were given directly to the organization's workspaces, connections, and custom integration types.
+- Their environment in the organization stops.
+
+## Move a workspace to another account
+
+Moving a workspace takes it out of the organization that owns it, into another account you belong to.
+
+1. Open **Settings → Sharing → Workspaces**.
+2. Open the workspace's **⋮** menu and select **Move workspace**.
+3. Choose the **Destination account**, confirm, and select **Move workspace**.
+
+Scripts, triggers, and the sessions those triggers created move together. Other sessions stay in the source account.
+
+To move a workspace you need all of these:
+
+- You're an Editor of the workspace yourself, not only through the organization.
+- You hold **Move workspaces between accounts** in the account that owns it.
+- You're a member of the destination, with **Create workspaces** there.
+- Everyone who owns a trigger in the workspace already has access to the destination.
+
+A Private workspace can't be moved.
+
+## Transfer ownership
+
+An organization has exactly one Owner. Only the Owner can hand it over.
+
+1. In **Settings → Organization**, open the organization's **⋮** menu and select **Transfer ownership**.
+2. Choose the new owner from the organization's members.
+3. Select **Transfer ownership**.
+
+The new owner gets every owner permission, including billing. You become an Admin. Deleting the organization and transferring it again move to the new owner.
+
+Invite another member first if you're the only one.

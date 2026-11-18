@@ -1,0 +1,191 @@
+---
+title: "Roles and permissions"
+description: "Every organization permission, what it allows, and its default for each role — plus how to change a role, create your own, and give one member an exception."
+keywords: ["roles", "permissions", "owner", "admin", "billing admin", "member", "guest", "custom roles", "two-factor", "Integration calls", "Agent models", "Script.it"]
+---
+
+A role is a named set of permissions. Everyone in an organization holds exactly one role, and the role decides what they can do there.
+
+Your organization starts with four built-in roles. Admins can change what each one holds, create roles of their own, and give a single member exceptions. This page is the reference for all of it.
+
+## Built-in roles
+
+| Role | Who it's for |
+|---|---|
+| Owner | The one person who owns the organization. Holds every permission, and nobody can change that. |
+| Admin | People who run the organization: members, workspaces, integrations, domains, and settings. |
+| Billing admin | People who manage the plan, payment details, and spending, without managing members. |
+| Member | Everyone else. Creates workspaces, connects and shares integrations, runs and publishes scripts. |
+
+Two more kinds of people appear in the member list:
+
+- **Custom roles** your organization defines. Each one starts from Admin, Billing admin, or Member. See [Create a custom role](#create-a-custom-role).
+- **Guests**, people outside the organization who were invited into one of its workspaces. See [Guests](#guests).
+
+## Permissions reference
+
+These are the permissions you see in **Settings → Organization**, grouped as the editor groups them. The columns show what each built-in role holds before anyone changes it.
+
+✓ means the role holds it by default. — means it doesn't.
+
+### Integrations
+
+| Permission | What it allows | Owner | Admin | Billing admin | Member |
+|---|---|---|---|---|---|
+| **Share integrations** | Share a connection's live credentials into a workspace, so everyone there can act as that account. | ✓ | ✓ | ✓ | ✓ |
+| **Share custom integration types** | Publish a custom integration definition to a workspace, or to everyone in the organization. Recipients connect their own credentials. | ✓ | ✓ | — | — |
+| **Manage integration editors** | Give or take away edit rights on a connection or a custom integration type. | ✓ | ✓ | — | — |
+| **Connect and manage integrations** | Connect accounts, change their credentials and labels, and edit custom integration types and their permission policies. | ✓ | ✓ | ✓ | ✓ |
+| **Manage integration permissions** | Set or clear the Integration calls of members and roles, your own included. | ✓ | ✓ | — | — |
+| **Manage members' integrations** | See every member's connections and custom integration types, disconnect or delete them, and take ownership of a custom type. | ✓ | ✓ | — | — |
+
+### Workspaces
+
+| Permission | What it allows | Owner | Admin | Billing admin | Member |
+|---|---|---|---|---|---|
+| **Have a private workspace** | Keep a Private workspace only you can open. | ✓ | ✓ | ✓ | ✓ |
+| **Create workspaces** | Start a shared workspace the organization owns and pays for. | ✓ | ✓ | ✓ | ✓ |
+| **Share workspaces with everyone** | Open one of your workspaces to every member of the organization, including people who join later. | ✓ | ✓ | ✓ | ✓ |
+| **Invite people outside the organization** | Invite someone who isn't a member into an organization workspace, as a guest. | ✓ | ✓ | — | — |
+| **See every shared workspace** | List every shared workspace the organization owns, joined or not. A listed workspace gives no access to it. | ✓ | ✓ | — | — |
+| **Join any shared workspace** | Join any shared workspace the organization owns as an Editor, without an invitation, or look at its members and scripts without joining. | ✓ | ✓ | — | — |
+| **Move workspaces between accounts** | Move a workspace out of the organization that owns it. | ✓ | ✓ | — | — |
+
+### Scripts and sandbox
+
+| Permission | What it allows | Owner | Admin | Billing admin | Member |
+|---|---|---|---|---|---|
+| **Publish scripts publicly** | Put a script on a public link that needs no sign-in. See [Publishing](/scripts/publishing). | ✓ | ✓ | ✓ | ✓ |
+| **Use third-party agents** | Drive your sandbox from a third-party agent — the `scriptit` CLI, or an AI assistant such as ChatGPT or Claude. See [CLI](/developers/cli) and [AI assistants](/channels/ai-assistants). | ✓ | ✓ | ✓ | ✓ |
+| **Create and edit triggers** | Create, change, and turn on triggers. | ✓ | ✓ | ✓ | ✓ |
+| **Hide the Scripts tab** | A requirement, not a permission. See [Requirements](#requirements). | — | — | — | — |
+
+### Usage and billing
+
+| Permission | What it allows | Owner | Admin | Billing admin | Member |
+|---|---|---|---|---|---|
+| **See per-member usage** | Read the usage report broken down by person, including who connected which integrations. | ✓ | ✓ | — | — |
+| **See billing** | Open the plan and spending screens. | ✓ | — | ✓ | — |
+| **Manage billing** | Change the plan, payment details, and spending controls, and download invoices. | ✓ | — | ✓ | — |
+
+See [Billing, credits, and plans](/account/billing) for usage caps and credit requests.
+
+### People and organization
+
+| Permission | What it allows | Owner | Admin | Billing admin | Member |
+|---|---|---|---|---|---|
+| **Manage members** | Invite people, change roles, set individual permissions and usage caps, and remove members. | ✓ | ✓ | — | — |
+| **Manage verified domains** | Add or remove the domains whose addresses join automatically, and set up [single sign-on](/governance/sso). | ✓ | ✓ | — | — |
+| **Edit organization settings** | Rename the organization, change its icon, and edit organization-wide settings. | ✓ | ✓ | — | — |
+| **Manage self-hosted sandboxes** | Add, remove, and configure the machine that runs members' sandboxes on your own hardware. Applies only when self-hosted sandboxes are turned on for your organization. | ✓ | ✓ | — | — |
+| **Delete the organization** | Owner only. | ✓ | — | — | — |
+| **Transfer ownership** | Owner only. | ✓ | — | — | — |
+| **Belong to the organization** | Sign in to the organization and reach the workspaces shared with you. This is membership itself. To take it away, remove the member. | ✓ | ✓ | ✓ | ✓ |
+| **Must use two-factor authentication** | A requirement, not a permission. See [Requirements](#requirements). | — | — | — | — |
+
+### Integration calls and Agent models
+
+Two more settings sit in the same editor, under **Integrations**. They aren't checkboxes.
+
+- **Integration calls** limit which integration requests a member or a role may make, in the app and in everything they run. Holders of **Manage integration permissions** set them. See [Integration calls](/governance/integration-policies#integration-calls-for-members-and-roles).
+- **Agent models** limit which models a member's sessions, Agents, and subagents may run. Holders of **Manage members** set them. Model calls that scripts make follow Integration calls instead. See [Models](/sessions/models).
+
+## What turning a permission off does
+
+Most permissions simply hide or refuse an action. A few have effects you should know about:
+
+| Turned off | Effect |
+|---|---|
+| **Create and edit triggers** | The member's triggers in this organization pause, including their agent channels (WhatsApp, Telegram, Teams, Slack, and email). They resume when it's turned back on. The member can still delete triggers. |
+| **Have a private workspace** | The member's Private workspace is hidden, and they keep only the workspaces shared with them. Its contents are kept, and it returns when the permission is turned back on. |
+| **Connect and manage integrations** | The member can't connect accounts or change connections and custom types. They can still disconnect, and connections shared with them keep working. |
+| **Create workspaces** | **New workspace** no longer appears for them. |
+
+## The rules behind every change
+
+One rule decides who can change what: **you can only hand out what you hold, and you can only manage people who hold nothing you lack.**
+
+- **You can grant only permissions you hold.** An Admin without **Manage billing** can't give it to anyone.
+- **You can manage only members no stronger than you.** An Admin can change or remove another Admin who holds the same permissions. An Admin can't manage a Billing admin, because a Billing admin holds **Manage billing**. Nobody but the Owner can act on the Owner.
+- **You can give only roles whose permissions you hold.** With the built-in roles, the Owner can give any role, an Admin can give Admin and Member, and a Billing admin or Member can give none.
+- **Nobody changes their own permissions.** You can open your own to see what you hold. The one exception: a holder of **Manage integration permissions** can change their own Integration calls.
+- **Ownership is never handed out in pieces.** **Delete the organization** and **Transfer ownership** belong to the Owner alone. Ownership moves only by [transferring it](/governance/admin-oversight#transfer-ownership).
+- **The Member role never holds Manage integration permissions.** Neither does any role built on Member. Start a role from Admin or Billing admin to grant it.
+
+## Requirements
+
+Two entries in the editor bind a member instead of empowering them:
+
+- **Must use two-factor authentication.** The member signs in with an authenticator app. Until they set one up, they're asked to before they can continue, whichever account they have open. See [Two-factor authentication](/account/security#two-factor-authentication).
+- **Hide the Scripts tab.** The member's sidebar lists sessions only. They keep their scripts and the ones shared with them, and the agent still uses them.
+
+No role has a requirement by default. Anyone with **Manage members** can set one on a role or on a member they can manage. Requirements never apply to the Owner.
+
+## Change what a role holds
+
+Changing a role changes it for everyone who holds it, right away.
+
+<Steps>
+  <Step title="Open the roles">
+    Go to **Settings → Organization** and select **Roles**. You need **Manage members**.
+  </Step>
+  <Step title="Pick a role">
+    The list shows the built-in roles and your organization's own, with how many people hold each. You see only roles you can give.
+  </Step>
+  <Step title="Change its permissions">
+    Check or clear permissions. A badge marks each one that differs from the role's standard set: **Added**, **Removed**, or **Required**. A lock means you can't change that entry; hover it to see why.
+  </Step>
+  <Step title="Save">
+    Select **Save role**. Everyone with the role gets the change at once. Exceptions set on individual members stay theirs.
+  </Step>
+</Steps>
+
+A dot next to a built-in role means your organization changed it from the standard set. To undo your changes, select **Use the *role* standard set**.
+
+## Create a custom role
+
+<Steps>
+  <Step title="Start a new role">
+    In **Settings → Organization → Roles**, select **New role**.
+  </Step>
+  <Step title="Name it and pick a starting point">
+    Enter a name, then choose what it starts from under **Start from**: Member, Admin, or Billing admin. It starts with what that role holds in your organization today.
+  </Step>
+  <Step title="Create it, then set its permissions">
+    Select **Create role**. Change its permissions, then select **Save role**.
+  </Step>
+  <Step title="Give it to people">
+    Choose it in the role picker of the member list, in an invitation, or in a [single sign-on role rule](/governance/sso#roles-from-groups).
+  </Step>
+</Steps>
+
+You can rename a custom role at any time. You can delete it only once nobody holds it, no pending invitation offers it, and no single sign-on rule gives it.
+
+## Give one member an exception
+
+Sometimes one person needs more or less than their role.
+
+1. In **Settings → Organization**, find the member in the member list.
+2. Select the permissions button next to their name.
+3. Check or clear permissions, or change their Integration calls or Agent models.
+4. Select **Save permissions**.
+
+The member's row now shows **Custom**. Their exceptions stay when their role is edited, and follow them until their role changes or they leave. Changing their role clears their exceptions, except requirements such as two-factor authentication. To clear them yourself, select **Reset to the *role* role**.
+
+## Assign roles
+
+- **When you invite someone,** pick their role in the invitation. See [Invite members](/account/organizations#invite-members).
+- **For an existing member,** change the role in the member list. You can select several members to change them together.
+- **From your identity provider,** let [single sign-on role rules](/governance/sso#roles-from-groups) set roles from groups.
+
+In every case you can give only a role whose permissions you hold.
+
+## Guests
+
+A guest is someone outside your organization who was invited into one of its workspaces. Guests appear in the member list as **Guest**, with the workspaces they were let into.
+
+- Guests hold no organization permissions.
+- Their work runs on their own account and their own credits, so you can't set a usage cap for them.
+- They reach the workspace they were invited to, and the connections shared into it.
+
+Inviting a guest needs **Invite people outside the organization**, which only Owners and Admins hold by default. Inviting someone who is already a member, or whose email is on one of your [verified domains](/account/organizations#configure-domain-auto-join), doesn't count as inviting a guest. To take a guest's access away, remove them from the workspace.

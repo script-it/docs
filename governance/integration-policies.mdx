@@ -1,0 +1,135 @@
+---
+title: "Integration policies"
+description: "Limit the requests anyone can make through a connection or a custom integration type, and limit the calls a member or a role can make across every integration."
+keywords: ["integration policy", "permission policy", "Integration calls", "read only", "restrict connection", "shared connection", "governance", "Script.it"]
+---
+
+A shared connection lets everyone in a workspace act as that account. An integration policy narrows what they can do with it. For example, you can share your HubSpot connection so teammates can read contacts, while nobody can change or delete a record through it.
+
+Three kinds of policy limit integration calls:
+
+| Policy | Set on | Limits | Who sets it |
+|---|---|---|---|
+| **Connection policy** | One connection | Every request through that connection, whoever makes it | The connection's editors |
+| **Type policy** | A custom integration type | Every request through every connection of that type | The type's editors |
+| **Integration calls** | A member or a role | Every request that person makes, through any connection | Holders of **Manage integration permissions** |
+
+A call must pass all three, and the session's [permission profile](/governance/permission-profiles) too. See [How an integration call is checked](/governance/overview#how-an-integration-call-is-checked).
+
+## Limit a connection or a custom type
+
+A policy on a connection applies to everyone who calls through it: you, your teammates, and Script.it itself, such as a Slack bot posting status updates. Built-in integrations take a connection policy only. A custom integration type can also carry a type policy that limits all of its connections.
+
+<Steps>
+  <Step title="Open the integration">
+    Go to **Settings → Integrations**. Open the **⋮** menu on the connection and select **Edit**.
+  </Step>
+  <Step title="Find the policy">
+    The modal shows **Permission policy for this connection**. For a connection of a custom type, it also shows **Permission policy for all *type* connections**. Each one is marked **Restricted** or **Unrestricted**.
+  </Step>
+  <Step title="Choose what's allowed">
+    Set the integration's row to **Deny**, **Only listed**, or **All**. With **Only listed**, select **Add rule**, describe it, and add the requests it allows.
+  </Step>
+  <Step title="Save">
+    Select **Save Changes**. Script.it checks the policy before it stores it, and every later call meets it at once.
+  </Step>
+</Steps>
+
+You need edit rights on the connection or the type, and **Connect and manage integrations** in your organization. A connection limited by a policy shows **Restricted** in your integrations list. Hover it to see which policy limits it.
+
+### What the row states mean
+
+| State | Effect |
+|---|---|
+| **All** | No limit. For a connection or a type, this stores no policy. |
+| **Only listed** | Only requests that match one of the rules are allowed. |
+| **Deny** | No requests, whatever other rules allow. |
+
+Each rule has a plain-English description and one or more requests. A request is **Any endpoint** or a URL, with the methods it allows, such as `GET`.
+
+### Describe a change instead
+
+Under the policy, type what you want into **Describe a change to this permission policy…** and stage it. Script.it closes Settings and puts the request in the chat composer, naming the policy, so the agent makes the change with you. Nothing is sent until you send it.
+
+### Edit the YAML
+
+The policy has a **YAML** view for conditions the rows don't show, such as limits on a request's query or body. Here is a policy that lets a HubSpot connection read and nothing else:
+
+```yaml
+allow:
+  - resource: {integration: hubspot}
+    description: Reads HubSpot records and changes nothing.
+    actions:
+      call:
+        - endpoint: https://api.hubapi.com/**
+          methods: [GET]
+```
+
+## The policy format
+
+A policy is a list of `allow` rules and, optionally, `deny` rules. A request is allowed when an allow rule matches it and no deny rule does.
+
+- Every rule names its integration under `resource`. A connection's or a type's policy names only the integration it's stored on.
+- Every allow rule needs a `description` in plain English, written for the people the policy affects.
+- `call: "*"` allows every request. Otherwise `call` is a list of request entries, and a request is allowed when every condition of one entry matches.
+- A deny rule refuses every call to its integration.
+
+| Field | Matches |
+|---|---|
+| `endpoint` | A URL without its query. `*` matches one path segment. A trailing `/**` matches every path below. |
+| `methods` | `"*"` or a list, such as `[GET, POST]`. `GET` doesn't include `HEAD`. |
+| `query` | Optional. A JSON Schema over the query parameters, each mapped to its list of values. |
+| `body` | Optional. `{empty: true}` for no body, `{json: <JSON Schema>}` for a JSON body, or `{graphql: {operations: [query]}}` for GraphQL operation types. |
+
+Two rules about meaning:
+
+- **No policy limits nothing. An empty policy allows nothing.**
+- **Allow rules add up.** Two allow rules whose scopes overlap without being equal are refused, because the narrower one would limit nothing.
+
+<Warning>
+  A `body` condition only checks the body. Many APIs read the same parameter from the query too, so pin it in both places.
+</Warning>
+
+You can also set policies from the [`scriptit` CLI](/developers/cli). The agent's own permissions skill has worked examples for common integrations, so you can ask it to write one with you.
+
+## Integration calls for members and roles
+
+Integration calls are your organization's limit on a person, not on a connection. They follow the member across every integration they reach, including connections teammates shared with them. Each connection's own policy still applies on top.
+
+Set them in **Settings → Organization**:
+
+- **For a role:** select **Roles**, pick the role, and find **Integration calls** under **Integrations**.
+- **For one member:** open the member's permissions from the member list.
+
+Each integration you add is a row, with the same **Deny**, **Only listed**, and **All** states. A last row, **All other integrations**, covers every integration you didn't list. Setting nothing means no limit.
+
+```yaml
+allow:
+  - resource: {integration: {except: [payroll, hubspot]}}
+    description: Makes any request through every integration except payroll and HubSpot.
+    actions: {call: "*"}
+  - resource: {integration: hubspot}
+    description: Reads HubSpot records.
+    actions:
+      call:
+        - endpoint: https://api.hubapi.com/**
+          methods: [GET]
+```
+
+This policy blocks the payroll integration, lets HubSpot read only, and leaves every other integration unlimited.
+
+- Integration calls bind the member and everything they run: sessions, Agents, scripts, triggers, and the CLI.
+- Changing a role's Integration calls reaches everyone with the role right away. A member who was given their own keeps them.
+- Only holders of **Manage integration permissions** change them. Owners and Admins hold it by default, and the Member role never can.
+- They never apply to the Owner, a Personal account, or a guest.
+
+<Warning>
+  Script.it's own model and web search reach your scripts as integrations. A policy that leaves them out stops scripts' model calls or web search. The editor warns you when that happens. The agent's own model isn't affected.
+</Warning>
+
+## When a policy refuses a call
+
+The call fails, and the error names what refused it: the session's profile, the type's policy, the connection's policy, or your organization. Retrying the same call fails the same way.
+
+- If a connection's or a type's policy refused it, ask one of its editors to change the policy.
+- If your organization refused it, an Owner or Admin changes your Integration calls. Switching your session's profile doesn't lift it.
