@@ -1,0 +1,69 @@
+---
+title: "Message your agent on Telegram"
+description: "Connect Agent Telegram to chat with your agent through Script.it's Telegram bot, from your phone or desktop."
+keywords: ["Telegram", "Agent Telegram", "Telegram bot", "chat with your agent", "/new", "Script.it"]
+---
+
+Connect **Agent Telegram** and chat with your agent through Script.it's Telegram bot. It's the same agent as in the app, reachable from your phone.
+
+## Connect Agent Telegram
+
+<Steps>
+  <Step title="Start the connection">
+    In a session, click **Telegram** in the **Chat with me from an app you already use** banner. Or go to **Settings → Integrations**, find **Agent Telegram**, and click **Connect**.
+  </Step>
+  <Step title="Sign in with Telegram">
+    Telegram's sign-in opens in a new tab. Sign in with the Telegram account you want to use, and allow the bot to message you.
+  </Step>
+  <Step title="Check Telegram">
+    The bot sends you a message: "Connected to Script.it as …". Reply there to talk to your agent. If no message arrives, open the bot in Telegram and press **Start**.
+  </Step>
+</Steps>
+
+The connection shows your Telegram account on its row in **Settings → Integrations**. To open the chat later, click **Telegram** in the channels banner; it shows the bot's username and a link that opens the chat.
+
+Connecting creates a trigger, **Telegram DMs**, that delivers your messages to your agent.
+
+## Conversations
+
+Your chat with the bot is one conversation at a time, kept as one session in the app.
+
+- Send `/new` to start a fresh conversation. The agent starts with none of the earlier history. `/start` does the same.
+- Reply to one of the agent's messages to quote it. The quote stays in the current conversation.
+
+When the bot receives your message, it reacts with an emoji. Then the agent replies in the chat.
+
+## What you can send
+
+- Text, and photos or files with or without a caption. The agent can open files up to 20 MB.
+- Stickers, locations, edits and messages in group chats are ignored. The bot works only in your private chat with it.
+
+The agent writes in Telegram's formatting, splits long replies into several messages, and can send you files. Images arrive as photos, `.ogg` audio as voice notes, and other files as documents.
+
+## Answering a waiting run
+
+When a run pauses for your answer, message the bot in your own words. The agent resumes the run with your answer. See [Approvals and waits](/scripts/approvals-and-waits).
+
+## One Telegram account, one Script.it account
+
+Your Telegram account talks to one Script.it account. If you connect the same Telegram account from another Script.it account or organization, the newer connection takes over. The earlier one expires, and its owner gets an email saying so.
+
+The connection belongs to the account you connected it in, Personal or an organization. Conversations run there and use that account's credits. See [Ways to reach your agent](/channels/overview#which-account-credits-and-permissions-apply).
+
+## Messaging the bot before you have an account
+
+If you message the bot from a Telegram account that isn't connected, it replies with a link. Signing up or signing in through that link connects your chat in one tap. The bot sends this link whenever you send `/start`, and at most once a day for other messages.
+
+## Pause or disconnect
+
+- **To pause Telegram**, turn off the **Telegram DMs** trigger. See [Manage triggers](/triggers/managing). While it's off, sending `/start` gets a reply saying the trigger is off.
+- **To disconnect**, go to **Settings → Integrations**, open the **Agent Telegram** row's **⋮** menu, and select **Disconnect**.
+
+## Cost
+
+Agent Telegram has no connection fee. The agent's work is billed like any session.
+
+## Not to be confused with
+
+- **Linking your own Telegram account** lets scripts read and send Telegram messages *as you*, and costs credits each month. See [Messaging accounts](/integrations/messaging-accounts).
+- **A Telegram bot of your own that answers other people** is an External Agent. See [Agents](/scripts/agents).

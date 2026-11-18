@@ -1,0 +1,77 @@
+---
+title: "Message your agent on WhatsApp"
+description: "Connect Agent WhatsApp by sending a one-time code from your phone, then chat with your agent through Script.it's WhatsApp number."
+keywords: ["WhatsApp", "Agent WhatsApp", "WhatsApp number", "link code", "chat with your agent", "/new", "24-hour window", "Script.it"]
+---
+
+Connect **Agent WhatsApp** and chat with your agent through Script.it's WhatsApp number. You link your phone by sending it a one-time code, so there's no number to type.
+
+<Note>
+  Agent WhatsApp works only where Script.it's WhatsApp business number has been set up for your installation. If it hasn't, connecting **Agent WhatsApp** shows an error instead of a link code.
+</Note>
+
+## Connect Agent WhatsApp
+
+<Steps>
+  <Step title="Start the connection">
+    In a session, click **WhatsApp** in the **Chat with me from an app you already use** banner. Or go to **Settings → Integrations**, find **Agent WhatsApp**, and click **Connect**.
+  </Step>
+  <Step title="Send the code from your phone">
+    Script.it shows a **Link code** — `LINK-` followed by six characters — and a **Send it here** link. Open the link on your phone: it starts a WhatsApp chat with Script.it's number with the code already typed. Send it from the phone you want to use.
+  </Step>
+  <Step title="Start chatting">
+    The number replies: "Connected to Script.it as …". Message it any time to talk to your agent. The dialog in Script.it closes on its own once you're connected.
+  </Step>
+</Steps>
+
+The code is valid for one hour. If it expires, Script.it offers **Try again** for a new one, and a late code sent from WhatsApp gets a reply saying it expired. Connecting again always replaces the previous code.
+
+The connection shows your number on its row in **Settings → Integrations**. Connecting creates a trigger, **WhatsApp message received**, that delivers your messages to your agent.
+
+## Conversations
+
+Your chat with the number is one conversation at a time, kept as one session in the app.
+
+- Send `/new` to start a fresh conversation with none of the earlier history.
+- Reply to one of the agent's messages to quote it. The quote stays in the current conversation.
+
+When your message arrives, it's marked as read, and the agent reacts with an emoji. Then it replies in the chat.
+
+## The 24-hour window
+
+WhatsApp lets a business send free-form messages only within 24 hours of your last message. This matters when the agent messages you first, for example when a run finishes.
+
+- **Within 24 hours of your last message**, the agent's messages arrive as normal messages, with any files.
+- **After 24 hours**, the agent's message arrives inside a standard WhatsApp template message, joined onto one line, without files. Send the number any message to reopen the window.
+
+## Files
+
+- Send photos, audio, video and documents. The agent opens them when it needs them.
+- The agent can send you up to 10 files with a message, up to 16 MB each, within the 24-hour window. JPEG and PNG images, common audio formats and MP4 video arrive as media; anything else arrives as a document.
+
+## Answering a waiting run
+
+When a run pauses for your answer, message the number in your own words. The agent resumes the run with your answer. See [Approvals and waits](/scripts/approvals-and-waits).
+
+## One phone, one Script.it account
+
+Your phone number talks to one Script.it account. If you link the same number from another Script.it account or organization, the newer link takes over. The earlier connection expires, and its owner gets an email saying so.
+
+The connection belongs to the account you connected it in, Personal or an organization. Conversations run there and use that account's credits. See [Ways to reach your agent](/channels/overview#which-account-credits-and-permissions-apply).
+
+## Messaging the number before you have an account
+
+If you message Script.it's number from a phone that isn't linked, you get a reply with a link, at most once a day. Signing up or signing in through that link connects your number in one tap.
+
+## Cost
+
+Agent WhatsApp has no connection fee. WhatsApp charges per message for the messages the agent sends you, and Script.it passes that on as a small per-message charge to the account the number is linked in. Read receipts are free. The agent's work is billed like any session. See [Billing, credits, and usage](/account/billing).
+
+## Pause or disconnect
+
+- **To pause WhatsApp**, turn off the **WhatsApp message received** trigger. See [Manage triggers](/triggers/managing).
+- **To disconnect**, go to **Settings → Integrations**, open the **Agent WhatsApp** row's **⋮** menu, and select **Disconnect**.
+
+## Not to be confused with
+
+**Linking your own WhatsApp account** lets scripts read and send WhatsApp messages *as you*, to other people, and costs credits each month. Agent WhatsApp is the opposite: the agent has its own number, and only you talk to it. See [Messaging accounts](/integrations/messaging-accounts).

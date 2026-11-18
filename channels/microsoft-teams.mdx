@@ -1,0 +1,102 @@
+---
+title: "Message your agent on Microsoft Teams"
+description: "Set up your organization's own Teams bot once, then every member can chat with their agent in Teams or @mention it in a channel."
+keywords: ["Microsoft Teams", "Teams Bot", "Microsoft Teams Bot", "Azure Bot", "Teams app package", "Teams admin center", "personal chat", "mention", "Script.it"]
+---
+
+In Teams, your agent lives in your organization's own bot. Members chat with it one-to-one, or @mention it in a team channel to have it answer in the thread.
+
+Teams works differently from Slack: each organization runs its own bot, registered in its own Microsoft Entra tenant. An admin sets it up once, and then every member connects to it.
+
+## Admin setup
+
+You need to be an Owner or Admin of the organization — anyone with the **Edit organization settings** permission. You also need rights in your company's Azure portal and Teams admin center.
+
+<Steps>
+  <Step title="Create an Azure Bot">
+    In the Azure portal, create an **Azure Bot** with the **single tenant** type, in the Microsoft Entra tenant your members use Teams in. Create a client secret for the bot's app registration.
+  </Step>
+  <Step title="Point the bot at Script.it">
+    Set the bot's messaging endpoint to `https://api.script.it/api/webhooks/platform/teamsbot`. Every organization uses this same endpoint. On a self-hosted installation, use your installation's API address in place of `https://api.script.it`.
+  </Step>
+  <Step title="Turn on the Teams channel">
+    Under the bot's **Channels**, add **Microsoft Teams**.
+  </Step>
+  <Step title="Connect the bot in Script.it">
+    Switch to the organization's account. Go to **Settings → Integrations**, find **Microsoft Teams Bot**, and click **Connect**. Fill in:
+
+    - **Bot name, as members see it in Teams** — up to 30 characters.
+    - **Microsoft App ID**
+    - **Directory (tenant) ID**
+    - **Client secret**
+
+    Script.it signs in as the bot to check these. If Microsoft refuses them, the error says so, and nothing is saved. Once connected, the card shows the **Messaging endpoint** to compare with step 2.
+  </Step>
+  <Step title="Upload the Teams app">
+    Ask your agent for the Teams app package — for example, "give me the Teams app package for our bot". It saves the package as a zip file in the session. Upload it in the Teams admin center under **Teams apps → Manage apps → Upload**, and make it available to your members.
+  </Step>
+  <Step title="Optional: install it for everyone">
+    To put the bot in front of every member, add the app to a setup policy in the Teams admin center, under **Teams apps → Setup policies**. Add it to **Installed apps** to install it for the members the policy covers, and to **Pinned apps** to pin it in their app bar. Each member it's installed for gets a greeting, or a link to connect.
+  </Step>
+</Steps>
+
+Each new download of the app package is versioned, so uploading a later one updates the same Teams app.
+
+### Keeping the bot running
+
+- **One organization per bot.** A bot that another organization has already connected is refused.
+- **Rotating the secret.** Any admin of the organization can connect the same bot again with a new secret. Their connection takes over, and the previous admin's connection is retired.
+- **If the connection goes away, the bot stops answering.** That happens when the **Microsoft Teams Bot** connection is disconnected, or when the admin who connected it leaves the organization. Connect it again to bring the bot back.
+- **Supported clouds.** Teams in Microsoft's commercial cloud and GCC works. GCC High and DoD don't.
+
+## Connect as a member
+
+Once your admin has set up the bot, **Teams Bot** appears in your integrations and **Teams** appears in the channels banner. Script.it links your Teams account in whichever of these ways comes first:
+
+- **Automatically, by email.** When you first message the bot, Script.it checks your Teams email. If it's your verified Script.it email, you're connected.
+- **Automatically, by Microsoft sign-in.** On Script.it's cloud, if you sign in to Script.it through your organization's Microsoft Entra ID, the bot connects you when you first message it. See [Enterprise SSO](/governance/sso).
+- **With a link code.** Use this when neither of the above applies:
+
+<Steps>
+  <Step title="Start the connection">
+    In a session, click **Teams** in the **Chat with me from an app you already use** banner. Or go to **Settings → Integrations**, find **Teams Bot**, and click **Connect**.
+  </Step>
+  <Step title="Send the code">
+    Script.it shows a **Link code** and a **Send it in Teams** link. The link opens your chat with the bot with the code already typed. Press send. The code is valid for one hour.
+  </Step>
+  <Step title="Start chatting">
+    The bot replies that you're connected, and the dialog in Script.it closes. Message the bot to talk to your agent.
+  </Step>
+</Steps>
+
+If you message the bot before you're connected, it replies with a link to connect. Connecting creates two triggers, **Teams DMs** and **Teams Mentions**.
+
+## Personal chat
+
+Your one-to-one chat with the bot is one conversation at a time, kept as one session in the app. Send `/new` to start a fresh conversation with no earlier history. While the agent works, Teams shows the bot typing.
+
+## Mentions in a channel
+
+@mention the bot in a channel of a team it's been added to. The agent runs in your sandbox, with your integrations, and answers in that thread, where everyone in the channel can read it. One thread is one session.
+
+Only your own mentions reach your agent. A teammate who mentions the bot reaches their own agent, or gets a link to connect.
+
+<Note>
+  A mention can't answer a run that's waiting for you, because others can post in the thread. Answer in your personal chat with the bot instead. See [Approvals and waits](/scripts/approvals-and-waits).
+</Note>
+
+## Files
+
+- **Files you send** in your personal chat, up to 25 MB each, reach the agent. Files posted in a channel are stored in SharePoint, and the bot can't open them; the agent sees a note naming them instead.
+- **Files the agent sends** are images — PNG, JPEG or GIF, up to 1 MB each and 10 per message — shown inline. The agent shares any other file as a link.
+
+## One Teams account, one Script.it account
+
+Your Teams account talks to one Script.it account in an organization. If someone else in the organization links the same Teams account, the newer link wins, and the earlier owner gets an email that their connection expired.
+
+The connection belongs to the organization's account. Conversations run there and use the organization's credits. See [Ways to reach your agent](/channels/overview#which-account-credits-and-permissions-apply).
+
+## Pause or disconnect
+
+- **To pause Teams**, turn off the **Teams DMs** or **Teams Mentions** trigger. See [Manage triggers](/triggers/managing). If you message the bot while it's off, it tells you once a day.
+- **To disconnect**, go to **Settings → Integrations**, open the **Teams Bot** row's **⋮** menu, and select **Disconnect**.

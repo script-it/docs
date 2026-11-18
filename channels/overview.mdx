@@ -1,0 +1,99 @@
+---
+title: "Ways to reach your agent"
+description: "Talk to your agent from the app, email, Slack, Microsoft Teams, Telegram, WhatsApp, another AI assistant, or your terminal, and understand how those conversations become sessions."
+keywords: ["channels", "reach your agent", "email", "Slack", "Microsoft Teams", "Telegram", "WhatsApp", "ChatGPT", "Claude", "MCP", "CLI", "sessions", "Script.it"]
+---
+
+Your agent isn't only in the app. You can message it from the apps you already use, and every conversation becomes a session you can open in Script.it later.
+
+## Every way in
+
+| Where | How you reach your agent | Good for | Setup |
+|---|---|---|---|
+| [The web app](/sessions/chat) | Chat in a session | Building and reviewing scripts, seeing outputs and files | Nothing to set up |
+| [Email](/channels/email) | Your agent's own address, such as `ada@scriptit.email` | Forwarding things in, longer requests with attachments | Ready from the start |
+| [Slack](/channels/slack) | Direct-message the **Script.it** app, or @mention it in a channel | Quick asks during the day, answers in a team thread | Connect **Slack Bot** |
+| [Microsoft Teams](/channels/microsoft-teams) | Chat with your organization's bot, or @mention it in a channel | The same, for companies on Teams | An admin sets up the bot once, then you connect **Teams Bot** |
+| [Telegram](/channels/telegram) | Chat with Script.it's Telegram bot | Messaging your agent from your phone | Connect **Agent Telegram** |
+| [WhatsApp](/channels/whatsapp) | Chat with Script.it's WhatsApp number | Messaging your agent from your phone | Connect **Agent WhatsApp** |
+| [ChatGPT, Claude, and other AI assistants](/channels/ai-assistants) | Add Script.it as a connector in the assistant | Running your scripts and checking runs without leaving the assistant | Add `https://api.script.it/mcp` and approve once |
+| [The command line](/developers/cli) | The `scriptit` CLI, from your terminal or a coding agent such as Claude Code or Codex | Driving your sandbox from a terminal, moving files, scripting Script.it | Install the CLI and sign in |
+
+## Connecting a channel
+
+The quickest way is from inside a session. Above the message box, a banner reads **Chat with me from an app you already use** and lists **Email**, **Slack**, **Teams**, **Telegram** and **WhatsApp**.
+
+- Click a channel you haven't connected to open its connect screen.
+- Click a connected channel to open your chat with the agent in that app, or a dialog with the agent's address.
+- **Teams** appears only after an admin in your organization has set up its Teams bot.
+
+You can dismiss the banner. Every channel is also in **Settings → Integrations**, under the names **Agent Email**, **Slack Bot**, **Teams Bot**, **Agent Telegram** and **Agent WhatsApp**.
+
+<Note>
+  Your organization may limit who can connect integrations. If **Connect and manage integrations** is turned off for you, you can't connect a channel. See [Roles and permissions](/governance/roles-and-permissions).
+</Note>
+
+## How channel conversations work
+
+The messaging channels — email, Slack, Teams, Telegram and WhatsApp — share one model.
+
+### Only you reach your agent
+
+Each channel accepts messages only from you: your sign-in email address, your own Slack, Teams or Telegram account, or the phone number you linked. A message from anyone else never reaches your agent. Colleagues who message the same bot reach their own agents once they've connected it.
+
+### One conversation, one session
+
+Each conversation on a channel is one session. The agent answers in the same place you wrote to it.
+
+| Channel | One conversation is | To start a new one |
+|---|---|---|
+| Email | One email thread | Send a new email instead of replying |
+| Slack | One thread | Send a new top-level message or mention |
+| Teams | Your personal chat with the bot, or one channel thread you mentioned it in | Send `/new` in the personal chat, or mention the bot in a new thread |
+| Telegram | Your chat with the bot | Send `/new` |
+| WhatsApp | Your chat with the number | Send `/new` |
+
+Every one of these sessions appears in the app. Open it to see what the agent did, look at its files, or keep going there.
+
+The agent can also message you first. Ask it, or a script, to email you a report or message you on Slack when a run finishes. When you reply to that email or Slack message, your reply goes back to the session that sent it. In your Teams personal chat, Telegram and WhatsApp, your reply goes to the chat's current conversation.
+
+### Answering a run that's waiting for you
+
+When a run pauses to ask you something, you don't have to open the app. Answer in your own words on a channel of your own:
+
+- reply to the agent's email or Slack direct message, or
+- send a message on Telegram, WhatsApp or your Teams personal chat.
+
+The agent resumes the run with your answer. A message in a public channel thread, where other people can write, doesn't answer a waiting question; the agent tells you what it says instead. See [Approvals and waits](/scripts/approvals-and-waits).
+
+### Which account, credits and permissions apply
+
+- **Account.** Each channel connection belongs to the account you connected it in: Personal or an organization. Its conversations run in that account's sandbox, with that account's integrations, whichever account you have open in the app. Agent Email gives each of your accounts its own address.
+- **Credits.** The agent's work is billed to that same account, like any session. There's no monthly fee for any channel. Email and WhatsApp messages add a small per-message charge. See [Billing, credits, and usage](/account/billing).
+- **Permissions.** Channel conversations run with the **Full** permission profile and your own connections. Your organization's integration policies and Integration calls still apply. See [Permission profiles](/governance/permission-profiles).
+- **Triggers.** Each channel runs through a trigger created when you connect it. If your organization turns off **Create and edit triggers** for you, your channels in that organization pause too.
+
+### Channel connections are yours alone
+
+A channel connection carries your own messages. **Agent Email**, **Agent WhatsApp**, **Agent Telegram** and **Teams Bot** connections can't be shared with a workspace. A **Slack Bot** connection can be shared so scripts in a workspace post as the bot, but direct messages and mentions still reach only the agent of the person who sends them. Teammates connect channels for themselves. See [Admin and governance](/governance/overview).
+
+## Pausing or removing a channel
+
+Connecting a channel creates the trigger that delivers its messages to your agent:
+
+| Channel | Trigger |
+|---|---|
+| Email | **Mail received** |
+| Slack | **Slack DMs** and **Slack Mentions** |
+| Teams | **Teams DMs** and **Teams Mentions** |
+| Telegram | **Telegram DMs** |
+| WhatsApp | **WhatsApp message received** |
+
+- **To pause a channel**, turn its trigger off. See [Manage triggers](/triggers/managing).
+- **To remove a channel**, go to **Settings → Integrations**, open the connection's **⋮** menu, and select **Disconnect**. Its triggers go with it.
+
+## Not to be confused with
+
+- **Linking your own WhatsApp, Telegram, LinkedIn or Instagram account.** That lets scripts read and send messages *as you*, to other people. It's a different integration with a monthly cost. See [Messaging accounts](/integrations/messaging-accounts).
+- **External Agents.** An Agent in your script that answers *other people* — through a `+tag` email address, your own Telegram bot, or your own Slack app — under a restricted permission. See [Agents](/scripts/agents).
+- **MCP server integrations.** Connecting someone else's MCP server *into* Script.it, the reverse of using Script.it from an AI assistant. See [MCP servers](/integrations/mcp-servers).
