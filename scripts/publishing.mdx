@@ -1,0 +1,104 @@
+---
+title: "Publishing scripts"
+description: "Publish a read-only copy of a script at a public link, optionally with a session's runs and files, and manage, update, or unpublish it."
+keywords: ["publish", "public link", "share script", "republish", "unpublish", "import", "Use in Script.it", "Published scripts", "Script.it"]
+---
+
+Publishing puts a frozen, read-only copy of a script on a public web page. Anyone with the link can open it, no account needed. Other Script.it users can import their own copy with one click.
+
+Use it to share a script with people outside your workspace: a template for your community, an example for a customer, or a how-to for a blog post. To work on a script together with teammates, share a [workspace](/account/workspace) instead.
+
+<Warning>
+  **Everything in a published script is public.** That includes `SKILL.md`, every block's and trigger's code, the prompts in it, and every file in its `assets/` folder. If you include a session, its runs, outputs, and files are public too, and so is your conversation with the agent if you include it. Check for names, email addresses, customer data, internal URLs, and secrets before you publish.
+</Warning>
+
+## Who can publish
+
+To publish a script, you need edit access (**Can edit**) to its workspace.
+
+In an organization, publishing is also a per-member permission, **Publish scripts publicly**. It's on by default for every role. Owners and admins can turn it off for a role or a member. See [Roles and permissions](/governance/roles-and-permissions).
+
+## Publish a script
+
+<Steps>
+  <Step title="Open the publish dialog">
+    Open the script and click **Publish** in the bar at the top of the script.
+  </Step>
+  <Step title="Choose what to include">
+    If you have a session open, you can also publish it:
+
+    - **Include session outputs and files** shares the session's runs, outputs, and session files. The public page shows the script with those outputs.
+    - **Include conversation with the agent** also shares the full conversation: messages, reasoning, and tool activity. It's off by default.
+  </Step>
+  <Step title="Review the contents">
+    Click **Ask agent to prepare for publishing**. The agent checks the script for personal data, credentials, and other sensitive content, suggests changes that help people who import it, and offers to add a setup guide. It asks before changing anything, and can prepare a separate copy so your working script stays as it is.
+  </Step>
+  <Step title="Publish">
+    Click **Publish**. Script.it creates the page and gives you its link, in the form `https://public.script.it/scripts/<id>/<title>`. Click **Copy link** to share it.
+  </Step>
+</Steps>
+
+If publishing fails, the dialog shows why and offers a prompt that asks the agent to fix it.
+
+## What's published
+
+| Part | Published |
+|---|---|
+| `SKILL.md`, block code, and trigger code | Always |
+| Files in the script's `assets/` folder, and its cover | Always |
+| Scripts kept inside the script's folder | Always, each with its own files |
+| The session's runs, outputs, and session files | Only with **Include session outputs and files** |
+| The conversation with the agent | Only with **Include conversation with the agent** |
+| Your integration connections and credentials | Never |
+
+## Update a published script
+
+A published page is frozen: it doesn't change when you edit the script. Once it's published, the **Publish** button reads **Published**. When the script or the included session changes, the button's tooltip says "Published version is out of date".
+
+To update it, click **Published**. The dialog lists what changed since you published, under **Changes since published**. Click **Update**, choose what to include again, and click **Republish**. The link stays the same.
+
+<Note>
+  **Include conversation with the agent** starts off each time you republish. Turn it on again if you still want the conversation public.
+</Note>
+
+## Unpublish a script
+
+Click **Published** to open the publish dialog, click **Unpublish**, then confirm. The link stops working immediately, and you can't undo it.
+
+Copies that other people already imported are theirs, and aren't affected.
+
+## Manage everything you've published
+
+Open **Settings → Sharing → Published scripts** to see every script you've published from the active account. For each one, you can open the script, republish it, copy its link, open the public page, or unpublish it.
+
+A row's badge tells you its state:
+
+| Badge | Meaning |
+|---|---|
+| **Older Version** | The script or the included session has changed since you published. |
+| **Publication failed** | The last publish didn't finish, and nothing is live at the link. Republish to try again. |
+| **Source unavailable** | The public link still works, but the script it came from can't be found. |
+
+Published scripts belong to the account — Personal or an organization — that owns the script's workspace. Switching accounts shows that account's published scripts.
+
+## What visitors can do
+
+Anyone with the link can read the script: its description, its blocks and how each one works, and its files. If you included a session, they also see its runs and outputs.
+
+A visitor with a Script.it account can click **Use in Script.it** to import the script into one of their workspaces. They get their own independent copy. The **More actions** menu offers more:
+
+- **Copy prompt for your agent** copies a one-line prompt to paste into your agent, asking it to import the script into your workspace.
+- **Advanced imports → Import with session data** imports the script together with the published session, when there is one.
+- **Advanced imports → Download .zip** downloads the script's files.
+
+Published pages ask search engines not to index them. Treat the link as public anyway: anyone who has it can open the page and pass it on.
+
+## Publishing compared to workspace sharing
+
+| | Publishing | Workspace sharing |
+|---|---|---|
+| Who can see it | Anyone with the link | Members you invite |
+| Account needed to view | No | Yes |
+| Stays in sync with your edits | No, until you republish | Yes |
+| Others can change your script | No; they import a copy | Editors can |
+| Runs use | The importer's own connections and credits | Each member's own or shared connections |

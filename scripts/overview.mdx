@@ -1,46 +1,79 @@
 ---
 title: "Scripts"
-description: "Scripts are reusable workflows built by the AI agent. Each script contains blocks, source files, reusable files, and context settings for your automation."
-keywords: ["scripts", "automation", "workflow", "AI agent", "blocks", "SKILL.md"]
+description: "Scripts are reusable automations the agent builds for you. Learn what a script contains, what its page shows, and what you can do with it."
+keywords: ["scripts", "automation", "workflow", "AI agent", "blocks", "inputs", "triggers", "history", "publish", "SKILL.md"]
 ---
 
-A script is the core unit of automation in Script.it. It defines a sequence of steps — called blocks — that the platform runs in order. You describe what you want to automate in plain English, and the AI agent builds the script for you: it creates the blocks, writes the source files, and connects the pieces.
+A script is the core unit of automation in Script.it. It's a series of steps, called blocks, that run in order. You describe what you want to automate in plain language, and the agent builds the script for you: it writes each block, runs it to check it works, and connects the pieces.
 
-## What a script is
+## What a script contains
 
-Every script has a name, description, ordered blocks, source files, and any reusable files it needs. You can open a script in your workspace to review what it does, run it, or ask the agent to change it.
+| Part | What it is |
+|---|---|
+| **Name and description** | What the script does and when to use it |
+| **Blocks** | The steps that run, in order. See [Blocks](/scripts/blocks). |
+| **Inputs** | Values you set to change what a run does. See [Inputs and running](/scripts/inputs-and-running). |
+| **Assets** | Files that stay with the script, such as templates and reference data. See [Assets](/scripts/assets). |
+| **Triggers** | Rules that run the script automatically. See [Triggers](/triggers/overview). |
+| **Agent Context** | How much of the script the agent reads on its own. See [Agent context](/scripts/agent-context). |
 
-Scripts are **reusable** — you can run the same script many times, in many sessions, without the results of one run affecting another. They are also **version-tracked**: any change the agent makes to a script is captured as a version snapshot, so you can revert to a previous state at any time.
+A script lives in a [workspace](/account/workspace). Everyone with access to the workspace sees the same script.
 
-## How the agent builds scripts
+Script.it saves a version of the script at the end of every agent turn that changes it. To go back, open the script's **History** and choose **Restore version**, then **Restore this version**. See [Outlines, comments, and history](/scripts/outline-and-history#history).
 
-When you describe an automation in the session, the agent figures out what blocks are needed and creates the script automatically. It writes the code for executable blocks, adds documentation where useful, connects any required tools, and prepares the script so you can run it.
+Scripts are **reusable**. You can run the same script many times, in many sessions, without one run's results affecting another's.
 
-You don't need to manage the underlying files directly. But because the script is inspectable, you can read the source files, copy them, share them, or restore an earlier version when needed.
+## How the agent builds a script
+
+When you describe an automation in a session, the agent works out the steps and builds the script one block at a time. It writes a block's code, runs the block, and fixes it until it works before moving on. You can watch the script take shape on its page as it goes.
+
+Each block explains itself in plain language, so you can follow what it does without reading code. When you want a change, describe it in the chat or comment on the part you mean. See [Outlines, comments, and history](/scripts/outline-and-history).
 
 <Tip>
-  You can ask the agent to modify a script at any time — add a step, change the logic of a block, or restructure the whole workflow. Just describe what you want in the chat.
+  Feedback about how a script should behave on future runs belongs in the script. Say "ask me for the file next time" or "always check the sheet isn't empty first", and the agent changes the script so every later run does it.
 </Tip>
 
-## What scripts can contain
+## The script page
 
-A script can contain any number of blocks. Blocks come in two types:
+Open a script to see its page. The header holds:
 
-- **Executable blocks** — run Python or shell code to perform an action, such as fetching data, calling an API, transforming a file, or sending a notification.
-- **Markdown blocks** — contain plain text for documentation and notes, helping you and your team understand what the script does.
+- **Run**, to start a run, and the history button beside it.
+- **Description**: what the script does and when to use it.
+- **Agent Context**: how much of the script the agent reads on its own.
+- **Last run**: shown when the last run ended early, with where and why.
+- **Sessions**: the last session that ran or edited the script, and **View All**.
+- **Triggers** and **Assets**, when the script has them.
+- **Script inputs**: the values the next run uses.
 
-Blocks run in the order shown in the script view. The agent handles the wiring — you just describe the workflow you need.
+Below the header, each block has a card with its inputs, its outline, and its latest outputs.
 
-Scripts can also contain **assets**: persistent files such as templates, reference data, configuration, and small memory files that survive across sessions. See [Assets](/scripts/assets) for details.
+The bar at the top of the page holds **Publish** and the script's **⋮** menu: **Run in current session**, **Copy link to run script**, **Copy Script URL**, **Script Folder**, **Show script history**, and **Export Script**.
 
-A script can also carry its own **triggers** — the rules that run it automatically. They appear in the script alongside its blocks, and they're saved with it, so they travel with the script when you share, export, or import it. See [Triggers](/triggers/overview).
+## What you can do with a script
 
-## Agent context
+<CardGroup cols={2}>
+  <Card title="Run it" icon="play" href="/scripts/inputs-and-running">
+    Set its inputs, run it or a single block, and follow the run.
+  </Card>
+  <Card title="Change it" icon="message-square" href="/scripts/outline-and-history">
+    Comment on what should change, and restore an earlier version.
+  </Card>
+  <Card title="Hand a step to an Agent" icon="bot" href="/scripts/agents">
+    Let an AI Agent do research, or answer other people for you.
+  </Card>
+  <Card title="Pause for approval" icon="hand" href="/scripts/approvals-and-waits">
+    Ask before sending, or wait for a reply before continuing.
+  </Card>
+  <Card title="Run it automatically" icon="zap" href="/triggers/overview">
+    On a schedule, on an app event, or from a webhook.
+  </Card>
+  <Card title="Publish it" icon="globe" href="/scripts/publishing">
+    Share a read-only copy at a public link.
+  </Card>
+</CardGroup>
 
-Scripts also have context settings that control how much of the script the agent can use in chat. See [Agent context](/scripts/agent-context) for details.
+To work on a script with teammates, keep it in a shared [workspace](/account/workspace). To move a script elsewhere, choose **Export Script** from its **⋮** menu to download it. You can bring an exported script back in from **Settings → Account → Import Session or Script**.
 
-You do not need to edit these settings for normal use, but they are useful when a script should behave like persistent context rather than an automation the agent should run.
+## Where to start
 
-## Where to go next
-
-The pages in this section cover how blocks are structured, how reusable files work, and how to start from ready-made templates.
+To start from a ready-made idea, see [Templates](/scripts/templates). To build from scratch, open a new session and describe what you want to automate.

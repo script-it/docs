@@ -1,0 +1,74 @@
+---
+title: "Approvals and waits"
+description: "Make a run stop and continue later: ask you for approval or a choice, wait for a reply or an event, or wait for a set time."
+keywords: ["approval", "human in the loop", "ask before sending", "wait for reply", "follow up", "waiting run", "question card", "Script.it"]
+---
+
+Some work can't finish in one go. A draft needs your OK before it's posted. An email needs a reply before the next step. A follow-up should go out in two days if nobody answers. A block can stop the run at that point and continue it later, from the same place.
+
+Ask the agent in your own words:
+
+- "Ask me before you send each email"
+- "Let me pick one of the three ideas, then write the post"
+- "Wait for the lead's reply, and follow up in two days if they don't answer"
+- "Continue once the Notion page is marked approved"
+
+## What a run can wait for
+
+| Wait | Example | Continues when |
+|---|---|---|
+| **Your answer** | Approve a draft, pick an option, fill in a value | You answer the block's questions |
+| **An event** | A reply on LinkedIn or WhatsApp, a reply to an email the run sent, an accepted invite, a webhook call | The matching event arrives |
+| **A time** | "Publish at 9", "follow up in two days" | The time comes |
+
+A block can wait for whichever comes first. For example, it can wait for your approval or the page's approval in Notion, and give up after two days.
+
+## How a waiting run looks
+
+While a block waits, the run is **Waiting** and nothing runs. The blocks before it keep their outputs. The waiting block's card says what it waits for and for how long, such as "Waiting for your answer to 'Approve the copy?', up to 3 days".
+
+In the sessions list, the **Waiting** status filter finds every session with a waiting run.
+
+## Answering a question
+
+When a block asks you something, its questions appear in a question card, both under the block and in the session's chat. The card asks one question at a time:
+
+- A question with options offers them as choices. A yes-or-no question offers **Yes** and **No**.
+- You can always type an answer instead. Script.it checks it fits the question, such as a number or a date.
+- A question about something the run made, such as a draft, links to the file. Open it, edit it if you like, then answer. The block reads the file as you left it.
+
+When you answer, the run continues at the waiting block.
+
+You can also answer in your own words. Reply in the run's session chat, or reply over one of your [channels](/channels/overview), such as the email or Slack message the run sent you, and the agent passes your answer to the run.
+
+<Note>
+  Nothing reaches out on its own. If you won't be looking at the app, ask the agent to have the script tell you a question is waiting, for example by email or Slack, with a link to the session.
+</Note>
+
+## Waiting for an event
+
+To wait for an event, the script declares a [trigger](/triggers/overview) for it, such as new LinkedIn messages or replies to an Agent Email thread. Unlike an ordinary trigger, this one starts no runs. It only hands each event to the run waiting for it: the reply from this lead, or to this thread.
+
+Each member who runs the script turns that trigger on once. If the trigger is off, the block that waits on it fails and says so.
+
+An event that no run is waiting for, or that comes after the deadline, is ignored.
+
+## Deadlines
+
+Every wait has a deadline. If the script doesn't set one, it's 7 days. The longest a wait can last is 30 days.
+
+When the deadline passes, the run continues at the waiting block without an answer. What happens next is up to the script, so tell the agent: "If I don't answer in a day, skip the post", or "remind me every morning until I answer".
+
+## When the wait ends
+
+Only the waiting block runs again. It picks up where it stopped, and anything it already did before the wait, such as sending an email, isn't repeated. Then the blocks after it run as usual.
+
+A run waits in the session it runs in. When many runs wait at once, such as one per lead, the agent starts each in a session of its own, so they can continue side by side.
+
+## Stopping a waiting run
+
+To end a run that's waiting, choose **Stop the waiting run** from the waiting block's **⋮** menu, or use the stop button at the bottom of the script page. In the chat, the run's card offers **Stop run**.
+
+<Warning>
+  A question is a pause for you, not a lock. Your own agent can answer a waiting question when you tell it to in chat. For an approval that only you should give, ask the agent to say so in the question; it then leaves the answer to you in the question card.
+</Warning>
