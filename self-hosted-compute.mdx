@@ -1,18 +1,22 @@
 ---
 title: "Run agents inside your network"
-description: "Install a relay on a machine in your own VPC so Script.it agents run on your infrastructure and can reach internal databases, private APIs, and services that aren't exposed to the internet."
-keywords: ["self-hosted", "relay", "VPC", "private network", "internal database", "on-premise", "enterprise", "Script.it"]
+description: "Install a relay on a machine in your own network so your organization's agents run there and can reach internal databases, private APIs, and services that aren't exposed to the internet."
+keywords: ["self-hosted", "self-hosted sandboxes", "relay", "VPC", "private network", "internal database", "on-premise", "enterprise", "Script.it"]
 hidden: true
 noindex: true
 ---
 
-Some of the automations you want to build need to reach systems that were never meant to be public — an internal Postgres, a service inside your VPC, an API with no route from outside. By default, Script.it agents run on our infrastructure, so those systems are out of reach.
+Some of the automations you want to build need to reach systems that were never meant to be public: an internal Postgres, a service inside your VPC, an API with no route from outside. By default, Script.it agents run on Script.it's infrastructure, so those systems are out of reach.
 
-With a **relay**, they aren't. You install one service on a machine you own, and your team's agents run there instead.
+With a **relay**, they aren't. You install one service on a machine you own, and your organization's agents run there instead.
+
+<Note>
+  Self-hosted sandboxes are turned on per account on request, for company and Personal accounts alike. Contact [support@script.it](mailto:support@script.it) to turn it on.
+</Note>
 
 ## How it works
 
-You run one Linux machine inside your own network and install the relay on it. The relay opens a single connection **outward** to Script.it and keeps it open. Script.it uses that connection to run your team's environments on your machine.
+You run one Linux machine inside your own network and install the relay on it. The relay opens a single connection **outward** to Script.it and keeps it open. Script.it uses that connection to run your organization's sandboxes on your machine.
 
 Nothing needs to point inward. You add no firewall rules, no public IP, and no VPN peering.
 
@@ -23,9 +27,11 @@ Nothing needs to point inward. You add no firewall rules, no public IP, and no V
   noZoom
 />
 
-Two connections leave your network, both opened from your side. The **control connection** is how Script.it drives your environments. The second carries the environments' own traffic — connected integrations, model calls, and code sync.
+Two connections leave your network, both opened from your side. The **control connection** is how Script.it drives your sandboxes. The second carries the sandboxes' own traffic: connected integrations, model calls, and code sync.
 
 Because the agent is already inside your perimeter, private endpoints work with no allowlists and no tunnel to maintain. Internal hostnames resolve the way they do anywhere else on that machine.
+
+Once the relay is online, every sandbox in the organization moves onto it. A stopped sandbox moves right away. A running one moves once it's idle.
 
 ## What runs where
 
@@ -33,17 +39,17 @@ This is worth being precise about, because it's usually the deciding factor.
 
 **Stays in your network**
 
-- The agent process itself — every command it runs and every file it touches.
-- Your credentials. Environment variables are read from your machine. We never receive or store them.
+- The agent process itself: every command it runs and every file it touches.
+- Your environment variables. They're read on your machine. Script.it sees their names, never their values.
 - Any request a script makes directly. It goes straight from your machine to the destination.
-- Compute. You choose the instance size and pay for it directly.
+- Compute. You choose the machine and pay for it directly.
 
 **Still reaches Script.it**
 
-- Your automation code. Scripts are stored and versioned by us, which is what lets your team share and collaborate on them.
-- Session history and agent state, so a rebuilt environment restores cleanly. This can be turned off if you'd rather it stayed on your machine.
+- Your automation code. Scripts are stored and versioned in Script.it's hosted git, which is what lets your team share and collaborate on them.
+- Session history, so a sandbox can come back if the machine is lost. You can turn this off with **Back up session history**.
 - Connected integrations. See below.
-- Prompts and model traffic. Whatever an agent reads from your systems and then reasons about passes through our gateway on its way to the model provider.
+- Prompts and model traffic. Whatever an agent reads from your systems and then reasons about passes through Script.it's model gateway on its way to the model provider.
 
 <Note>
   A relay changes **where your agents run**, not where your data is processed. If your requirement is that no data may be processed by a third party at all, see [When you need full on-premise](#when-you-need-full-on-premise) below.
@@ -51,9 +57,9 @@ This is worth being precise about, because it's usually the deciding factor.
 
 ## Connecting to internal systems
 
-Scripts reach your internal systems by connecting to them directly, using credentials you provide on your own machine.
+Scripts reach your internal systems by connecting to them directly, using credentials you keep on your own machine.
 
-You put the values in a file on the relay host, or point the relay at your own secrets manager:
+You put the values in a file on the relay machine, or point the relay at an AWS Secrets Manager secret:
 
 ```yaml /etc/scriptit-relay/config.yaml
 sandbox_env:
@@ -62,7 +68,9 @@ sandbox_env:
   # aws_secrets_manager: arn:aws:secretsmanager:us-east-1:...:secret:scriptit/sandbox
 ```
 
-Every environment on that relay then receives those variables, and a script reads them the usual way:
+The file holds one `KEY=value` per line. A Secrets Manager secret holds a JSON object of names and values.
+
+Every sandbox on the relay receives those variables, and a script reads them the usual way:
 
 ```python
 import os, psycopg2
@@ -70,40 +78,73 @@ import os, psycopg2
 conn = psycopg2.connect(os.environ["INTERNAL_DB_URL"])
 ```
 
-Values are read when an environment starts, so changing them takes effect after you apply the change from **Settings → Compute**.
+Values are read when a sandbox starts. After you change them, go to **Settings → Organization → Self-hosted sandboxes** and click **Apply** under **Environment variables**. Each sandbox restarts with the new values once it's idle.
 
 <Warning>
-  Anything you inject is readable by the agent working in that environment, and agents send what they read to the model provider in order to reason about it. Give the relay credentials scoped to what your automations actually need — a read-only role against the specific database, rather than broad access.
+  Anything you inject is readable by the agent working in that sandbox, and agents send what they read to the model provider in order to reason about it. Give the relay credentials scoped to what your automations actually need, such as a read-only role on a specific database, rather than broad access.
 </Warning>
 
 ## Connected integrations
 
-Integrations you connect through Script.it — GitHub, Slack, Salesforce, and the rest of the catalog — are called **by us**, from our infrastructure, using the credentials you connected. That doesn't change when you run a relay.
+Integrations you connect through Script.it, such as GitHub, Slack, and Salesforce, are called **by Script.it**, from Script.it's infrastructure, using the credentials you connected. That doesn't change when you run a relay.
 
 Only requests a script makes itself travel directly from your machine.
 
-This has one practical consequence worth planning around: **an internal API can't be added as a connected integration**, because we would be the ones calling it and we can't reach your network. Reach internal services by calling them directly from your script, with credentials from the section above.
+This has one practical consequence worth planning around: **an internal API can't be added as a connected integration**, because Script.it would be the one calling it and can't reach your network. Reach internal services by calling them directly from your script, with credentials from the section above.
 
 ## What you need
 
+- **A Linux machine in your network**, x86-64 or ARM64, with Docker installed. Start with at least 4 CPUs, 16 GB of memory, 100 GB of free disk, and 1 GB of swap. Each sandbox gets 2 CPUs and 4 GB of memory, so a bigger machine runs more sandboxes at once.
+- **Outbound HTTPS** on port 443 to Script.it. No inbound rules, no public IP, and no changes to your security groups.
+- **A proxy setting, if you use one.** If your network sends outbound traffic through a proxy or inspects TLS, set `proxy`, `no_proxy`, and `ca_bundle` in `config.yaml`. The sandboxes use them too.
+- **Permission to set it up.** You need the **Manage self-hosted sandboxes** permission. Owners and Admins have it by default.
+
+## Install the relay
+
 <Steps>
-  <Step title="A Linux machine in your network">
-    x86-64 with Docker installed. Start around 4 vCPU and 16 GB of memory, with 100 GB of disk, plus headroom for each person working at the same time.
+  <Step title="Open Self-hosted sandboxes">
+    Go to **Settings → Organization** and expand **Self-hosted sandboxes**.
   </Step>
-  <Step title="Outbound HTTPS">
-    Port 443 to Script.it. No inbound rules, no public IP, and no changes to your security groups.
+  <Step title="Add the relay">
+    Enter a **Relay name** and click **Add relay**. Script.it shows an install command.
   </Step>
-  <Step title="Ten minutes to install">
-    Go to **Settings → Compute**, click **Add relay**, and copy the install command. It carries a single-use token that expires in an hour. The machine appears in your settings as soon as it connects.
+  <Step title="Run the install command on your machine">
+    Click **Copy** and run the command on the Linux machine. It works once, for the next 60 minutes. If it expires, click **New install command**.
+
+    The installer checks the machine first. It stops if the machine can't run Script.it's sandboxes, and warns about anything that limits them.
+  </Step>
+  <Step title="Wait for the relay to connect">
+    The relay appears as online as soon as it connects. Your organization's sandboxes then start moving onto it.
   </Step>
 </Steps>
 
-Once it's online, you'll see which environments are running on it, how much capacity is left, and when a sandbox update is available.
+## Manage the relay
+
+**Settings → Organization → Self-hosted sandboxes** shows:
+
+- Whether the relay is online, and when it went offline if it isn't.
+- The machine: CPUs and memory, how many more sandboxes fit, free disk, Docker version, relay version, and what each sandbox gets.
+- **Sandboxes on this machine**, with each member's sandbox and whether it's running.
+- **Environment variables**: the names the relay found, and **Apply** to restart sandboxes with new values.
+- **Back up session history**: keeps a copy of each sandbox's chat sessions on Script.it, so they come back if the machine is lost. Workspaces stay backed up through hosted git either way.
+
+When a new sandbox version is available, you see **Update available**. Running sandboxes stay on their current version until you click **Update**. The machine downloads the new version, then each sandbox moves to it once it's idle. Files and sessions stay. The relay has to be online to update.
+
+To stop using the relay, click **Remove relay**. Each sandbox moves back to Script.it once it's idle, then the relay is removed. A sandbox that can't move keeps its data on the machine and starts on Script.it from its latest backup.
 
 ## When you need full on-premise
 
-A relay is the right fit when your problem is **reach** — the automations you want are blocked because the systems they need aren't reachable from outside, and you're comfortable with a hosted product processing your data.
+A relay is the right fit when your problem is **reach**: the automations you want are blocked because the systems they need aren't reachable from outside, and you're comfortable with a hosted product processing your data.
 
-Choose full on-premise instead when your problem is **residency** — policy or regulation says your data may not be processed by a third party. A relay doesn't get you there, because model traffic still carries whatever an agent reads. Full on-premise puts the entire platform, including the model gateway and your own provider keys, inside your perimeter.
+Choose full on-premise instead when your problem is **residency**: policy or regulation says your data may not be processed by a third party. A relay doesn't get you there, because model traffic still carries whatever an agent reads.
 
-If you're not sure which applies, talk to us before you start — the two paths are very different amounts of work, and it's worth getting right up front.
+Full on-premise is a licensed, standalone install of the whole Script.it platform on a server you run, in your cloud or on your own hardware:
+
+- **Your own identity provider.** Sign-in runs inside your install and can connect to Active Directory or LDAP, or to Okta and other OIDC providers.
+- **Your own model keys.** Use Anthropic, OpenAI, Azure OpenAI, AWS Bedrock, or a model server you host yourself. The model gateway runs inside your perimeter.
+- **Internal APIs as integrations.** Your install can be set to let integrations call services on your own network.
+- **An air-gapped option.** Hosts with no outbound internet install from a bundle that includes every container image.
+
+Anonymous product analytics are on by default in an on-premise install, and you can turn them off.
+
+If you're not sure which applies, talk to us before you start. The two paths are very different amounts of work, and it's worth getting right up front. Contact [support@script.it](mailto:support@script.it).

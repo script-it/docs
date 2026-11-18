@@ -1,64 +1,94 @@
 ---
 title: "Integrations"
-description: "Connect built-in tools, custom REST APIs, and shared workspace integrations so scripts can read and write data wherever your team works."
-keywords: ["integrations", "shared integrations", "custom integrations", "Slack", "Gmail", "Notion", "HubSpot", "Airtable", "connect", "tools", "Script.it"]
+description: "See what every account includes, the ways to connect your own tools, and how integrations are shared and controlled."
+keywords: ["integrations", "included connections", "shared integrations", "custom integrations", "MCP server", "LinkedIn", "WhatsApp", "Slack", "Gmail", "Notion", "HubSpot", "connect", "Script.it"]
 ---
 
-Integrations give your scripts access to the tools you already use. Script.it connects to 600+ apps — including Slack, Gmail, Notion, HubSpot, Airtable, Google Sheets, Linear, Jira, and Shopify. You can also create custom integrations for REST APIs that are not in the built-in catalog.
+Integrations give your scripts access to the tools you already use. Script.it connects to 600+ apps, including Slack, Gmail, Notion, HubSpot, Airtable, Google Sheets, Linear, Jira, and Shopify. You can also link your own messaging accounts, add remote MCP servers, and create custom integrations for any REST API.
+
+## Included with every account
+
+Some connections are ready the moment you sign up. They need no API key and no sign-up with another service:
+
+| Connection | What it gives your agent and scripts |
+|---|---|
+| **AI models** | The latest models from Anthropic, OpenAI, and Google, for writing and analysis, and for generating images, video, and voice. |
+| **Web search** | Answers from the live web with their sources, and the full text of any page you point it at. |
+| **Social data** | Public posts, profiles, and comments from TikTok, Instagram, YouTube, LinkedIn, X, Reddit, and more, plus job listings and ad libraries. |
+| **Email** | Your agent's own email address. It can send mail on your behalf, and mail sent to it can start a session. See [Email](/channels/email). |
+
+Their usage is paid with credits, like the rest of your activity. See [Billing](/account/billing).
+
+## Ways to connect your own tools
+
+| Option | Use it for | Where to start |
+|---|---|---|
+| Built-in apps | The 600+ apps in the catalog, such as Slack, Gmail, and HubSpot | [Connect integrations](/integrations/connecting) |
+| Messaging and social accounts | Your own LinkedIn, WhatsApp, Telegram, or Instagram, so scripts can read and send messages as you | [Messaging and social accounts](/integrations/messaging-accounts) |
+| MCP servers | A service that publishes a remote MCP server URL | [MCP servers](/integrations/mcp-servers) |
+| Custom integrations | Any REST API that isn't in the catalog, such as an internal service | [Custom integrations](/integrations/custom-integrations) |
 
 ## What integrations are
 
 An integration is either:
 
-- **A connection** - an authorized account for an external tool, such as your Slack workspace, Gmail account, or internal API key.
-- **An integration type** - the reusable definition for an API, such as the auth mode, base URL, OAuth settings, and API schema.
+- **A connection**: an authorized account for an external tool, such as your Slack workspace, Gmail account, or an API key for an internal service.
+- **An integration type**: the reusable definition of an API, such as its auth mode, base URL, and OAuth settings.
 
-For built-in tools, Script.it provides the integration type. You connect your account. For custom integrations, you or a teammate can define the type, then each member can connect credentials through it.
+For built-in apps, Script.it provides the integration type, and you connect your account. For custom integrations and MCP servers, you or a teammate define the type, then each member can connect their own credentials through it.
 
-When a script uses an integration, Script.it injects authentication securely. Scripts do not store API keys, OAuth tokens, or secrets in source files.
+When a script uses an integration, Script.it adds the authentication to each request. Scripts don't store API keys, OAuth tokens, or secrets in their files.
 
 ## How the AI agent uses integrations
 
-When you describe an automation in chat, the agent automatically figures out which integrations it needs. If you say "send a Slack message whenever a new row is added to my Airtable base," the agent identifies that it needs Slack and Airtable, uses the actions those integrations provide, and builds the script accordingly.
+When you describe an automation in chat, the agent works out which integrations it needs. If you say "send a Slack message whenever a new row is added to my Airtable base," the agent sees that it needs Slack and Airtable, uses the actions those integrations provide, and builds the script.
 
-The agent can also detect mid-session when a required integration isn't connected yet. Rather than failing silently, it will prompt you to authorize the missing tool so the automation can proceed.
+If a required integration isn't connected yet, the agent asks you to connect it during the session, so the automation can continue.
 
-## Sharing integrations with workspaces
+## Sharing integrations
 
-You can keep integrations private or share them with a workspace.
-
-There are two kinds of sharing:
+You can keep integrations private or share them.
 
 | Share type | What is shared | How runs authenticate |
 |---|---|---|
-| Shared connection | Your connected account and credentials | Workspace members call the upstream API as you. |
-| Shared custom integration type | The API definition only, with no member credentials | Each member connects and runs with their own account. |
+| Shared connection | Your connected account and its credentials, with a workspace | Workspace members call the upstream API as you. |
+| Shared custom integration type | The API definition only, with a workspace or with everyone in your company | Each person connects and runs with their own account. |
 
-Sharing a connection authorizes the account, not just the workspace location. Once shared, every member of that workspace can use the connection from their sessions and scripts. The same connection can be shared with multiple workspaces.
+Sharing a connection authorizes the account, not just the workspace. Once shared, every member of that workspace can use the connection from their sessions and scripts. You can share the same connection with more than one workspace.
 
 <Warning>
   Share connections only with people you trust. When members use a shared OAuth or API-key connection, upstream requests may appear as the connection owner in the provider's logs or audit trail.
 </Warning>
 
-Managing an integration is separate from workspace role. The creator can manage it, and custom integration editors can be granted management access. A workspace Editor who only received an integration through a share can use it, but does not automatically get permission to edit, rotate, or delete it.
+Managing an integration is separate from workspace role. The creator can manage it, and editors can be added to a custom integration type. A workspace Editor who received an integration through a share can use it, but can't edit, rotate, or delete it.
 
-## The 600+ available tools
+## Controlling what integrations can do
 
-Script.it's integration catalog covers tools across every major category:
+Three controls decide whether a request through an integration goes ahead:
 
-- **Communication** — Slack, Gmail, Microsoft Teams, Discord
-- **Productivity** — Notion, Google Docs, Confluence, Coda
-- **Spreadsheets & databases** — Google Sheets, Airtable, Smartsheet
-- **CRM & sales** — [HubSpot](/integrations/hubspot), Salesforce, Pipedrive
-- **Project management** — Linear, Jira, Asana, Trello, ClickUp
-- **E-commerce** — Shopify, WooCommerce
-- **Developer tools** — GitHub, GitLab, Bitbucket, PagerDuty
-- **Finance** — Stripe, QuickBooks, Xero
+- **Integration policies**: limits set on a connection or a custom integration type by whoever manages it.
+- **Integration calls**: limits your organization sets on a member or a role.
+- **Permission profiles**: limits on what a session or an Agent may do.
 
-If a tool you need isn't in the catalog, create a [custom integration](/integrations/custom-integrations) for its REST API.
+All three apply to every call. See [Integration policies](/governance/integration-policies) and [Permission profiles](/governance/permission-profiles).
+
+## The 600+ available apps
+
+Script.it's catalog covers tools across every major category:
+
+- **Communication**: Slack, Gmail, Microsoft Teams, Discord
+- **Productivity**: Notion, Google Docs, Confluence, Coda
+- **Spreadsheets and databases**: Google Sheets, Airtable
+- **CRM and sales**: [HubSpot](/integrations/hubspot), Salesforce, Pipedrive
+- **Project management**: Linear, Jira, Asana, Trello, ClickUp
+- **E-commerce**: Shopify
+- **Developer tools**: GitHub, GitLab, Bitbucket, PagerDuty
+- **Finance**: Stripe, QuickBooks, Xero
+
+If a tool you need isn't in the catalog, check whether it publishes an [MCP server](/integrations/mcp-servers), or create a [custom integration](/integrations/custom-integrations) for its REST API.
 
 ## How to get started
 
-To use an integration in your scripts, first connect it from **Settings → Integrations**. Search for the tool, click **Connect**, and complete the authorization flow.
+To use an integration in your scripts, connect it from **Settings → Integrations**. Search for the tool, click **Connect**, and complete the authorization flow.
 
-For team workflows, open the integration's sharing controls and choose which workspaces should be able to use it. See [Connect integrations](/integrations/connecting) for details.
+For team workflows, open the integration's sharing controls and choose which workspaces can use it. See [Connect integrations](/integrations/connecting) for details.

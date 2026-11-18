@@ -1,94 +1,146 @@
 ---
 title: "Custom integrations"
-description: "Create custom REST API integrations for tools and internal services that are not available in Script.it's built-in catalog."
-keywords: ["custom integration", "REST API", "internal API", "integration", "OAuth", "API key", "headers", "auth", "Script.it"]
+description: "Create custom REST API integrations for tools and internal services that aren't in Script.it's built-in catalog, then share them with your team."
+keywords: ["custom integration", "REST API", "internal API", "integration", "OAuth", "PKCE", "API key", "headers", "allowed hosts", "auth", "Script.it"]
 ---
 
-Custom integrations let your scripts connect to REST APIs that are not available in Script.it's built-in catalog. They are useful for internal services, partner APIs, customer-specific systems, and niche SaaS tools.
+Custom integrations let your scripts connect to REST APIs that aren't in Script.it's built-in catalog. Use them for internal services, partner APIs, customer-specific systems, and niche SaaS tools.
 
 ## What a custom integration is
 
 A custom integration has two layers:
 
-- **Integration type** - the reusable API definition, including the display name, base URL, auth mode, OAuth URLs, docs URL, logo, and optional schema.
-- **Connection** - a user's credentials for that type, such as an API key, bearer token, username and password, or OAuth grant.
+- **Integration type**: the reusable API definition. It holds the name, base URL, auth mode, OAuth settings, allowed hosts, and docs URL.
+- **Connection**: one person's credentials for that type, such as an API key, a bearer token, a username and password, or an OAuth sign-in.
 
-The integration type does not contain a teammate's personal credentials. Each member can connect their own account through the type, or the owner can share a connected account with a workspace when that is the right trust model.
+The type never contains a teammate's personal credentials. Each member connects their own account through the type. When it's the right trust model, the owner of a connection can share that connection with a workspace instead.
 
 ## When to use one
 
 Create a custom integration when you need to connect to:
 
-- An internal company API not available in the public catalog
-- A service that exposes a REST endpoint but doesn't have a native Script.it integration
-- A custom backend you've built yourself
-- A partner or customer API with a nonstandard auth header
+- An internal company API that isn't in the public catalog
+- A service that exposes a REST API but doesn't have a built-in Script.it integration
+- A backend you've built yourself
+- A partner or customer API with a nonstandard auth header, or a key in the URL
 - An OAuth API where your team owns the OAuth app registration
 
-If the tool is already in Script.it's built-in catalog, use the built-in integration instead.
+If the tool is already in the catalog, use the built-in integration. If the service publishes a remote MCP server, you can [add it as an MCP server](/integrations/mcp-servers) instead.
+
+<Note>
+  The API must be reachable from the internet. Requests to addresses on a private network are refused.
+</Note>
 
 ## Supported auth modes
 
-| Auth mode | How it works | What the user enters |
+| Auth mode | How it works | What you set on the type | What each person enters to connect |
+|---|---|---|---|
+| **API Key** | Sends a key in a request header, the URL path, or a query parameter. | Where the key goes. See [Where the API key goes](#where-the-api-key-goes). | **API Key** |
+| **Bearer Token** | Sends `Authorization: Bearer <token>`. | Nothing extra. | **Bearer Token** |
+| **Basic Auth** | Sends a basic auth header. | Nothing extra. | **Username** and **Password** |
+| **Custom Headers** | Sends one or more headers, such as a key and a secret. | Each header's name and the label people see. | A value for each header |
+| **OAuth2 (Auth Code)** | Opens the provider's sign-in page in the browser. | **Authorization URL**, **Token URL**, **Permissions (Scopes)**, **Client ID**, **Client Secret**, **Token endpoint authentication**, and **Use PKCE** | Their sign-in and consent at the provider |
+| **OAuth2 (Client Credentials)** | Uses server-to-server OAuth, with no sign-in page. | **Token URL**, **Permissions (Scopes)**, **Client ID**, **Client Secret**, and **Token endpoint authentication** | Nothing. Script.it gets a token for them. |
+
+The OAuth client ID and secret belong to the type. Everyone who connects through the type uses the same OAuth app, and each person signs in with their own account. The client secret is encrypted at rest.
+
+Script.it stores credentials and adds them to each request. Scripts call the integration by name. They never hold or print secrets.
+
+### Where the API key goes
+
+With **API Key**, choose **Where does the key go?**:
+
+| Option | What happens | Example |
 |---|---|---|
-| API key | Sends a secret in a configured header such as `X-API-Key`. | API key |
-| Bearer token | Sends `Authorization: Bearer <token>`. | Access token |
-| Basic auth | Sends a basic auth header. | Username and password |
-| Custom headers | Sends one or more static or templated headers. | The secret fields referenced by the headers |
-| OAuth2 authorization code | Opens a browser authorization flow. | OAuth client ID and client secret, then user consent |
-| OAuth2 client credentials | Uses server-to-server OAuth. | OAuth client ID and client secret |
+| **Request header** | The key is sent as `X-API-Key` on every request. | `X-API-Key: <key>` |
+| **URL path** | Put `{api_key}` in the **API Base URL** where the key belongs. Script.it fills it in on each request. | `https://api.example.com/v1/{api_key}` |
+| **Query parameter** | Script.it adds the key to every request as a query parameter. Set its name in **Parameter name** (default `api_key`). | `?api_key=<key>` |
 
-Script.it handles credential storage and request authentication. Scripts call the integration by name; they do not store or print secrets.
+The key is filled in by Script.it on each request and never reaches your scripts. A `{api_key}` placeholder can go in the URL path or query string, but not in the host.
 
-## Creating a custom integration
+### OAuth settings
+
+- **Redirect URL**: register `https://api.script.it/api/v1/integrations/oauth/callback` as a redirect URI in your OAuth app. You can also copy it from the **Redirect URL** field when you edit the integration.
+- **Use PKCE**: on by default for **OAuth2 (Auth Code)**. Some providers, such as X (Twitter), require it. Turn it off only if the provider rejects the authorization request.
+- **Token endpoint authentication**: how Script.it sends the client ID and secret to the **Token URL**. **Send in request body (default)** works for most providers. Choose **Send in Authorization: Basic header** for Spotify, Yahoo, some Microsoft endpoints, or LinkedIn OAuth 2.0.
+
+## Create a custom integration
 
 <Steps>
   <Step title="Open Settings → Integrations">
     In Script.it, click **Settings** in the sidebar, then select **Integrations**.
   </Step>
-  <Step title="Create a custom integration">
-    Choose the custom integration option. Give the integration a short name that identifies the API, such as "Acme internal API" or "Partner reporting API".
+  <Step title="Click Custom">
+    Next to **Add Integration**, click **Custom**. The **Create Custom Integration** dialog opens.
   </Step>
-  <Step title="Enter API details">
-    Add the base URL, docs URL, logo URL if available, and the auth mode the API requires. For OAuth APIs, the connection flow will show the redirect URL you need to add to your OAuth app.
+  <Step title="Name the integration">
+    Enter a **Name** that identifies the API, such as "Acme internal API" or "Partner reporting API". Script.it creates the integration's ID from it.
   </Step>
-  <Step title="Save the integration type">
-    Saving creates the reusable integration definition. It does not connect credentials yet.
+  <Step title="Choose the authentication">
+    Pick the **Authentication** mode and fill in its settings. You can't change the mode after you create the integration.
   </Step>
-  <Step title="Connect credentials">
-    Click **Connect** for the new custom integration and enter the credential values. For OAuth APIs, enter the OAuth client credentials and complete the authorization flow.
+  <Step title="Enter the API Base URL">
+    Enter the root URL of the API, such as `https://api.example.com`. Requests are allowed only to this host and any **Additional Allowed Hosts**.
+  </Step>
+  <Step title="Set advanced options (optional)">
+    Open **Advanced options** to add:
+    - **Additional Allowed Hosts**: extra hosts the integration may call, separated by commas, such as `cdn.example.com, uploads.example.com`.
+    - **Documentation URL**: a link to the API's docs. It helps the agent understand the API.
+  </Step>
+  <Step title="Set a permission policy (optional)">
+    Use the **Permission policy for all … connections** field to limit what every connection of this type may do, yours and your teammates'. See [Integration policies](/governance/integration-policies).
+  </Step>
+  <Step title="Connect">
+    Click **Continue**. For key, token, and password modes, enter your credentials and click **Connect**. For the OAuth2 modes, review the scopes and click **Connect**. With **OAuth2 (Auth Code)**, you approve access in the tab that opens. With **OAuth2 (Client Credentials)**, Script.it gets a token right away.
   </Step>
 </Steps>
 
+If you click **Back** on the connect step, Script.it removes the integration it just created so you can change the definition.
+
+Creating a custom integration needs the **Connect and manage integrations** permission. Every role has it by default.
+
 ## Sharing custom integrations
 
-You can share a custom integration type with a workspace. Members of that workspace can then see the integration in their catalog and connect their own credentials through it.
+You can share a custom integration type with a workspace, or with everyone in your company. People it's shared with see it in their catalog and connect their own credentials through it. No connection is shared.
 
-You can also share a connected account, but that has different security semantics: members call the API using the connection owner's credentials.
+To share a type, open its **⋮** menu in the catalog and choose **Share**:
+
+- **Share with organization**: pick **Everyone in** your company. Every member sees the integration, including people who join later. This option is available in company accounts only.
+- **Share with workspace**: pick one or more workspaces. Members of those workspaces see the integration.
+
+Sharing a type in a company account needs the **Share custom integration types** permission. Owners and Admins have it by default. See [Roles and permissions](/governance/roles-and-permissions).
+
+When you stop sharing a type with everyone, members no longer see it in their catalog unless a workspace shares it with them. Connections they already made keep working, but can't be reconnected once they expire.
+
+You can also share a connected account, which works differently: members call the API with the connection owner's credentials. See [Connect integrations](/integrations/connecting).
 
 <Warning>
-  Sharing a custom integration type shares the API recipe, not personal credentials. Sharing a connection shares the connected account. Use connection sharing only when every workspace member should be able to act through that account.
+  Sharing a custom integration type shares the API recipe, not personal credentials. Sharing a connection shares the connected account. Share a connection only when every workspace member should be able to act through that account.
 </Warning>
 
-Managing a custom integration type is controlled by per-integration editor rights. A workspace Editor who only receives the type through a share can use it, but cannot automatically edit, rename, or delete it.
+### Who can change a shared type
+
+People a type is shared with can use it, but can't change or delete it. To let someone edit it, open the type's **⋮** menu and choose **Manage editors**. This option appears once the type is shared, for people with the **Manage integration editors** permission.
 
 ## How the agent uses custom integrations
 
-Once connected, the AI agent can call a custom integration from any script that can access it. When you describe an automation that involves your internal API, the agent can use the custom integration by name, send requests, pass payloads, and use responses in later blocks.
+Once connected, the agent can call a custom integration from any script that can access it. When you describe an automation that involves your internal API, the agent uses the integration by name, sends requests, passes payloads, and uses the responses in later blocks.
 
 For example, if you tell the agent "post the results of this script to our compliance API," it can:
 
-1. Identify the custom integration for the compliance API.
+1. Find the custom integration for the compliance API.
 2. Format the script output as a JSON payload.
 3. Send a POST request through the authenticated integration.
 4. Use the API response in the next step.
 
-## Managing a custom integration
+## Manage a custom integration
 
-To update or remove a custom integration:
+Open the integration's **⋮** menu in the catalog in **Settings → Integrations**:
 
-1. Go to **Settings → Integrations**.
-2. Find the custom integration by name.
-3. Use the action menu to edit the definition, manage sharing, connect or disconnect accounts, or delete the type if no active connections depend on it.
+- **Connect**: add a connection with your credentials.
+- **Share**: share the type with your company or with workspaces.
+- **Edit**: change the name, base URL, OAuth settings, allowed hosts, docs URL, or permission policy.
+- **Manage editors**: choose who else can edit the type.
+- **Delete**: remove the type permanently. Disconnect every connection to it first.
 
-Changing a custom integration type can affect every script and workspace that uses that type. Review shared workspaces before editing auth settings, base URLs, or schemas.
+Changing a custom integration type affects every script and workspace that uses it. Check who it's shared with before you change auth settings or base URLs.
